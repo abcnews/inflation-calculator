@@ -13,13 +13,16 @@
     $indexStore[name].value = value;
   };
 
+  // $: maxWeight = group.cpiWeighting * 2;
+  $: maxWeight = 0.30;
+
   $: minY = calculateInflationRate({
     ...$indexStore,
     [name]: { ...group, value: 0 },
   });
   $: maxY = calculateInflationRate({
     ...$indexStore,
-    [name]: { ...group, value: group.cpiWeighting * 2 },
+    [name]: { ...group, value: maxWeight },
   });
 
   const MAX_SLOPE = 0.35;
@@ -51,19 +54,19 @@
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <polygon points="0,100 100,100 100,{100 - slope}" class="max" />
         <polygon points="0,100 100,100 100,{100 - current}" class="current" />
-        <line x1="50" y1="00" x2="50" y2="100" class="midpoint">
+        <line x1="{group.cpiWeighting / maxWeight * 100}" y1="00" x2="{group.cpiWeighting / maxWeight * 100}" y2="100" class="midpoint">
       </svg>
     </div>
 
     <div class="range-wrapper">
-      <div class="range-label">{0}%</div>
+      <!-- <div class="range-label">{0}%</div> -->
       <Range
         value={group.value}
         min={0}
-        max={group.cpiWeighting * 2}
+        max={maxWeight}
         on:change={(e) => setValue(e.detail.value)}
       />
-      <div class="range-label">{(100 * group.cpiWeighting * 2).toPrecision(2)}%</div>
+      <!-- <div class="range-label">{(100 * maxWeight).toPrecision(2)}%</div> -->
     </div>
   </div>
 </div>
@@ -88,6 +91,10 @@
       }
     }
 
+    .slope-wrapper {
+      padding: 0.5rem;
+    }
+
     .control {
       width: 100%;
       position: relative;
@@ -96,20 +103,20 @@
         display: flex;
         width: calc(100% - 45px);
       }
-      .range-label {
-        width: 20px;
-      }
+      /* .range-label { */
+      /*   width: 20px; */
+      /* } */
       .miny {
         font-size: 8pt;
         position: absolute;
         top: var(--min-y);
-        right: 45px;
+        right: 55px;
       }
       .maxy {
         font-size: 8pt;
         position: absolute;
         top: var(--max-y);
-        right: 45px;
+        right: 55px;
       }
       .ylabel {
         font-size: 8pt;

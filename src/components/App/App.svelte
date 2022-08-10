@@ -33,6 +33,21 @@
   </div>
 
   <div class="header"></div>
+
+  <h2>Personal Inflation Calculator</h2>
+
+  <p>
+    Inflation has reached 6.1% in Australia. There’s no doubt that the cost of living is going up for everyone.
+    But the increase in prices isn't uniform, it’s dependent on what you buy.
+  </p>
+  <p>
+    Depending on the makeup of your "basket", the real inflation you're seeing could be quite different.
+
+    By reducing, or increasing, the <b>weighting</b> of each expenditure group in your budget, this page
+    will calculate your personal inflation rate.
+  </p>
+
+
   <div class="sliders">
     <h3>Transport</h3>
     <p>
@@ -73,15 +88,18 @@
 
   .inflation-calculator {
     font-family: "ABCSans",Helvetica,Arial,sans-serif;
+
+    p,
+    h2,
+    .sliders {
+      max-width: 600px;
+      margin: auto;
+      padding: 1rem;
+    }
   }
 
   .header {
     height: 80px;
-  }
-  .sliders {
-    max-width: 800px;
-    margin: auto;
-    padding: 2rem;
   }
 
   .inflation-rate {
