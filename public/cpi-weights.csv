@@ -1,0 +1,137 @@
+Group,Subgroup,Group weight,Subgroup weight
+Food and non-alcoholic beverages,,16.76,
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Bread,,0.53
+Food and non-alcoholic beverages,Cakes and biscuits,,0.61
+Food and non-alcoholic beverages,Breakfast cereals,,0.12
+Food and non-alcoholic beverages,Other cereal products,,0.17
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Beef and veal,,0.54
+Food and non-alcoholic beverages,Pork,,0.32
+Food and non-alcoholic beverages,Lamb and goat,,0.31
+Food and non-alcoholic beverages,Poultry,,0.45
+Food and non-alcoholic beverages,Other meats,,0.39
+Food and non-alcoholic beverages,Fish and other seafood,,0.44
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Milk,,0.4
+Food and non-alcoholic beverages,Cheese,,0.32
+Food and non-alcoholic beverages,Ice cream and other dairy products,,0.29
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Fruit,,1
+Food and non-alcoholic beverages,Vegetables,,1.31
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Eggs,,0.13
+Food and non-alcoholic beverages,"Jams, honey and spreads",,0.13
+Food and non-alcoholic beverages,Food additives and condiments,,0.3
+Food and non-alcoholic beverages,Oils and fats,,0.2
+Food and non-alcoholic beverages,Snacks and confectionery,,0.84
+Food and non-alcoholic beverages,Other food products n.e.c.,,0.51
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,"Coffee, tea and cocoa",,0.24
+Food and non-alcoholic beverages,"Waters, soft drinks and juices",,0.86
+Food and non-alcoholic beverages,,,
+Food and non-alcoholic beverages,Restaurant meals,,3.42
+Food and non-alcoholic beverages,Take away and fast foods,,2.93
+Alcohol and tobacco,,9.01,
+Alcohol and tobacco,,,
+Alcohol and tobacco,Spirits,,1.03
+Alcohol and tobacco,Wine,,2.06
+Alcohol and tobacco,Beer,,2.36
+Alcohol and tobacco,,,
+Alcohol and tobacco,Tobacco,,3.56
+Clothing and footwear,,3.33,
+Clothing and footwear,,,
+Clothing and footwear,Garments for men,,0.54
+Clothing and footwear,Garments for women,,1.13
+Clothing and footwear,Garments for infants and children,,0.32
+Clothing and footwear,,,
+Clothing and footwear,Footwear for men,,0.12
+Clothing and footwear,Footwear for women,,0.29
+Clothing and footwear,Footwear for infants and children,,0.08
+Clothing and footwear,,,
+Clothing and footwear,Accessories,,0.74
+Clothing and footwear,"Cleaning, repair and hire of clothing and footwear",,0.11
+Housing,,23.24,
+Housing,,,
+Housing,Rents,,6.23
+Housing,,,
+Housing,New dwelling purchase by owner-occupiers,,8.67
+Housing,,,
+Housing,Maintenance and repair of the dwelling,,2.29
+Housing,Property rates and charges,,1.61
+Housing,,,
+Housing,Water and sewerage,,0.95
+Housing,Electricity,,2.52
+Housing,Gas and other household fuels,,0.97
+"Furnishings, household equipment and services",,9.16,
+"Furnishings, household equipment and services",,,
+"Furnishings, household equipment and services",Furniture,,1.63
+"Furnishings, household equipment and services",Carpets and other floor coverings,,0.34
+"Furnishings, household equipment and services",,,
+"Furnishings, household equipment and services",Household textiles,,0.5
+"Furnishings, household equipment and services",,,
+"Furnishings, household equipment and services",Major household appliances,,0.44
+"Furnishings, household equipment and services",Small electric household appliances,,0.33
+"Furnishings, household equipment and services","Glassware, tableware and household utensils",,0.42
+"Furnishings, household equipment and services",Tools and equipment for house and garden,,0.41
+"Furnishings, household equipment and services",,,
+"Furnishings, household equipment and services",Cleaning and maintenance products,,0.23
+"Furnishings, household equipment and services",Personal care products,,0.89
+"Furnishings, household equipment and services",Other non-durable household products,,1.26
+"Furnishings, household equipment and services",,,
+"Furnishings, household equipment and services",Child care,,0.91
+"Furnishings, household equipment and services",Hairdressing and personal grooming services,,1.06
+"Furnishings, household equipment and services",Other household services,,0.74
+Health,,6.47,
+Health,,,
+Health,Pharmaceutical products,,1.09
+Health,Therapeutic appliances and equipment,,0.16
+Health,,,
+Health,Medical and hospital services,,4.56
+Health,Dental services,,0.66
+Transport,,10.58,
+Transport,,,
+Transport,Motor vehicles,,3.06
+Transport,Spare parts and accessories for motor vehicles,,0.7
+Transport,Automotive fuel,,3.28
+Transport,Maintenance and repair of motor vehicles,,1.78
+Transport,Other services in respect of motor vehicles,,1.4
+Transport,,,
+Transport,Urban transport fares,,0.36
+Communication,,2.41,
+Communication,,,
+Communication,Postal services,,0.11
+Communication,Telecommunication equipment and services,,2.3
+Recreation and culture,,8.64,
+Recreation and culture,,,
+Recreation and culture,"Audio, visual and computing equipment",,1.35
+Recreation and culture,"Audio, visual and computing media and services",,0.7
+Recreation and culture,,,
+Recreation and culture,Books,,0.18
+Recreation and culture,"Newspapers, magazines and stationery",,0.4
+Recreation and culture,,,
+Recreation and culture,Domestic holiday travel and accommodation,,1.95
+Recreation and culture,International holiday travel and accommodation,,0.08
+Recreation and culture,,,
+Recreation and culture,"Equipment for sports, camping and open-air recreation",,0.7
+Recreation and culture,"Games, toys and hobbies",,0.69
+Recreation and culture,Pets and related products,,0.5
+Recreation and culture,Veterinary and other services for pets,,0.44
+Recreation and culture,Sports participation,,0.75
+Recreation and culture,"Other recreational, sporting and cultural services",,0.9
+Education,,4.63,
+Education,,,
+Education,Preschool and primary education,,0.99
+Education,Secondary education,,2.01
+Education,Tertiary education,,1.63
+Insurance and financial services,,5.8,
+Insurance and financial services,,,
+Insurance and financial services,Insurance,,1.23
+Insurance and financial services,,,
+Insurance and financial services,Deposit and loan facilities (direct charges),,0.46
+Insurance and financial services,Other financial services,,4.11
+All groups CPI,,100,100
+,,,
+a. Any discrepancies between totals and sums of components in this Appendix are due to rounding.,,,
+,,,
+"Source: Australian Bureau of Statistics, Annual weight update of the CPI and Living Cost Indexes 2021",,,
