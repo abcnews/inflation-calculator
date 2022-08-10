@@ -51,6 +51,7 @@
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <polygon points="0,100 100,100 100,{100 - slope}" class="max" />
         <polygon points="0,100 100,100 100,{100 - current}" class="current" />
+        <line x1="50" y1="00" x2="50" y2="100" class="midpoint">
       </svg>
     </div>
     <div class="range-wrapper">
@@ -89,9 +90,10 @@
 
       .range-wrapper {
         display: flex;
+        width: calc(100% - 45px);
       }
       .range-label {
-        width: 10%;
+        width: 20px;
       }
       .miny {
         font-size: 8pt;
@@ -126,6 +128,12 @@
       }
       .current {
         fill: #C368FF;
+      }
+
+      .midpoint {
+        stroke: grey;
+        stroke-dasharray: 4;
+        stroke-width: 0.4px;
       }
     }
   }
