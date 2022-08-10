@@ -50,9 +50,10 @@ const calcGroupWeighting = (cpiWeights: any, name: string): number => {
 };
 
 export async function getStoreData(): Promise<InflationIndex> {
-  const groupsData = await csv('/cpi-groups.csv');
-  const subgroupsData = await csv('/cpi-subgroups.csv');
-  const cpiWeights = await csv('/cpi-weights.csv');
+  const absolutePath = __webpack_public_path__ || '/';
+  const groupsData = await csv(`${absolutePath}cpi-groups.csv`);
+  const subgroupsData = await csv(`${absolutePath}cpi-subgroups.csv`);
+  const cpiWeights = await csv(`${absolutePath}cpi-weights.csv`);
   const latestYearSubgroups = subgroupsData.slice(subgroupsData.length - 4);
 
   const groups = GROUPS.map(group => {
@@ -103,8 +104,8 @@ export async function getStoreData(): Promise<InflationIndex> {
     };
   });
 
-  console.log(groups);
-  console.log(groups.reduce((acc, g) => acc + g.cpiWeighting, 0));
+  // console.log(groups);
+  // console.log(groups.reduce((acc, g) => acc + g.cpiWeighting, 0));
 
   return groups.reduce((acc, g) => ({ ...acc, [g.name]: g }), {});
 }
