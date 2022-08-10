@@ -22,7 +22,7 @@
     [name]: { ...group, value: group.cpiWeighting * 2 },
   });
 
-  const MAX_SLOPE = 0.3;
+  const MAX_SLOPE = 0.35;
 
   $: currentY = calculateInflationRate($indexStore);
   $: slope = group.annualInflation * 100 / MAX_SLOPE;
@@ -32,24 +32,37 @@
 <div class="slider purple-theme">
   <div class="display">
     <div class="name">{group.name}</div>
-    <div class="weighting">{(group.value * 100).toPrecision(2)}%</div>
   </div>
 
   <div class="control">
-    <div class="slope-wrapper">
+    <div
+      class="slope-wrapper"
+      style="
+        --min-y: {100 - 15}px;
+        --max-y: {100 - slope - 15}px;
+      "
+    >
+      <div class="ylabel">Inflation</div>
       <div class="maxy">{(maxY * 100).toPrecision(2)}%</div>
-      <div class="miny">{(minY * 100).toPrecision(2)}%</div>
+      <!-- Only show min if there's a big enough gap -->
+      {#if maxY * 100 > minY * 100 + 0.5}
+        <div class="miny">{(minY * 100).toPrecision(2)}%</div>
+      {/if}
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <polygon points="0,100 100,100 100,{100 - slope}" class="max" />
         <polygon points="0,100 100,100 100,{100 - current}" class="current" />
       </svg>
     </div>
-    <Range
-      value={group.value}
-      min={0}
-      max={group.cpiWeighting * 2}
-      on:change={(e) => setValue(e.detail.value)}
-    />
+    <div class="range-wrapper">
+      <div class="range-label">{0}%</div>
+      <Range
+        value={group.value}
+        min={0}
+        max={group.cpiWeighting * 2}
+        on:change={(e) => setValue(e.detail.value)}
+      />
+      <div class="range-label">{(100 * group.cpiWeighting * 2).toPrecision(2)}%</div>
+    </div>
   </div>
 </div>
 
@@ -74,24 +87,38 @@
       width: 85%;
       position: relative;
 
+      .range-wrapper {
+        display: flex;
+      }
+      .range-label {
+        width: 10%;
+      }
       .miny {
         font-size: 8pt;
         position: absolute;
-        bottom: 27px;
-        right: 5px;
+        top: var(--min-y);
+        right: 45px;
       }
       .maxy {
         font-size: 8pt;
         position: absolute;
+        top: var(--max-y);
+        right: 45px;
+      }
+      .ylabel {
+        font-size: 8pt;
+        position: absolute;
         top: 0px;
-        right: 5px;
+        right: -5px;
+        text-align: right;
       }
 
     }
 
     svg {
-      width: 100%;
-      height: 50px;
+      /* padding for y axis label */
+      width: calc(100% - 45px);
+      height: 100px;
       background: #f7edff;
 
       .max {

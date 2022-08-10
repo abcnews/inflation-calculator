@@ -2,6 +2,7 @@ import { csv } from 'd3-fetch';
 
 export interface ExpenditureGroup {
   name: string;
+  group: string;
   annualInflation: number;
   cpiWeighting: number;
   // anuWeighting: number;
@@ -98,6 +99,7 @@ export async function getStoreData(): Promise<InflationIndex> {
 
     return {
       name: group.label,
+      group: group.group,
       annualInflation,
       cpiWeighting,
       value: cpiWeighting,
