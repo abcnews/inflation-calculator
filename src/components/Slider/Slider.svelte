@@ -54,6 +54,7 @@
         <line x1="50" y1="00" x2="50" y2="100" class="midpoint">
       </svg>
     </div>
+
     <div class="range-wrapper">
       <div class="range-label">{0}%</div>
       <Range
@@ -69,23 +70,26 @@
 
 <style lang="scss">
   .slider {
+    position: relative;
+    display: flex;
     padding-bottom: 2rem;
     width: 100%;
-    display: flex;
 
     .display {
-      width: 15%;
+      position: absolute;
       display: flex;
+      top: 0;
+      left: 0;
       flex-direction: column;
-      line-height: 2rem;
+      padding: 1rem;
 
       .name {
-        width: 200px;
         z-index: 10;
       }
     }
+
     .control {
-      width: 85%;
+      width: 100%;
       position: relative;
 
       .range-wrapper {

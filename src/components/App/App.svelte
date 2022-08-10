@@ -79,6 +79,8 @@
     height: 80px;
   }
   .sliders {
+    max-width: 800px;
+    margin: auto;
     padding: 2rem;
   }
 
