@@ -43,13 +43,8 @@ const toPercentage = (x: string | number): Decimal => {
 export async function getStoreData(): Promise<InflationModel> {
   const absolutePath = __webpack_public_path__ || '/';
 
-  // Downloaded from
+  // ** I can't find an alternative to these weights, I don't think they get seasonally adjusted **
   //
-  // https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release
-  //
-  const inflationData = await csv(`${absolutePath}annual-inflation.csv`);
-  const latestYearInflation = inflationData.find(a => a[""] === 'Jun-2022');
-
   // Downloaded from
   //
   // https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/annual-weight-update-cpi-and-living-cost-indexes/latest-release
@@ -58,7 +53,21 @@ export async function getStoreData(): Promise<InflationModel> {
   // Annual weight update of the CPI and Living Cost Indexes
   // Reference period: 2021
   //
-  const inflationWeights = await csv(`${absolutePath}inflation-weights.csv`);
+  const WEIGHTS = await csv(`${absolutePath}inflation-weights.csv`);
+
+  //
+  // ** The next files are two slightly different versions of the inflation data per group **
+  //
+  // Neither of them end up giving us that magic 6.1% 
+  //
+
+  //
+  // Downloaded from
+  //
+  // https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release
+  //
+  const inflationData = await csv(`${absolutePath}annual-inflation.csv`);
+  const INFLATION_REGULAR = inflationData.find(a => a[""] === 'Jun-2022');
 
   // Downloaded from
   //
@@ -72,11 +81,8 @@ export async function getStoreData(): Promise<InflationModel> {
   // Time Period: 2022-Q2
   // Unit of measure: Percent
   //
-  // These numbers are _different_ to the ones on the website page, but both
-  const custom = await csv(`${absolutePath}custom.csv`);
-
-  // Clean the custom data explorer export to be usable in the later grouping
-  const inflationSeasonallyAdjusted = custom.map(i => {
+  const customDataExport = await csv(`${absolutePath}custom.csv`);
+  const INFLATION_SEASONALLY_ADJUSTED = customDataExport.map(i => {
     const name = i['INDEX: Index'].split(': ')[1];
     return {
       name,
@@ -87,7 +93,7 @@ export async function getStoreData(): Promise<InflationModel> {
   const keyPrefix = 'Percentage Change from Corresponding Quarter of Previous Year ;  ';
   const keySuffix = ' ;  Australia ;';
 
-  const inflationByGroup: InflationModel = Object.keys(latestYearInflation).reduce((acc: InflationModel, key: string) => {
+  const inflationByGroup: InflationModel = Object.keys(INFLATION_REGULAR).reduce((acc: InflationModel, key: string) => {
     if (!key.startsWith(keyPrefix)) {
       return acc;
     }
@@ -99,9 +105,9 @@ export async function getStoreData(): Promise<InflationModel> {
     }
 
     // Lookup the weightings using the key (groupName)
-    const group = inflationWeights.find(i => i.group === groupName)?.groupweight;
-    const subgroup = inflationWeights.find(i => i.subgroup === groupName)?.subgroupweight;
-    const subsubgroup = inflationWeights.find(i => i.subsubgroup === groupName)?.subsubgroupweight;
+    const group = WEIGHTS.find(i => i.group === groupName)?.groupweight;
+    const subgroup = WEIGHTS.find(i => i.subgroup === groupName)?.subgroupweight;
+    const subsubgroup = WEIGHTS.find(i => i.subsubgroup === groupName)?.subsubgroupweight;
 
     // each group will have exactly one of these values
     const weighting: number = group || subgroup || subsubgroup;
@@ -112,16 +118,15 @@ export async function getStoreData(): Promise<InflationModel> {
     }
 
     // Use the seasonally adjusted data
-    const { annualInflation } = inflationSeasonallyAdjusted.find(i => i.name === groupName);
 
     // construct a generic group definition
     const groupModel: ExpenditureGroup = {
 
       // TRY BOTH THESE: Use one or the other of the inflation numbers per group
       //    - seasonally adjusted data from custom explorer download
-      annualInflation: annualInflation, 
+      annualInflation:INFLATION_SEASONALLY_ADJUSTED.find(i => i.name === groupName)?.annualInflation,
       //    - regular download from ABS website
-      // annualInflation: toPercentage(latestYearInflation[key]),
+      // annualInflation: toPercentage(INFLATION_REGULAR[key]),
  
       name: groupName,
       cpiWeighting: toPercentage(weighting),
