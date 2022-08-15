@@ -13,13 +13,11 @@
   setContext('inflation-index', indexStore);
 
   getStoreData().then(d => {
-    cpiIndex = d.subsubgroup;
-    indexStore.set(d.subsubgroup)
+    cpiIndex = d.cpi;
+    indexStore.set(d.employed)
   });
 
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toString()}%`;
-  // `${(x * 100).toPrecision(2)}%`;
-
 </script>
 
 <div class="inflation-calculator">
