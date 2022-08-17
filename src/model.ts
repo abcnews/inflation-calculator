@@ -1,6 +1,5 @@
 import { csv } from 'd3-fetch';
 import { Decimal } from 'decimal.js-light';
-import { WeightedBar } from './components/Chart/WeightedIndexChart.svelte';
 import { COLOURS } from './colours';
 
 //
@@ -12,8 +11,10 @@ export type InflationData = Record<string, Record<string, ExpenditureGroup>>;
 export interface Customisation {
   index: keyof ExpenditureGroupWeights;
   timelineYears: 1 | 10;
+  expandInflation: boolean;
   weightOverrides: Record<string, number>;
   splitGroups: string[];
+  removedGroups: string[];
 }
 
 export interface ExpenditureGroup {
@@ -35,6 +36,12 @@ export interface ExpenditureGroupWeights {
   othergovt: Decimal;
   superannuation: Decimal;
   cpi: Decimal;
+}
+export interface WeightedBar {
+  name: string;
+  colour?: string;
+  inflation: Decimal;
+  weighting: Decimal;
 }
 
 export async function getStoreData(): Promise<InflationData> {
@@ -147,6 +154,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
   return allBars
     // .sort((a, b) => b.inflation - a.inflation)
+    .filter(b => customisation.removedGroups.indexOf(b.name) === -1)
     .filter(b => b.weighting.toNumber() > 0);
 }
 
