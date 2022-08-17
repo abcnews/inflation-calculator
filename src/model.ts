@@ -1,77 +1,156 @@
 import { csv } from 'd3-fetch';
 import { Decimal } from 'decimal.js-light';
+import { WeightedBar } from './components/Chart/WeightedIndexChart.svelte';
+import { COLOURS } from './colours';
 
 //
-// Model for representing an inflation index
+// Model for representing inflation indexes
 //
+export type InflationIndex = Array<ExpenditureGroup>;
+export type InflationData = Record<string, Record<string, ExpenditureGroup>>;
+
+export interface Customisation {
+  index: keyof ExpenditureGroupWeights;
+  timelineYears: 1 | 10;
+  weightOverrides: Record<string, number>;
+  splitGroups: string[];
+}
+
 export interface ExpenditureGroup {
   name: string;
-  group: string; // This is for choosing a colour
-  weighting: Decimal;
-  inflation: Decimal;
+  group: string;
+  weights: ExpenditureGroupWeights;
+  inflation: {
+    1: Decimal;
+    10: Decimal;
+  };
+  inflationCombined: {
+    1: Decimal;
+    10: Decimal;
+  };
+}
+export interface ExpenditureGroupWeights {
+  employed: Decimal;
+  agepension: Decimal;
+  othergovt: Decimal;
+  superannuation: Decimal;
+  cpi: Decimal;
 }
 
-export type InflationIndex = Record<string, ExpenditureGroup>;
+export async function getStoreData(): Promise<InflationData> {
+  const absolutePath = __webpack_public_path__ || '/';
 
-// https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/selected-living-cost-indexes-australia/latest-release
-export interface LivingCostIndexes {
-  employed: InflationIndex;
-  agepension: InflationIndex;
-  othergovt: InflationIndex;
-  superannuation: InflationIndex;
-  cpi: InflationIndex;
+  const WEIGHTS = await csv(`${absolutePath}all-weights.csv`);
+  const INFLATION = await csv(`${absolutePath}inflation-long-term.csv`);
+  const INFLATION_ONE_YEAR = INFLATION.find(i => i.Group === 'Last Year');
+  const INFLATION_TEN_YEARS = INFLATION.find(i => i.Group === 'Last 10 Years');
+
+  // Clean raw data into expenditure groups with a reference to the group they fit into
+  let lastGroup: string;
+  return WEIGHTS.reduce((acc, row) => {
+    lastGroup = row.Group || lastGroup;
+
+    if (!row['Expenditure Group']) {
+      return acc;
+    }
+
+    const key = (k: string) => `Index Numbers ;  ${k} ;  Australia ;`;
+    const group: ExpenditureGroup = {
+      name: row['Expenditure Group'],
+      group: lastGroup,
+      weights: {
+        employed: new Decimal(row['Employee households']).div(100),
+        agepension: new Decimal(row['Age pensioner households']).div(100),
+        othergovt: new Decimal(row['Other government transfer recipient households']).div(100),
+        superannuation: new Decimal(row['Self-funded retiree households']).div(100),
+        cpi: new Decimal(row['Consumer Price Index']).div(100),
+      },
+      inflation: {
+        10: new Decimal(INFLATION_TEN_YEARS[key(row['Expenditure Group'])]).sub(1),
+        1: new Decimal(INFLATION_ONE_YEAR[key(row['Expenditure Group'])]).sub(1)
+      },
+      // Include the inflation for the combined group (eg. Transport, Housing) as this can't
+      // be reconstructed from subgroups. There's a bit of redundant data but no big deal
+      inflationCombined: {
+        10: new Decimal(INFLATION_TEN_YEARS[key(lastGroup)]).sub(1),
+        1: new Decimal(INFLATION_ONE_YEAR[key(lastGroup)]).sub(1)
+      }
+    };
+
+    return {
+      ...acc,
+      [group.group]: {
+        ...acc[group.group],
+        [group.name]: group,
+      },
+    };
+  }, {});
 }
-
-const INDEXES = [
-  'employed',
-  'agepension',
-  'othergovt',
-  'superannuation',
-  'cpi'
-];
 
 // 
 // Weighted average
 // see: http://textbook.stpauls.br/Macroeconomics/page_90.htm
 //
-export function calculateInflationRate(index: InflationIndex): Decimal {
-  const weightedSum = Object.values(index).reduce((acc, group) => {
-    return acc.add(group.weighting.mul(group.inflation));
-  }, new Decimal(0));
+export function calculateInflationRate(data: InflationData, customisation: Customisation): Decimal {
+  const {
+    index,
+    timelineYears,
+  } = customisation;
 
-  const sumOfWeights = Object.values(index).reduce((acc, g) => acc.add(g.weighting), new Decimal(0));
-  return weightedSum.div(sumOfWeights);
+  return Object.keys(data).reduce((acc: Decimal, groupName: string) => {
+    const weightedSum = Object.keys(data[groupName]).reduce((acc: Decimal, expGroupName: string) => {
+      const group: ExpenditureGroup = data[groupName][expGroupName];
+
+      const weighting = group.weights[index];
+      const inflation = group.inflation[timelineYears];
+
+      return acc.add(weighting.mul(inflation));
+    }, new Decimal(0));
+
+    // Shouldn't need this as our weights add up to 1.
+    // const sumOfWeights = Object.values(index).reduce((acc, g) => acc.add(g.weighting), new Decimal(0));
+    // return acc.add(weightedSum.div(sumOfWeights));
+
+    return acc.add(weightedSum);
+  }, new Decimal(0));
+}
+
+export function deriveChartData(data: InflationData, customisation: Customisation): WeightedBar[] {
+  const allBars = Object.keys(data).reduce((acc: WeightedBar[], groupName: string) => {
+    
+    // Split into expenditure groups
+    if (customisation.splitGroups.indexOf(groupName) > -1) {
+      const bars = Object.values(data[groupName]).map(group => ({
+        name: group.name,
+        colour: COLOURS[group.group] || 'blue',
+        inflation: group.inflation[customisation.timelineYears],
+        weighting: group.weights[customisation.index],
+      }));
+      return [...acc, ...bars];
+    }
+
+    // Keep as a combined bar
+    const weighting = Object.values(data[groupName]).reduce((combinedWeight, group) => {
+      return combinedWeight.add(group.weights[customisation.index]);
+    }, new Decimal(0));
+
+    const inflation = Object.values(data[groupName])[0].inflationCombined[customisation.timelineYears];
+
+    const bar = {
+      name: groupName,
+      colour: COLOURS[groupName] || 'blue',
+      inflation,
+      weighting,
+    };
+    return [...acc, bar];
+  }, []);
+
+  return allBars
+    // .sort((a, b) => b.inflation - a.inflation)
+    .filter(b => b.weighting.toNumber() > 0);
 }
 
 const toPercentage = (x: string | number): Decimal => {
   return new Decimal(x).div(100);
 };
-
-export async function getStoreData(): Promise<LivingCostIndexes> {
-  const absolutePath = __webpack_public_path__ || '/';
-
-  const INFLATION = await csv(`${absolutePath}inflation-long-term.csv`);
-  const INFLATION_ONE_YEAR = INFLATION.find(i => i.Group === 'Last Year');
-  const INFLATION_TEN_YEARS = INFLATION.find(i => i.Group === 'Last 10 Years');
-
-  const WEIGHTS = await csv(`${absolutePath}living-indexes.csv`);
-
-  const indexObj: any = INDEXES.reduce((indexes: Partial<LivingCostIndexes>, indexId: string) => {
-    const key = (k: string) => `Index Numbers ;  ${k} ;  Australia ;`;
-
-    const groups = WEIGHTS.map(group => ({
-      name: group.Group,
-      group: group.Group,
-      weighting: new Decimal(group[indexId]).div(100),
-      inflation: new Decimal(INFLATION_ONE_YEAR[key(group.Group)]).sub(1),
-    }));
-
-    return {
-      ...indexes,
-      [indexId]: groups,
-    };
-  }, {} as Partial<LivingCostIndexes>);
-
-  return indexObj;
-}
 

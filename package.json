@@ -30,8 +30,10 @@
 		"@abcnews/alternating-case-to-object": "^3.0.2",
 		"@abcnews/env-utils": "^3.0.1",
 		"@abcnews/mount-utils": "^2.0.0",
+		"@abcnews/palette": "^0.0.1",
 		"d3-fetch": "^3.0.1",
 		"decimal.js-light": "^2.5.1",
+		"layercake": "^7.0.0",
 		"svelte": "^3.49.0"
 	}
 }

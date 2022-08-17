@@ -1,73 +1,49 @@
 <script lang="ts">
   import { setContext } from 'svelte';
-  import { writable } from 'svelte/store';
+  import { writable, derived } from 'svelte/store';
   import { Decimal } from 'decimal.js-light';
 
-  // import Slider from '../Slider/Slider.svelte';
-  import { calculateInflationRate, getStoreData, InflationIndex } from '../../model';
+  import { calculateInflationRate, deriveChartData, InflationData, Customisation, ExpenditureGroupWeights } from '../../model';
 
-  let cpiIndex: InflationIndex;
+  import Chart from '../Chart/WeightedIndexChart.svelte';
 
-  // Create store with groups in it
-  const indexStore = writable<InflationIndex>({});
-  setContext('inflation-index', indexStore);
+  export let data: InflationData;
 
-  getStoreData().then(d => {
-    cpiIndex = d.cpi;
-    indexStore.set(d.employed)
+  export let index: keyof ExpenditureGroupWeights = 'employed';
+  export let timelineYears: 1 | 10 = 1;
+  export let splitGroups = ['Transport', 'Housing', 'Alcohol and tobacco'];
+
+  // Create store with the latest inflation data
+  const inflationStore = writable<InflationData>({});
+  setContext('inflation-data', inflationStore);
+  $: inflationStore.set(data);
+
+  // Create store with the personalisation params
+  const customisationStore = writable<Customisation>({ index, timelineYears, splitGroups, weightOverrides: {} });
+  setContext('customisation', customisationStore);
+  $: customisationStore.set({
+    index,
+    timelineYears,
+    splitGroups,
+    weightOverrides: {},
   });
+
+  export const outputStore = derived(
+    [inflationStore, customisationStore],
+    ([inflationData, customisation]) => deriveChartData(inflationData, customisation)
+  );
 
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toString()}%`;
 </script>
 
 <div class="inflation-calculator">
-  <div class="scores">
-    {#if cpiIndex}
-      <div>
-        Your inflation: <span class="inflation-rate">{formatPercentage(calculateInflationRate($indexStore))}</span>
-      </div>
-      <div>
-        CPI inflation: {formatPercentage(calculateInflationRate(cpiIndex))}
-      </div>
-    {/if}
-  </div>
-
-  <div class="header"></div>
-
   <h2>Personal Inflation Calculator</h2>
 
-  <!-- <div class="sliders"> -->
-  <!--   <h3>Transport</h3> -->
-  <!--   <p> -->
-  <!--     Transport saw big increases, but these were dominated by the price of new cars and petrol. -->
-  <!--   </p> -->
-  <!--   {#each Object.values($indexStore) as group} -->
-  <!--     {#if group.group === 'Transport'} -->
-  <!--       <Slider name={group.name} /> -->
-  <!--     {/if} -->
-  <!--   {/each} -->
-  <!--  -->
-  <!--   <h3>Housing</h3> -->
-  <!--   <p> -->
-  <!--     Housing construction costs rose sharply, but if you weren't buying a brand-new house or renovating, your inflation will be much lower. -->
-  <!--   </p> -->
-  <!--   {#each Object.values($indexStore) as group} -->
-  <!--     {#if group.group === 'Housing'} -->
-  <!--       <Slider name={group.name} /> -->
-  <!--     {/if} -->
-  <!--   {/each} -->
-  <!--  -->
-  <!--   <h3>Other Groups</h3> -->
-  <!--   <p> -->
-  <!--     The price increases across the other expenditure groups were modest. -->
-  <!--   </p> -->
-  <!--   {#each Object.values($indexStore) as group} -->
-  <!--     {#if group.group !== 'Transport' &#38;&#38; group.group !== 'Housing'} -->
-  <!--       <Slider name={group.name} /> -->
-  <!--     {/if} -->
-  <!--   {/each} -->
-  <!-- </div> -->
+  inflation: <span class="inflation-rate">{formatPercentage(calculateInflationRate($inflationStore, $customisationStore))}</span>
+
 </div>
+
+<Chart data={$outputStore} />
 
 <style lang="scss">
   :global(body) {
@@ -76,6 +52,7 @@
 
   .inflation-calculator {
     font-family: "ABCSans",Helvetica,Arial,sans-serif;
+    padding: 2rem;
 
     /* p, */
     h2 {
@@ -85,27 +62,7 @@
     }
   }
 
-  .header {
-    height: 80px;
-  }
-
   .inflation-rate {
     color: #a7029e;
-  }
-
-  .scores {
-    position: fixed;
-    display: flex;
-
-    z-index: 100;
-    width: 100%;
-    height: 60px;
-    align-items: center;
-    background: #f7edff;
-
-    div {
-      text-align: center;
-      width: 50%;
-    }
   }
 </style>

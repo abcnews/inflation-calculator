@@ -3,20 +3,37 @@ import { whenOdysseyLoaded } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
 import App from './components/App/App.svelte';
+import { getStoreData } from './model';
 
 let appMountEl: Mount;
 let appProps;
 
-whenOdysseyLoaded.then(() => {
+let vizElem;
+
+let index = 'employed';
+let transportAnswer = 'nocar';
+let housingAnswer = 'rents';
+
+// const getUpdatedIndex = (indexData) => {
+//   return indexData[incomeAnswer];
+// };
+
+Promise.all([
+  getStoreData(),
+  whenOdysseyLoaded,
+]).then((res) => {
   [appMountEl] = selectMounts('inflationcalculator');
+  const [indexData] = res;
 
   if (appMountEl) {
     appProps = acto(getMountValue(appMountEl));
-    new App({
+    const props = { index, data: indexData };
+    vizElem = new App({
       target: appMountEl,
-      props: appProps
+      props,
     });
   }
+
 });
 
 if (process.env.NODE_ENV === 'development') {
