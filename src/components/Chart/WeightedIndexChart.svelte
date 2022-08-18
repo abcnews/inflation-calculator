@@ -45,16 +45,18 @@
     padding={{ top: 0, bottom: 20, left: 35 }}
     x={xKey}
     y={yKey}
-    xDomain={[xMin, xMax]}
+    xDomain={expandX ? [xMin, xMax] : [0, 100]}
     yDomain={[yMax, 0]}
     data={processedData}
   >
     <Svg>
-      <AxisX
-        gridlines={false}
-        baseline={true}
-        snapTicks={true}
-      />
+      {#if expandX}
+        <AxisX
+          gridlines={false}
+          baseline={true}
+          snapTicks={true}
+        />
+      {/if}
       <AxisY
         gridlines={false}
       />
