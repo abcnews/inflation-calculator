@@ -29,6 +29,9 @@
       >
         <SelectItem value="employed" text="Salary / Wages" />
         <SelectItem value="agepension" text="Age Pension" />
+        <SelectItem value="othergovt" text="Other Govt Payments" />
+        <SelectItem value="superannuation" text="Self-funded Retiree" />
+        <SelectItem value="cpi" text="Consumer Price Index (CPI)" />
       </Select>
 
       <Select

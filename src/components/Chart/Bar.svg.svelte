@@ -7,10 +7,14 @@
   export let expandX;
 
   $: bars =  $data.reduce((acc, d) => {
+
     let width = $xGet(d);
     let x = $xScale(0);
-    if (width <= 0 && expandX) {
-      width = Math.abs(x);
+    width = width - x;
+
+    // If it's a negative value, we need to shift it to the left
+    if (width < 0 && expandX) {
+      width = Math.abs(width);
       x = x - width;
     }
 
@@ -18,7 +22,7 @@
       x,
       y: acc.y,
       height: $yGet(d),
-      width: expandX ? width : '5%',
+      width: expandX ? width : 50,
       fill: d.colour,
       text: d.name,
     };
@@ -32,28 +36,35 @@
 </script>
 
 <g class="bar-group">
-  {#each bars as d, i (d.text)}
-    <rect
-      class='group-rect'
-      data-id="{i}"
-      x="{d.x}"
-      y="{d.y}"
-      height={d.height}
-      width="{d.width}"
-      fill={d.fill}
-    ></rect>
-    <text y={d.y + (d.height / 2) + 2} x={d.x + d.width} >{d.text}</text>
+  {#each bars as d (d.text)}
+    <g class="weighted-bar" style="transform: translate({d.x}px, {d.y}px)">
+      <rect
+        x="0"
+        y="0"
+        height={d.height}
+        width={d.width}
+        fill={d.fill}
+      ></rect>
+      <text style="transform: translate({d.width}px, {(d.height / 2) + 2}px);">{d.text}</text>
+    </g>
   {/each}
 </g>
 
-<style>
+<style lang="scss">
   .bar-group text {
     font-family: ABCSans;
     font-size: 6pt;
-    transition: x 2s;
   }
 
-  .group-rect {
-    transition: width,x 2s;
+  .weighted-bar {
+    transition: transform 2s;
+
+    rect {
+      transition: width 2s, height 2s;
+    }
+    text {
+      text-anchor: start;
+      transition: transform 2s;
+    }
   }
 </style>
