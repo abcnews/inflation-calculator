@@ -7,7 +7,7 @@
   import { writable, derived } from 'svelte/store';
   import { Decimal } from 'decimal.js-light';
 
-  import { calculateInflationRate, deriveChartData, InflationData, Customisation, ExpenditureGroupWeights } from '../../model';
+  import { calculateInflationRate, calculateInflationRate2, deriveChartData, InflationData, Customisation, ExpenditureGroupWeights } from '../../model';
 
   import Chart from '../Chart/WeightedIndexChart.svelte';
   import PropertiesTab from '../PropertiesTab.svelte';
@@ -53,13 +53,21 @@
 
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toString()}%`;
   $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $customisationStore));
+  $: inflationOutput2 = formatPercentage(calculateInflationRate2($inflationStore, $customisationStore));
+
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 35] : [-42, 80];
 </script>
 
 <main>
   <article>
     Estimated inflation: <span class="inflation-rate">{inflationOutput}</span>
+    Estimated inflation 2: <span class="inflation-rate">{inflationOutput2}</span>
     <figure>
-      <Chart data={$outputStore} expandX={$customisationStore.expandInflation} />
+      <Chart
+        data={$outputStore}
+        expandX={$customisationStore.expandInflation}
+        {xDomain}
+      />
     </figure>
     </article>
 

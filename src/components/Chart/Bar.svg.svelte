@@ -1,5 +1,6 @@
 <script>
   import { getContext } from 'svelte';
+  import { fade } from 'svelte/transition';
 
   const { data, xGet, yGet, xScale } = getContext('LayerCake');
 
@@ -27,7 +28,8 @@
     const point = {
       x,
       y: acc.y,
-      height: $yGet(d),
+      // 1 pixel of whitespace between bars
+      height: $yGet(d) - 1,
       // round up to 1 so there's a tiny sliver of bar when inflation=0 
       width: (width || 1),
       fill: d.colour,
@@ -40,12 +42,36 @@
     };
   }, { y: 0, points: [] }).points;
 
+  function grow(_, {
+    delay = 0,
+    duration = 400,
+    width,
+    x
+  }) {
+    // Grow in the other direction when negative value
+    const zeroX = $xScale(0);
+    if (x !== zeroX) {
+      return {
+        delay,
+        duration,
+        css: t => `transform: translateX(${(1 - t) * (zeroX - width)}px); width: ${t * width}`
+      }
+    }
+
+    return {
+      delay,
+      duration,
+      css: t => `width: ${t * width}`
+    };
+  }
 </script>
 
 <g class="bar-group">
   {#each bars as d (d.text)}
     <g class="weighted-bar" style="transform: translate({d.x}px, {d.y}px)">
       <rect
+        in:grow="{{ width:d.x, x: d.x, delay: 800 }}" 
+        out:grow="{{ width:d.x, x: d.x }}" 
         x="0"
         y="0"
         height={d.height}
@@ -53,27 +79,38 @@
         fill={d.fill}
       ></rect>
       {#if d.height > 8}
-        <text style="transform: translate({d.width}px, {(d.height / 2) + 2}px);">{d.text}</text>
+        <text
+          out:fade
+          in:fade="{{ delay: 400 }}"
+          stroke={d.fill}
+          style="
+            transform: translate({d.width + 2}px, {(d.height / 2) + 2}px);
+          "
+        >
+          {d.text}
+        </text>
       {/if}
     </g>
   {/each}
 </g>
 
 <style lang="scss">
-  .bar-group text {
-    font-family: ABCSans;
-    font-size: 6pt;
-  }
-
   .weighted-bar {
-    transition: transform 2s;
+    transition: transform 800ms;
+    transition-delay: 400ms;
 
     rect {
-      transition: width 2s, height 2s;
+      transition: width 800ms, height 800ms;
+      transition-delay: 400ms;
     }
+
     text {
+      font-family: ABCSans;
+      font-size: 6pt;
       text-anchor: start;
-      transition: transform 2s;
+
+      transition: transform 800ms;
+      transition-delay: 400ms;
     }
   }
 </style>
