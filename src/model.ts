@@ -15,11 +15,13 @@ export interface Customisation {
   weightOverrides: Record<string, number>;
   splitGroups: string[];
   removedGroups: string[];
+  showDiscretionary: boolean;
 }
 
 export interface ExpenditureGroup {
   name: string;
   group: string;
+  isDiscretionary: boolean;
   weights: ExpenditureGroupWeights;
   inflation: {
     1: Decimal;
@@ -42,11 +44,13 @@ export interface WeightedBar {
   colour?: string;
   inflation: Decimal;
   weighting: Decimal;
+  isDiscretionary: boolean;
 }
 
 export async function getStoreData(): Promise<InflationData> {
   const absolutePath = __webpack_public_path__ || '/';
 
+  const DISCRETIONARY = await csv(`${absolutePath}discretionary.csv`);
   const WEIGHTS = await csv(`${absolutePath}all-weights.csv`);
   const INFLATION = await csv(`${absolutePath}inflation-long-term.csv`);
   const INFLATION_ONE_YEAR = INFLATION.find(i => i.Group === 'Last Year');
@@ -61,10 +65,13 @@ export async function getStoreData(): Promise<InflationData> {
       return acc;
     }
 
+    const isDiscretionary = DISCRETIONARY.find(r => r.Name === row['Expenditure Group']).Discretionary === '1';
+
     const key = (k: string) => `Index Numbers ;  ${k} ;  Australia ;`;
     const group: ExpenditureGroup = {
       name: row['Expenditure Group'],
       group: lastGroup,
+      isDiscretionary,
       weights: {
         employed: new Decimal(row['Employee households']).div(100),
         agepension: new Decimal(row['Age pensioner households']).div(100),
@@ -187,23 +194,26 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
             colour: COLOURS[group.group] || 'blue',
             inflation: group.inflation[timelineYears],
             weighting,
+            isDiscretionary: group.isDiscretionary,
           }
         ];
       }, []);
-    
-      // const bars = Object.values(data[groupName]).map(group => ({
-      //   name: group.name,
-      //   colour: COLOURS[group.group] || 'blue',
-      //   inflation: group.inflation[customisation.timelineYears],
-      //   weighting: group.weights[customisation.index],
-      // }));
+
       return [...acc, ...bars];
     }
 
+    let discretionaryWeighting = new Decimal(0);
     // Keep as a combined bar
-    const weighting = Object.values(data[groupName]).reduce((combinedWeight, group) => {
-      return combinedWeight.add(group.weights[customisation.index]);
+    const weighting = Object.values(data[groupName]).reduce((combinedWeight, subgroup) => {
+      const weightForSubgroup = subgroup.weights[customisation.index];
+      if (subgroup.isDiscretionary) {
+        discretionaryWeighting = discretionaryWeighting.add(weightForSubgroup);
+      }
+      return combinedWeight.add(weightForSubgroup);
     }, new Decimal(0));
+
+    // Set the group as discretionary if more than half the weighting from subgroups is discretionary
+    const isDiscretionary = discretionaryWeighting > weighting.div(2);
 
     const inflation = Object.values(data[groupName])[0].inflationCombined[customisation.timelineYears];
 
@@ -212,6 +222,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       colour: COLOURS[groupName] || 'blue',
       inflation,
       weighting,
+      isDiscretionary,
     };
     return [...acc, bar];
   }, []);

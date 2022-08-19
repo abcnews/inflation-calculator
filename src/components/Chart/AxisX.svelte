@@ -1,17 +1,13 @@
 <script>
   import { getContext } from 'svelte';
+  import { fade } from 'svelte/transition';
   const { width, height, xScale, yRange } = getContext('LayerCake');
 
-  /** @type {Boolean} [gridlines=true] - Extend lines from the ticks into the chart space */
+  export let axisLabel = '';
+
   export let gridlines = true;
-
-  /** @type {Boolean} [tickMarks=false] - Show a vertical mark for each tick. */
   export let tickMarks = false;
-
-  /** @type {Boolean} [baseline=false] – Show a solid line at the bottom. */
   export let baseline = false;
-
-  /** @type {Boolean} [snapTicks=false] - Instead of centering the text on the first and the last items, align them to the edges of the chart. */
   export let snapTicks = false;
 
   /** @type {Function} [formatTick=d => d] - A function that passes the current tick value and expects a nicely formatted value in return. */
@@ -48,9 +44,9 @@
   }
 </script>
 
-<g class="axis x-axis" class:snapTicks>
+<g in:fade class="axis x-axis" class:snapTicks>
   {#each tickVals as tick, i (tick)}
-    <g class="tick tick-{i}" transform="translate({$xScale(tick)},{Math.max(...$yRange)})">
+    <g in:fade="{{ delay: 600 }}" class="tick tick-{i}" transform="translate({$xScale(tick)},{Math.max(...$yRange)})">
       {#if gridlines !== false}
         <line class="gridline" y1={$height * -1} y2="0" x1="0" x2="0" />
       {/if}
@@ -75,12 +71,23 @@
   {#if baseline === true}
     <line class="baseline" y1={$height + 0.5} y2={$height + 0.5} x1="0" x2={$width} />
   {/if}
+  {#if axisLabel}
+    <text class="axis-label" x={$xScale.range()[1]} y={$yRange[0] - 6}>{axisLabel}</text>
+  {/if}
 </g>
 
 <style>
   .tick {
     font-size: 0.725em;
     font-weight: 200;
+    transition: transform 1s;
+  }
+
+  .axis-label {
+    font-size: 1em;
+    font-weight: 300;
+    fill: #666;
+    text-anchor: end;
   }
 
   line,

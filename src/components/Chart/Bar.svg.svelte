@@ -1,11 +1,13 @@
 <script>
   import { getContext } from 'svelte';
   import { fade } from 'svelte/transition';
+  import { FOCUS, NON_FOCUS } from '../../colours';
 
   const { data, xGet, yGet, xScale } = getContext('LayerCake');
 
   // Toggle between 2D Bar chart and expanded weighted area chart
   export let expandX;
+  export let showDiscretionary;
 
   $: bars =  $data.reduce((acc, d) => {
 
@@ -25,6 +27,11 @@
       width = ($xScale.range()[1] - x) / 3; 
     }
 
+    let fill = d.colour;
+    if (showDiscretionary) {
+      fill = d.isDiscretionary ? FOCUS : NON_FOCUS;
+    }
+
     const point = {
       x,
       y: acc.y,
@@ -32,7 +39,7 @@
       height: $yGet(d) - 1,
       // round up to 1 so there's a tiny sliver of bar when inflation=0 
       width: (width || 1),
-      fill: d.colour,
+      fill,
       text: d.name,
     };
 

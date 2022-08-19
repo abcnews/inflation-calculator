@@ -11,3 +11,7 @@ export const COLOURS = {
   'Insurance and financial services': '#69788C',
   'Clothing and footwear': '#8FBF77',
 };
+
+
+export let FOCUS = '#E52A00';
+export let NON_FOCUS = '#007BC7';

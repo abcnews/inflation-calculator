@@ -7,7 +7,7 @@
   import { writable, derived } from 'svelte/store';
   import { Decimal } from 'decimal.js-light';
 
-  import { calculateInflationRate, calculateInflationRate2, deriveChartData, InflationData, Customisation, ExpenditureGroupWeights } from '../../model';
+  import { calculateInflationRate, deriveChartData, InflationData, Customisation, ExpenditureGroupWeights } from '../../model';
 
   import Chart from '../Chart/WeightedIndexChart.svelte';
   import PropertiesTab from '../PropertiesTab.svelte';
@@ -21,6 +21,10 @@
   export let splitGroups = ['Transport', 'Housing', 'Alcohol and tobacco'];
   export let removedGroups = ['Tobacco'];
   export let expandInflation = true;
+  export let showDiscretionary = false;
+
+  let height: number;
+  let width: number;
 
   // Create store with the latest inflation data
   const inflationStore = writable<InflationData>({});
@@ -34,6 +38,7 @@
     splitGroups,
     removedGroups,
     expandInflation,
+    showDiscretionary,
     weightOverrides: {},
   } as Customisation);
   setContext('customisation', customisationStore);
@@ -43,6 +48,7 @@
     splitGroups,
     removedGroups,
     expandInflation,
+    showDiscretionary,
     weightOverrides: {},
   });
 
@@ -51,9 +57,8 @@
     ([inflationData, customisation]) => deriveChartData(inflationData, customisation)
   );
 
-  const formatPercentage = (x: Decimal): string => `${x.mul(100).toString()}%`;
+  const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
   $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $customisationStore));
-  $: inflationOutput2 = formatPercentage(calculateInflationRate2($inflationStore, $customisationStore));
 
   $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 35] : [-42, 80];
 </script>
@@ -61,12 +66,14 @@
 <main>
   <article>
     Estimated inflation: <span class="inflation-rate">{inflationOutput}</span>
-    Estimated inflation 2: <span class="inflation-rate">{inflationOutput2}</span>
-    <figure>
+    <figure bind:clientWidth={width} bind:clientHeight={height}>
       <Chart
         data={$outputStore}
         expandX={$customisationStore.expandInflation}
+        showDiscretionary={$customisationStore.showDiscretionary}
         {xDomain}
+        {width}
+        {height}
       />
     </figure>
     </article>
@@ -109,6 +116,7 @@
 
   figure {
     margin: auto;
+    height: 80vh;
   }
 
   aside {

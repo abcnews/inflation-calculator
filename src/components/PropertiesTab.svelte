@@ -58,6 +58,10 @@
         labelText="Expand inflation (x-axis)"
         bind:checked={$customisation.expandInflation}
       />
+      <Checkbox
+        labelText="Show discretionary vs non-discretionary"
+        bind:checked={$customisation.showDiscretionary}
+      />
 
     </AccordionItem>
 
