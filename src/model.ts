@@ -1,6 +1,6 @@
 import { csv } from 'd3-fetch';
 import { Decimal } from 'decimal.js-light';
-import { COLOURS } from './colours';
+import { COLOURS, FOCUS, NON_FOCUS } from './colours';
 
 //
 // Model for representing inflation indexes
@@ -15,7 +15,10 @@ export interface Customisation {
   weightOverrides: Record<string, number>;
   splitGroups: string[];
   removedGroups: string[];
-  showDiscretionary: boolean;
+
+  highlightedGroups: string[];
+  orderBy: string;
+  // showDiscretionary: boolean;
 }
 
 export interface ExpenditureGroup {
@@ -41,6 +44,7 @@ export interface ExpenditureGroupWeights {
 }
 export interface WeightedBar {
   name: string;
+  group: string;
   colour?: string;
   inflation: Decimal;
   weighting: Decimal;
@@ -157,7 +161,9 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const {
     index,
     timelineYears,
+    highlightedGroups,
     removedGroups,
+    orderBy,
   } = customisation;
 
   const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
@@ -182,6 +188,9 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
         const group: ExpenditureGroup = data[groupName][expGroupName];
 
+        const isHighlighted = highlightedGroups.indexOf(expGroupName) > -1 ||
+          (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
+
         // Add the proportional amount of the extra weighting
         const originalWeighting = group.weights[index];
         const extraWeighting = totalWeightingRemoved.mul(originalWeighting);
@@ -191,7 +200,8 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
           ...acc,
           {
             name: group.name,
-            colour: COLOURS[group.group] || 'blue',
+            group: group.group,
+            colour: isHighlighted ? FOCUS : NON_FOCUS,
             inflation: group.inflation[timelineYears],
             weighting,
             isDiscretionary: group.isDiscretionary,
@@ -213,13 +223,16 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     }, new Decimal(0));
 
     // Set the group as discretionary if more than half the weighting from subgroups is discretionary
-    const isDiscretionary = discretionaryWeighting > weighting.div(2);
+    const isDiscretionary = discretionaryWeighting === weighting;
+    const isHighlighted = highlightedGroups.indexOf(groupName) > -1 ||
+      (isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
 
     const inflation = Object.values(data[groupName])[0].inflationCombined[customisation.timelineYears];
 
     const bar = {
       name: groupName,
-      colour: COLOURS[groupName] || 'blue',
+      group: groupName,
+      colour: isHighlighted ? FOCUS : NON_FOCUS,
       inflation,
       weighting,
       isDiscretionary,
@@ -228,6 +241,23 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   }, []);
 
   return allBars
+    .sort((a, b) => {
+      if (orderBy === 'area') {
+        const bv = b.inflation.mul(b.weighting)
+        const av = a.inflation.mul(a.weighting);
+        return bv - av;
+      }
+      if (orderBy === 'inflation') {
+        return b.inflation.sub(a.inflation).toNumber();
+      }
+      if (orderBy === 'weighting') {
+        return b.weighting.sub(a.weighting).toNumber();
+      }
+      if (orderBy === 'group') {
+        return b.group - a.group;
+      }
+      return 0;
+    })
     // .sort((a, b) => b.inflation - a.inflation)
     .filter(b => customisation.removedGroups.indexOf(b.name) === -1)
     .filter(b => b.weighting.toNumber() > 0);

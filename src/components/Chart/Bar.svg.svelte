@@ -1,13 +1,13 @@
 <script>
   import { getContext } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { FOCUS, NON_FOCUS } from '../../colours';
+  // import { FOCUS, NON_FOCUS } from '../../colours';
 
   const { data, xGet, yGet, xScale } = getContext('LayerCake');
 
   // Toggle between 2D Bar chart and expanded weighted area chart
   export let expandX;
-  export let showDiscretionary;
+  // export let showDiscretionary;
 
   $: bars =  $data.reduce((acc, d) => {
 
@@ -28,11 +28,12 @@
     }
 
     let fill = d.colour;
-    if (showDiscretionary) {
-      fill = d.isDiscretionary ? FOCUS : NON_FOCUS;
-    }
+    // if (showDiscretionary) {
+    //   fill = d.isDiscretionary ? FOCUS : NON_FOCUS;
+    // }
 
     const point = {
+      id: d.name,
       x,
       y: acc.y,
       // 1 pixel of whitespace between bars
@@ -40,7 +41,7 @@
       // round up to 1 so there's a tiny sliver of bar when inflation=0 
       width: (width || 1),
       fill,
-      text: d.name,
+      text: `${d.name} (${(d.inflation * d.weighting / 100).toPrecision(2)}%)`,
     };
 
     return {
@@ -74,7 +75,7 @@
 </script>
 
 <g class="bar-group">
-  {#each bars as d (d.text)}
+  {#each bars as d (d.id)}
     <g class="weighted-bar" style="transform: translate({d.x}px, {d.y}px)">
       <rect
         in:grow="{{ width:d.x, x: d.x, delay: 800 }}" 
@@ -113,7 +114,7 @@
 
     text {
       font-family: ABCSans;
-      font-size: 6pt;
+      font-size: 7pt;
       text-anchor: start;
 
       transition: transform 800ms;

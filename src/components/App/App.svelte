@@ -21,7 +21,8 @@
   export let splitGroups = ['Transport', 'Housing', 'Alcohol and tobacco'];
   export let removedGroups = ['Tobacco'];
   export let expandInflation = true;
-  export let showDiscretionary = false;
+  export let orderBy = 'area';
+  export let highlightedGroups = [];
 
   let height: number;
   let width: number;
@@ -38,7 +39,8 @@
     splitGroups,
     removedGroups,
     expandInflation,
-    showDiscretionary,
+    highlightedGroups,
+    orderBy,
     weightOverrides: {},
   } as Customisation);
   setContext('customisation', customisationStore);
@@ -48,7 +50,8 @@
     splitGroups,
     removedGroups,
     expandInflation,
-    showDiscretionary,
+    highlightedGroups,
+    orderBy,
     weightOverrides: {},
   });
 
@@ -70,7 +73,6 @@
       <Chart
         data={$outputStore}
         expandX={$customisationStore.expandInflation}
-        showDiscretionary={$customisationStore.showDiscretionary}
         {xDomain}
         {width}
         {height}

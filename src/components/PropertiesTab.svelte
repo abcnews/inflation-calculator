@@ -42,25 +42,40 @@
         <SelectItem value="10" text="10 years" />
       </Select>
 
+      <Select
+        labelText="Order Bars By"
+        bind:selected={$customisation.orderBy}
+      >
+        <SelectItem value="area" text="Total Area" />
+        <SelectItem value="inflation" text="Inflation" />
+        <SelectItem value="weighting" text="Weighting" />
+        <SelectItem value="group" text="Category" />
+      </Select>
+
       <MultiSelect
         titleText="Split groups"
+        filterable
         bind:selectedIds={$customisation.splitGroups}
         items={allGroups.map(g => ({ id: g, text: g }))}
       />
 
       <MultiSelect
         titleText="Removed groups"
+        filterable
         bind:selectedIds={$customisation.removedGroups}
         items={allSubGroups.map(g => ({ id: g, text: g }))}
+      />
+
+      <MultiSelect
+        titleText="Highlighted groups"
+        filterable
+        bind:selectedIds={$customisation.highlightedGroups}
+        items={['Discretionary', 'Non Discretionary', ...allGroups, ...allSubGroups].map(g => ({ id: g, text: g }))}
       />
 
       <Checkbox
         labelText="Expand inflation (x-axis)"
         bind:checked={$customisation.expandInflation}
-      />
-      <Checkbox
-        labelText="Show discretionary vs non-discretionary"
-        bind:checked={$customisation.showDiscretionary}
       />
 
     </AccordionItem>
