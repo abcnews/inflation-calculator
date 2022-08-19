@@ -245,7 +245,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       if (orderBy === 'area') {
         const bv = b.inflation.mul(b.weighting)
         const av = a.inflation.mul(a.weighting);
-        return bv - av;
+        return bv.sub(av);
       }
       if (orderBy === 'inflation') {
         return b.inflation.sub(a.inflation).toNumber();
@@ -254,11 +254,11 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         return b.weighting.sub(a.weighting).toNumber();
       }
       if (orderBy === 'group') {
+        // @ts-ignore
         return b.group - a.group;
       }
       return 0;
     })
-    // .sort((a, b) => b.inflation - a.inflation)
     .filter(b => customisation.removedGroups.indexOf(b.name) === -1)
     .filter(b => b.weighting.toNumber() > 0);
 }
