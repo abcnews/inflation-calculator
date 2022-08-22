@@ -12,7 +12,8 @@ module.exports = {
   build: {
     includedDependencies,
     entry: [
-      "index"
+      "index",
+      "builder",
     ],
   },
   webpack: config => {

@@ -42,9 +42,17 @@
 
   // Use the combined weightings (should add up to 100)
   $: yMax = processedData.reduce((x, d) => x + d[yKey], 0);
+
+  $: chartWidth = Math.max(800, width);
 </script>
 
-<div class="chart-container" style="width:{width}px; height:{height}px;">
+<div
+  class="chart-container"
+  style="
+    width:{chartWidth - 20}px;
+    margin-top: 30px;
+    height:{height * 0.6}px;
+  ">
   {#if width && height}
     <LayerCake
       padding={{ top: 0, bottom: 20, left: 35 }}

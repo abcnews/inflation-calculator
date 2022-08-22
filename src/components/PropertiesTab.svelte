@@ -10,6 +10,7 @@
   // import TextInput from 'carbon-components-svelte/src/TextInput/TextInput.svelte';
 
   import { getContext } from 'svelte';
+
   let customisation = getContext<any>('customisation');
   let inflationData = getContext<any>('inflation-data');
 
@@ -46,10 +47,11 @@
         labelText="Order Bars By"
         bind:selected={$customisation.orderBy}
       >
-        <SelectItem value="area" text="Total Area" />
+        <SelectItem value="area" text="Area" />
         <SelectItem value="inflation" text="Inflation" />
         <SelectItem value="weighting" text="Weighting" />
         <SelectItem value="group" text="Category" />
+        <SelectItem value="default" text="Default" />
       </Select>
 
       <MultiSelect
@@ -82,38 +84,3 @@
 
   </Accordion>
 </div>
-
-<style>
-  :global(.bx--accordion__title) {
-    font-weight: bold;
-  }
-
-  :global(.bx--checkbox-wrapper) {
-    flex-direction: row;
-    margin-bottom: 0.5rem;
-  }
-
-  :global(.bx--multi-select__wrapper) {
-    margin-bottom: 1rem;
-  }
-
-  :global(.bx--text-input-wrapper) {
-    margin-bottom: 1rem;
-  }
-
-  :global(.bx--checkbox-label) {
-    margin-left: 0.5rem;
-  }
-
-  :global(.bx--tile) {
-    margin-bottom: 1rem;
-  }
-
-  :global(.bx--select) {
-    margin-bottom: 1rem;
-  }
-
-  :global(.bx--number) {
-    margin-bottom: 1rem;
-  }
-</style>

@@ -31,3 +31,24 @@ $css--plex: false;
   letter-spacing: 0em;
   text-align: left;
 }
+
+.bx--accordion__title {
+  font-weight: bold;
+}
+
+.bx--checkbox-wrapper {
+  flex-direction: row;
+  margin-bottom: 0.5rem;
+}
+
+.bx--multi-select__wrapper,
+.bx--text-input-wrapper,
+.bx--number,
+.bx--select,
+.bx--tile {
+  margin-bottom: 1rem;
+}
+
+.bx--checkbox-label {
+  margin-left: 0.5rem;
+}

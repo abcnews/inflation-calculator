@@ -1,18 +1,21 @@
 import acto from '@abcnews/alternating-case-to-object';
-import { whenOdysseyLoaded } from '@abcnews/env-utils';
+import { getStoreData } from './model';
+
+import { whenDOMReady, whenOdysseyLoaded } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
-import App from './components/App/App.svelte';
-import { getStoreData } from './model';
+import { loadScrollyteller } from './components/Scrollyteller';
+
+import ScrollyWrapper from './components/ScrollyWrapper/ScrollyWrapper.svelte';
 
 let appMountEl: Mount;
 let appProps;
 
 let vizElem;
 
-let index = 'employed';
-let transportAnswer = 'nocar';
-let housingAnswer = 'rents';
+// let index = 'employed';
+// let transportAnswer = 'nocar';
+// let housingAnswer = 'rents';
 
 // const getUpdatedIndex = (indexData) => {
 //   return indexData[incomeAnswer];
@@ -22,16 +25,19 @@ Promise.all([
   getStoreData(),
   whenOdysseyLoaded,
 ]).then((res) => {
-  [appMountEl] = selectMounts('inflationcalculator');
   const [indexData] = res;
+  try {
+    const scrollyData = loadScrollyteller('chart', 'u-full', 'mark');
+    appMountEl = scrollyData.mountNode;
 
-  if (appMountEl) {
-    appProps = acto(getMountValue(appMountEl));
-    const props = { index, data: indexData };
-    vizElem = new App({
-      target: appMountEl,
-      props,
-    });
+    if (appMountEl) {
+      new ScrollyWrapper({
+        target: appMountEl,
+        props: { scrollyData, indexData }
+      });
+    }
+  } catch (e) {
+    console.log(e);
   }
 
 });

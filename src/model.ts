@@ -18,6 +18,7 @@ export interface Customisation {
 
   highlightedGroups: string[];
   orderBy: string;
+  showInflationRate: boolean;
   // showDiscretionary: boolean;
 }
 
@@ -158,6 +159,7 @@ export function calculateInflationRate2(data: InflationData, customisation: Cust
 }
 
 export function deriveChartData(data: InflationData, customisation: Customisation): WeightedBar[] {
+  // console.log(customisation);
   const {
     index,
     timelineYears,
@@ -175,6 +177,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     const weightToRemove = subGroup.weights[index];
     return acc.add(weightToRemove);
   }, new Decimal(0));
+
   const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved);
 
   const allBars = Object.keys(data).reduce((acc: WeightedBar[], groupName: string) => {
@@ -216,9 +219,15 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     // Keep as a combined bar
     const weighting = Object.values(data[groupName]).reduce((combinedWeight, subgroup) => {
       const weightForSubgroup = subgroup.weights[customisation.index];
+ 
+      if (removedGroups.indexOf(subgroup.name) > -1) {
+        return combinedWeight;
+      }
+
       if (subgroup.isDiscretionary) {
         discretionaryWeighting = discretionaryWeighting.add(weightForSubgroup);
       }
+
       return combinedWeight.add(weightForSubgroup);
     }, new Decimal(0));
 
@@ -245,7 +254,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       if (orderBy === 'area') {
         const bv = b.inflation.mul(b.weighting)
         const av = a.inflation.mul(a.weighting);
-        return bv.sub(av);
+        return bv.sub(av).toNumber();
       }
       if (orderBy === 'inflation') {
         return b.inflation.sub(a.inflation).toNumber();
@@ -254,8 +263,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         return b.weighting.sub(a.weighting).toNumber();
       }
       if (orderBy === 'group') {
-        // @ts-ignore
-        return b.group - a.group;
+        return b.group.localeCompare(a.group);
       }
       return 0;
     })
