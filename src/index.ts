@@ -8,7 +8,7 @@ import { loadScrollyteller } from './components/Scrollyteller';
 
 import ScrollyWrapper from './components/ScrollyWrapper/ScrollyWrapper.svelte';
 
-let appMountEl: Mount;
+let appMountEl: any;
 let appProps;
 
 let vizElem;
