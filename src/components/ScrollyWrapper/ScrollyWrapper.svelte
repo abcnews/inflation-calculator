@@ -3,7 +3,7 @@
   import { writable } from 'svelte/store';
   import { decode } from '@abcnews/base-36-props';
 
-  import { InflationData, Customisation } from '../../model';
+  import { InflationData } from '../../types';
   import { defaultCustomisation } from '../../constants';
 
   import Scrollyteller from '../Scrollyteller/Scrollyteller.svelte';
@@ -37,8 +37,8 @@
     let:width={width}
   >
     <ChartWrapper
-      {width}
-      {height}
+      width={Math.min(width, 600)}
+      height={height * 0.6}
     />
   </Scrollyteller>
 {/if}

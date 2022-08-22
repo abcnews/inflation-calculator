@@ -71,8 +71,8 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const housingProps = HOUSING_PROFILES[housingProfile];
 
   // Apply the housing profile on top of the chart customisation
-  const removedGroups = [...customisation.removedGroups, ...(housingProps.removedGroups || [])];
-  const weightOverrides = {...customisation.weightOverrides, ...housingProps.weightOverrides};
+  const removedGroups = [...customisation.removedGroups, ...(housingProps?.removedGroups || [])];
+  const weightOverrides = {...customisation.weightOverrides, ...(housingProps?.weightOverrides || {})};
 
   // Collect the amount of weights to redistribute away from the `removedGroups`
   const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
