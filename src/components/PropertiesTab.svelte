@@ -36,6 +36,16 @@
       </Select>
 
       <Select
+        labelText="Housing type"
+        bind:selected={$customisation.housingProfile}
+      >
+        <SelectItem value="renter" text="Rent" />
+        <SelectItem value="mortgage" text="Owner with mortgage" />
+        <SelectItem value="outright" text="Own outright" />
+      </Select>
+
+
+      <Select
         labelText="Inflation years"
         bind:selected={$customisation.timelineYears}
       >

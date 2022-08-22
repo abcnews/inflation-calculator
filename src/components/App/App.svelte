@@ -2,7 +2,8 @@
   import { setContext } from 'svelte';
   import { writable } from 'svelte/store';
 
-  import { InflationData, Customisation } from '../../model';
+  import { InflationData } from '../../model';
+  import { defaultCustomisation } from '../../constants';
 
   import ChartWrapper from '../ChartWrapper/ChartWrapper.svelte';
   import PropertiesTab from '../PropertiesTab.svelte';
@@ -14,24 +15,11 @@
   const inflationStore = writable<InflationData>({});
   setContext('inflation-data', inflationStore);
   $: inflationStore.set(data);
-
-  // default state for the builder
-  const DEFAULT_STATE: Customisation = {
-    index: 'employed',
-    timelineYears: 1,
-    splitGroups: ['Transport', 'Housing', 'Alcohol and tobacco'],
-    removedGroups: ['Tobacco'],
-    expandInflation: true,
-    highlightedGroups: [],
-    orderBy: 'area',
-    showInflationRate: true,
-    weightOverrides: {},
-  };
 </script>
 
 <Builder
   storeName={"customisation"}
-  defaultState={DEFAULT_STATE}
+  defaultState={defaultCustomisation}
   let:width={width}
   let:height={height}
 >

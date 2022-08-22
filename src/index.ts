@@ -1,5 +1,5 @@
 import acto from '@abcnews/alternating-case-to-object';
-import { getStoreData } from './model';
+import { getStoreData } from './dataFetch';
 
 import { whenDOMReady, whenOdysseyLoaded } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
@@ -13,9 +13,9 @@ let appProps;
 
 let vizElem;
 
-// let index = 'employed';
+let incomeIndex = 'employed';
+let housingProfile = 'renter'; // renter | mortgage | outright
 // let transportAnswer = 'nocar';
-// let housingAnswer = 'rents';
 
 // const getUpdatedIndex = (indexData) => {
 //   return indexData[incomeAnswer];
@@ -33,7 +33,7 @@ Promise.all([
     if (appMountEl) {
       new ScrollyWrapper({
         target: appMountEl,
-        props: { scrollyData, indexData }
+        props: { scrollyData, indexData, housingProfile }
       });
     }
   } catch (e) {

@@ -3,7 +3,7 @@ import { whenOdysseyLoaded } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
 import App from './components/App/App.svelte';
-import { getStoreData } from './model';
+import { getStoreData } from './dataFetch';
 
 let appMountEl: Mount;
 let appProps;

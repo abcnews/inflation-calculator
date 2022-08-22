@@ -4,6 +4,7 @@
   import { decode } from '@abcnews/base-36-props';
 
   import { InflationData, Customisation } from '../../model';
+  import { defaultCustomisation } from '../../constants';
 
   import Scrollyteller from '../Scrollyteller/Scrollyteller.svelte';
   import ChartWrapper from '../ChartWrapper/ChartWrapper.svelte';
@@ -16,28 +17,14 @@
   setContext('inflation-data', inflationStore);
   $: inflationStore.set(indexData);
 
-  // TODO: Import from a single place rather than defining twice
-  // default state for the builder
-  const DEFAULT_STATE: Customisation = {
-    index: 'employed',
-    timelineYears: 1,
-    splitGroups: [],
-    removedGroups: [],
-    expandInflation: true,
-    highlightedGroups: [],
-    orderBy: 'area',
-    showInflationRate: true,
-    weightOverrides: {},
-  };
-
   // Create store for controlling the chart
   // TODO: Impose personalisation controls over this
-  const stateStore = writable<any>({ ...DEFAULT_STATE });
+  const stateStore = writable<any>({ ...defaultCustomisation });
   setContext('customisation', stateStore);
 
   let updateState = ((marker: any) => {
     const state = decode(marker.state);
-    stateStore.set({ ...DEFAULT_STATE, ...state });
+    stateStore.set({ ...defaultCustomisation, ...state });
   });
 
 </script>
