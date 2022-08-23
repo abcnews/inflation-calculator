@@ -78,8 +78,6 @@
       css: t => `width: ${t * width}`
     };
   }
-
-  $: console.log(bars);
 </script>
 
 <g class="bars-group">
