@@ -92,9 +92,6 @@
 <g class="bars-group">
   {#each bars as d (d.id)}
     <g class="weighted-bar" style="transform: translate({d.x}px, {d.y}px)">
-      {#if expandX}
-        in:grow="{{ width:d.x, x: d.x, delay: 800 }}" 
-        out:grow="{{ width:d.x, x: d.x }}" 
         <rect
           x="0"
           y="0"
@@ -103,16 +100,6 @@
           opacity={d.opacity}
           fill={d.fill}
         ></rect>
-      {:else}
-        <rect
-          x="0"
-          y="0"
-          height={d.height}
-          width={d.width}
-          opacity={d.opacity}
-          fill={d.fill}
-        ></rect>
-      {/if}
 
       {#if d.height > 8}
         <text
