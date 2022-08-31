@@ -93,9 +93,9 @@
   {#each bars as d (d.id)}
     <g class="weighted-bar" style="transform: translate({d.x}px, {d.y}px)">
       {#if expandX}
+        in:grow="{{ width:d.x, x: d.x, delay: 800 }}" 
+        out:grow="{{ width:d.x, x: d.x }}" 
         <rect
-          in:grow="{{ width:d.x, x: d.x, delay: 800 }}" 
-          out:grow="{{ width:d.x, x: d.x }}" 
           x="0"
           y="0"
           height={d.height}
@@ -104,10 +104,7 @@
           fill={d.fill}
         ></rect>
       {:else}
-
         <rect
-          out:fade
-          in:fade="{{ delay: 400 }}"
           x="0"
           y="0"
           height={d.height}
@@ -115,34 +112,8 @@
           opacity={d.opacity}
           fill={d.fill}
         ></rect>
-
-        {#if showSecondColumn}
-          <polygon
-            out:fade
-            in:fade="{{ delay: 400 }}"
-            points="
-              {d.width},0
-              {d.width},{d.height}
-              {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
-              {$xScale.range()[1] - d.width},{d.yCombined - d.y}
-            "
-            fill={d.fill}
-            opacity={Math.max(d.opacity - 0.5, 0.2)}
-          />
-
-          <rect
-            out:fade
-            in:fade="{{ delay: 400 }}"
-            x={$xScale.range()[1] - d.width}
-            y={d.yCombined - d.y}
-            height={d.heightCombined}
-            width={d.width}
-            opacity={d.opacity}
-            fill={d.fill}
-          ></rect>
-        {/if}
-
       {/if}
+
       {#if d.height > 8}
         <text
           out:fade
@@ -157,6 +128,34 @@
         </text>
       {/if}
     </g>
+
+    {#if showSecondColumn}
+      <g class="weighted-bar" in:fade style="transform: translate({d.x}px, {d.y}px)">
+        <polygon
+          out:fade
+          in:fade="{{ delay: 400 }}"
+          points="
+            {d.width},0
+            {d.width},{d.height}
+            {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
+            {$xScale.range()[1] - d.width},{d.yCombined - d.y}
+          "
+          fill={d.fill}
+          opacity={Math.max(d.opacity - 0.7, 0.2)}
+        />
+
+        <!-- in:grow="{{ width:d.width, x: $xScale.range()[1] - d.width, delay: 400 }}"  -->
+        <!-- in:fade="{{ delay: 400 }}" -->
+        <rect
+          x={$xScale.range()[1] - d.width}
+          y={d.yCombined - d.y}
+          height={d.heightCombined}
+          width={d.width}
+          opacity={d.opacity}
+          fill={d.fill}
+        ></rect>
+      </g>
+    {/if}
   {/each}
 </g>
 
@@ -166,7 +165,8 @@
     transition-delay: 400ms;
 
     rect, polygon {
-      transition: width 800ms, height 800ms;
+      transition: width 800ms, height 800ms, fill 800ms, x 800ms, y 800ms;
+      /* transition: all 800ms; */
       transition-delay: 400ms;
     }
 

@@ -68,7 +68,7 @@
         <SelectItem value="area" text="Area" />
         <SelectItem value="inflation" text="Inflation" />
         <SelectItem value="weighting" text="Weighting" />
-        <SelectItem value="group" text="Category" />
+        <SelectItem value="category" text="Category" />
         <SelectItem value="discretionary" text="Discretionary" />
         <SelectItem value="default" text="Default" />
       </Select>

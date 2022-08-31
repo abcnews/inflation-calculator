@@ -24,18 +24,13 @@
   $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 35] : [-42, 80];
 </script>
 
-<!-- Estimated inflation: <span class="inflation-rate">{inflationOutput}</span> -->
 <Chart
   data={$outputStore}
   expandX={$customisationStore.showMarimako}
   showSecondColumn={$customisationStore.showInflationBreakdown}
+  label="Your budget breakdown"
+  secondColumnLabel="Your inflation breakdown (of {inflationOutput})"
   {xDomain}
   {width}
   {height}
 />
-
-<style lang="scss">
-  /* .inflation-rate { */
-  /*   color: #a7029e; */
-  /* } */
-</style>

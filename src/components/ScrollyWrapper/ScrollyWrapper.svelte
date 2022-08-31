@@ -22,9 +22,12 @@
   const stateStore = writable<any>({ ...defaultCustomisation });
   setContext('customisation', stateStore);
 
+
   let updateState = ((marker: any) => {
-    const state = decode(marker.state);
-    stateStore.set({ ...defaultCustomisation, ...state });
+    if (marker.state) {
+      const state = decode(marker.state);
+      stateStore.set({ ...defaultCustomisation, ...state });
+    }
   });
 
 </script>

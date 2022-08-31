@@ -17,6 +17,9 @@
 
   export let showDiscretionary: boolean;
 
+  export let label = '';
+  export let secondColumnLabel = '';
+
   export let width: number;
   export let height: number;
 
@@ -54,6 +57,18 @@
     height: {height}px;
     margin: auto;
   ">
+
+  <div
+    class="label-container"
+    style="padding-left: 30px; padding-right: 50px;"
+   >
+    <h6>{label}</h6>
+
+    {#if showSecondColumn}
+      <h6>{secondColumnLabel}</h6>
+    {/if}
+  </div>
+
   {#if width && height}
     <LayerCake
       padding={{ top: 30, bottom: 10, left: 30, right: 50 }}
@@ -78,3 +93,13 @@
     </LayerCake>
   {/if}
 </div>
+
+<style>
+  .label-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: -40px;
+    font-family: ABCSans, Helvetica, sans-serif;
+  }
+</style>

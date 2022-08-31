@@ -8,9 +8,6 @@ import { loadScrollyteller } from './components/Scrollyteller';
 
 import ScrollyWrapper from './components/ScrollyWrapper/ScrollyWrapper.svelte';
 
-let appMountEl: any;
-let appProps;
-
 let vizElem;
 
 let incomeIndex = 'employed';
@@ -27,8 +24,8 @@ Promise.all([
 ]).then((res) => {
   const [indexData] = res;
   try {
-    const scrollyData = loadScrollyteller('chart', 'u-full', 'mark');
-    appMountEl = scrollyData.mountNode;
+    const scrollyData = loadScrollyteller('chart1', 'u-full', 'mark');
+    const appMountEl = scrollyData.mountNode;
 
     if (appMountEl) {
       new ScrollyWrapper({
@@ -40,6 +37,19 @@ Promise.all([
     console.log(e);
   }
 
+  try {
+    const scrollyData = loadScrollyteller('chart2', 'u-full', 'mark');
+    const appMountEl = scrollyData.mountNode;
+
+    if (appMountEl) {
+      new ScrollyWrapper({
+        target: appMountEl,
+        props: { scrollyData, indexData, housingProfile }
+      });
+    }
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 if (process.env.NODE_ENV === 'development') {
