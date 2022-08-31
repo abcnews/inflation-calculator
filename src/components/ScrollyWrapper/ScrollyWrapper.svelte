@@ -46,9 +46,8 @@
 <style lang="scss">
   /* Make the chart visible before the first panel of text */
   :global(.scrollyteller .content) {
-    :global(.panel:first-child),
     :global(.st-panel:first-child){
-      margin-top: 60vh;
+      margin-top: 80vh;
     }
   }
 </style>

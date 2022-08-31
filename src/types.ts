@@ -8,7 +8,6 @@ export type InflationData = Record<string, Record<string, ExpenditureGroup>>;
 export interface Customisation {
   index: keyof ExpenditureGroupWeights;
   timelineYears: 1 | 10;
-  expandInflation: boolean;
   weightOverrides: Record<string, Decimal>;
   splitGroups: string[];
   removedGroups: string[];
@@ -16,8 +15,13 @@ export interface Customisation {
   housingProfile: string;
 
   highlightedGroups: string[];
+
   orderBy: string;
-  showInflationRate: boolean;
+  colourBy: string;
+
+  showMarimako: boolean;
+  showInflationBreakdown: boolean;
+
   // showDiscretionary: boolean;
 }
 
@@ -49,4 +53,5 @@ export interface WeightedBar {
   inflation: Decimal;
   weighting: Decimal;
   isDiscretionary: boolean;
+  isHighlighted: boolean;
 }

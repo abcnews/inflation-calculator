@@ -1,56 +1,65 @@
 <script>
   import { getContext } from 'svelte';
   import { fade } from 'svelte/transition';
-  // import { FOCUS, NON_FOCUS } from '../../colours';
 
-  const { data, xGet, yGet, xScale } = getContext('LayerCake');
+  const { data, xGet, yGet, x, y, xScale, yScale } = getContext('LayerCake');
 
   // Toggle between 2D Bar chart and expanded weighted area chart
   export let expandX;
+  export let showSecondColumn;
   // export let showDiscretionary;
 
   let bars;
   $: {
+    const totalArea = $data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
+    const anyHighlighted = $data.reduce((acc, d) => acc || d.isHighlighted, false);
+
     bars = $data.reduce((acc, d) => {
 
       let width = $xGet(d);
-      let x = $xScale(0);
-      width = width - x;
+      let xVal = $xScale(0);
+      width = width - xVal;
 
       // If it's a negative value, we need to shift it to the left
       if (width < 0) {
         width = Math.abs(width);
-        x = x - width;
+        xVal = xVal - width;
       }
 
       // Set the width to 1/3 of the canvas
       if (!expandX) {
-        x = $xScale.range()[0];
-        width = ($xScale.range()[1] - x) / 3; 
+        xVal = $xScale.range()[0];
+        width = ($xScale.range()[1] - xVal) / 6;
       }
 
-      let fill = d.colour;
-      // if (showDiscretionary) {
-      //   fill = d.isDiscretionary ? FOCUS : NON_FOCUS;
-      // }
+      const proportionOfTotal = $x(d) * $y(d) / totalArea;
+      const heightCombined = $yScale.range()[0] * proportionOfTotal;
 
       const point = {
         id: d.name,
-        x,
-        y: acc.y,
+        x: xVal,
+        fill: d.colour,
+        text: `${d.name}`,
+
+        opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
+
         // 1 pixel of whitespace between bars
         height: $yGet(d) - 1,
+        y: acc.y,
+
+        yCombined: acc.yCombined,
+        heightCombined: heightCombined - 1,
+
         // round up to 1 so there's a tiny sliver of bar when inflation=0 
         width: (width || 1),
-        fill,
-        text: `${d.name} (${(d.inflation * d.weighting / 100).toPrecision(2)}%)`,
       };
 
       return {
         y: acc.y + $yGet(d),
+        yCombined: acc.yCombined + heightCombined,
         points: [...acc.points, point],
       };
-    }, { y: 0, points: [] });
+    }, { y: 0, yCombined: 0, points: [] });
 
     bars = bars.points;
     bars.sort((a, b) => a.id.localeCompare(b.id));
@@ -91,9 +100,11 @@
           y="0"
           height={d.height}
           width={d.width}
+          opacity={d.opacity}
           fill={d.fill}
         ></rect>
       {:else}
+
         <rect
           out:fade
           in:fade="{{ delay: 400 }}"
@@ -101,16 +112,45 @@
           y="0"
           height={d.height}
           width={d.width}
+          opacity={d.opacity}
           fill={d.fill}
         ></rect>
+
+        {#if showSecondColumn}
+          <polygon
+            out:fade
+            in:fade="{{ delay: 400 }}"
+            points="
+              {d.width},0
+              {d.width},{d.height}
+              {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
+              {$xScale.range()[1] - d.width},{d.yCombined - d.y}
+            "
+            fill={d.fill}
+            opacity={Math.max(d.opacity - 0.5, 0.2)}
+          />
+
+          <rect
+            out:fade
+            in:fade="{{ delay: 400 }}"
+            x={$xScale.range()[1] - d.width}
+            y={d.yCombined - d.y}
+            height={d.heightCombined}
+            width={d.width}
+            opacity={d.opacity}
+            fill={d.fill}
+          ></rect>
+        {/if}
+
       {/if}
       {#if d.height > 8}
         <text
           out:fade
           in:fade="{{ delay: 400 }}"
+          opacity={d.opacity}
           stroke={d.fill}
           style="
-            transform: translate({d.width + 2}px, {(d.height / 2) + 2}px);
+            transform: translate({d.width + 7}px, {(d.height / 2) + 4}px);
           "
         >
           {d.text}
@@ -125,7 +165,7 @@
     transition: transform 800ms;
     transition-delay: 400ms;
 
-    rect {
+    rect, polygon {
       transition: width 800ms, height 800ms;
       transition-delay: 400ms;
     }

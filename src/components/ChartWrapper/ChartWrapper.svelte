@@ -27,7 +27,8 @@
 <!-- Estimated inflation: <span class="inflation-rate">{inflationOutput}</span> -->
 <Chart
   data={$outputStore}
-  expandX={$customisationStore.expandInflation}
+  expandX={$customisationStore.showMarimako}
+  showSecondColumn={$customisationStore.showInflationBreakdown}
   {xDomain}
   {width}
   {height}

@@ -11,7 +11,10 @@
 
   export let data: WeightedBar[];
   export let xDomain: [number, number]; 
+
   export let expandX: boolean; 
+  export let showSecondColumn: boolean; 
+
   export let showDiscretionary: boolean;
 
   export let width: number;
@@ -70,7 +73,7 @@
           />
         {/if}
 
-        <Bar {expandX} {showDiscretionary} />
+        <Bar {expandX} {showSecondColumn} {showDiscretionary} />
       </Svg>
     </LayerCake>
   {/if}

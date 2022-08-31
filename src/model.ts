@@ -64,7 +64,10 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     index,
     timelineYears,
     highlightedGroups,
+
     orderBy,
+    colourBy,
+
     housingProfile,
   } = customisation;
 
@@ -107,6 +110,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       const group: ExpenditureGroup = data[groupName][expGroupName];
 
       const isHighlighted = highlightedGroups.indexOf(expGroupName) > -1 ||
+        highlightedGroups.indexOf(groupName) > -1 ||
         (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
 
       let weighting = group.weights[index];
@@ -124,9 +128,13 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         {
           name: group.name,
           group: group.group,
-          colour: isHighlighted ? FOCUS : NON_FOCUS,
+
           inflation: group.inflation[timelineYears],
           weighting,
+
+          colour: getColour(group.group, group.isDiscretionary, colourBy),
+
+          isHighlighted,
           isDiscretionary: group.isDiscretionary,
         }
       ];
@@ -152,9 +160,13 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     const bar = {
       name: groupName,
       group: groupName,
-      colour: isHighlighted ? FOCUS : NON_FOCUS,
+
       inflation,
       weighting: combinedWeighting,
+
+      colour: getColour(groupName, false, colourBy),
+
+      isHighlighted,
       isDiscretionary: false,
     };
 
@@ -177,11 +189,31 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       if (orderBy === 'group') {
         return b.group.localeCompare(a.group);
       }
+      if (orderBy === 'discretionary') {
+        if (b.isDiscretionary && !a.isDiscretionary) {
+          return 1;
+        }
+        if (!b.isDiscretionary && a.isDiscretionary) {
+          return -1;
+        }
+        return 0;
+      }
       return 0;
     })
     .filter(b => customisation.removedGroups.indexOf(b.name) === -1)
     .filter(b => b.weighting.toNumber() > 0);
 }
+
+const getColour = (name: string, isDiscretionary: boolean, colourBy: string) => {
+  if (colourBy === 'category') {
+    return COLOURS[name];
+  }
+  if (colourBy === 'discretionary') {
+    return isDiscretionary ? FOCUS : NON_FOCUS;
+  }
+
+  return NON_FOCUS;
+};
 
 const toPercentage = (x: string | number): Decimal => {
   return new Decimal(x).div(100);

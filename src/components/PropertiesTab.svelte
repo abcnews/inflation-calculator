@@ -54,6 +54,14 @@
       </Select>
 
       <Select
+        labelText="Colour Bars By"
+        bind:selected={$customisation.colourBy}
+      >
+        <SelectItem value="category" text="Category" />
+        <SelectItem value="discretionary" text="Discretionary" />
+      </Select>
+
+      <Select
         labelText="Order Bars By"
         bind:selected={$customisation.orderBy}
       >
@@ -61,6 +69,7 @@
         <SelectItem value="inflation" text="Inflation" />
         <SelectItem value="weighting" text="Weighting" />
         <SelectItem value="group" text="Category" />
+        <SelectItem value="discretionary" text="Discretionary" />
         <SelectItem value="default" text="Default" />
       </Select>
 
@@ -86,8 +95,12 @@
       />
 
       <Checkbox
-        labelText="Expand inflation (x-axis)"
-        bind:checked={$customisation.expandInflation}
+        labelText="Show Marimako"
+        bind:checked={$customisation.showMarimako}
+      />
+      <Checkbox
+        labelText="Show Inflation Breakdown"
+        bind:checked={$customisation.showInflationBreakdown}
       />
 
     </AccordionItem>

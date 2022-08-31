@@ -24,10 +24,14 @@ export const defaultCustomisation: Customisation = {
   timelineYears: 1,
   splitGroups: [],
   removedGroups: [],
-  expandInflation: true,
   highlightedGroups: [],
-  orderBy: 'area',
-  showInflationRate: true,
+
+  orderBy: 'category',
+  colourBy: 'category',
+
+  showMarimako: false,
+  showInflationBreakdown: false,
+
   housingProfile: 'renter',
   weightOverrides: {},
 };
