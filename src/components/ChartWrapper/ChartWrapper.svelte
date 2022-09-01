@@ -21,7 +21,7 @@
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
   $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $customisationStore));
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 35] : [-42, 80];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-15, 25] : [-42, 80];
 </script>
 
 <Chart

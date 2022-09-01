@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
   import { getContext } from 'svelte';
   import { fade } from 'svelte/transition';
 
   const { data, xGet, yGet, x, y, xScale, yScale } = getContext('LayerCake');
+  
+  const formatPercentage = (x): string => `${(x).toPrecision(2)}%`;
 
   // Toggle between 2D Bar chart and expanded weighted area chart
-  export let expandX;
-  export let showSecondColumn;
-  // export let showDiscretionary;
+  export let expandX: boolean;
+  export let showSecondColumn: boolean;
 
   let bars;
   $: {
@@ -39,7 +40,10 @@
         id: d.name,
         x: xVal,
         fill: d.colour,
-        text: `${d.name}`,
+        text: expandX ? `${d.name} (area ${formatPercentage($x(d) * $y(d) / 100)})` : `${d.name}`,
+
+        label: formatPercentage($y(d)),
+        labelCombined: formatPercentage(proportionOfTotal * 100),
 
         opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
 
@@ -64,29 +68,6 @@
     bars = bars.points;
     bars.sort((a, b) => a.id.localeCompare(b.id));
   }
-
-  function grow(_, {
-    delay = 0,
-    duration = 400,
-    width,
-    x
-  }) {
-    // Grow in the other direction when negative value
-    const zeroX = $xScale(0);
-    if (x !== zeroX) {
-      return {
-        delay,
-        duration,
-        css: t => `transform: translateX(${(1 - t) * (zeroX - width)}px); width: ${t * width}`
-      }
-    }
-
-    return {
-      delay,
-      duration,
-      css: t => `width: ${t * width}`
-    };
-  }
 </script>
 
 <g class="bars-group">
@@ -101,14 +82,34 @@
           fill={d.fill}
         ></rect>
 
-      {#if d.height > 8}
+      {#if d.height > 11}
+        <!-- Label inside the bar -->
+        {#if d.width > 19}
+          <text
+            out:fade
+            in:fade="{{ delay: 400 }}"
+            opacity={d.opacity}
+            stroke={'white'}
+            
+            style="
+              font-size: 12px;
+              transform: translate({d.width / 2}px, {(d.height / 2) + 6}px);
+              text-anchor: middle;
+            "
+          >
+            {d.label}
+          </text>
+        {/if}
+
+        <!-- Label to the right -->
         <text
           out:fade
           in:fade="{{ delay: 400 }}"
           opacity={d.opacity}
           stroke={d.fill}
           style="
-            transform: translate({d.width + 7}px, {(d.height / 2) + 4}px);
+            font-size: 12px;
+            transform: translate({d.width + 7}px, {(d.height / 2) + 6}px);
           "
         >
           {d.text}
@@ -118,21 +119,21 @@
 
     {#if showSecondColumn}
       <g class="weighted-bar" in:fade style="transform: translate({d.x}px, {d.y}px)">
-        <polygon
-          out:fade
-          in:fade="{{ delay: 400 }}"
-          points="
-            {d.width},0
-            {d.width},{d.height}
-            {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
-            {$xScale.range()[1] - d.width},{d.yCombined - d.y}
-          "
-          fill={d.fill}
-          opacity={Math.max(d.opacity - 0.7, 0.2)}
-        />
+        {#key `${d.width}-${d.height}-${d.yCombined}-${d.y}`}k
+          <polygon
+            out:fade
+            in:fade="{{ delay: 800 }}"
+            points="
+              {d.width},0
+              {d.width},{d.height}
+              {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
+              {$xScale.range()[1] - d.width},{d.yCombined - d.y}
+            "
+            fill={d.fill}
+            opacity={Math.max(d.opacity - 0.7, 0.2)}
+          />
+        {/key}
 
-        <!-- in:grow="{{ width:d.width, x: $xScale.range()[1] - d.width, delay: 400 }}"  -->
-        <!-- in:fade="{{ delay: 400 }}" -->
         <rect
           x={$xScale.range()[1] - d.width}
           y={d.yCombined - d.y}
@@ -141,6 +142,21 @@
           opacity={d.opacity}
           fill={d.fill}
         ></rect>
+
+        <!-- Label inside the bar -->
+        {#if d.heightCombined > 25}
+          <text
+            opacity={d.opacity}
+            stroke={'white'}
+            style="
+              font-size: 12px;
+              text-anchor: middle;
+              transform: translate({$xScale.range()[1] - d.width / 2}px, {d.yCombined - d.y + d.heightCombined / 2 + 6}px);
+            "
+          >
+            {d.labelCombined}
+          </text>
+        {/if}
       </g>
     {/if}
   {/each}
@@ -149,12 +165,18 @@
 <style lang="scss">
   .weighted-bar {
     transition: transform 800ms;
-    transition-delay: 400ms;
+    transition-delay: 800ms;
 
     rect, polygon {
-      transition: width 800ms, height 800ms, fill 800ms, x 800ms, y 800ms;
-      /* transition: all 800ms; */
-      transition-delay: 400ms;
+      transition: 
+        fill 200ms linear 0ms,
+        width 800ms linear 800ms,
+        height 800ms linear 800ms,
+        x 800ms linear 800ms,
+        y 800ms linear 800ms,
+        opacity 800ms linear 800ms;
+      /* transition-delay: 400ms; */
+      /* transition-duration: 800ms; */
     }
 
     text {
@@ -162,8 +184,8 @@
       font-size: 7pt;
       text-anchor: start;
 
-      transition: transform 800ms;
-      transition-delay: 400ms;
+      transition: transform 800ms linear, opacity 800ms;
+      transition-delay: 800ms;
     }
   }
 </style>
