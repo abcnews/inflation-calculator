@@ -40,10 +40,11 @@
         id: d.name,
         x: xVal,
         fill: d.colour,
-        text: expandX ? `${d.name} (area ${formatPercentage($x(d) * $y(d) / 100)})` : `${d.name}`,
+        name: d.name,
 
-        label: formatPercentage($y(d)),
-        labelCombined: formatPercentage(proportionOfTotal * 100),
+        areaLabel: formatPercentage($x(d) * $y(d) / 100),
+        labelY: formatPercentage($y(d)),
+        labelYCombined: formatPercentage(proportionOfTotal * 100),
 
         opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
 
@@ -82,38 +83,55 @@
           fill={d.fill}
         ></rect>
 
-      {#if d.height > 11}
-        <!-- Label inside the bar -->
-        {#if d.width > 19}
-          <text
-            out:fade
-            in:fade="{{ delay: 400 }}"
-            opacity={d.opacity}
-            stroke={'white'}
-            
-            style="
-              font-size: 12px;
-              transform: translate({d.width / 2}px, {(d.height / 2) + 6}px);
-              text-anchor: middle;
-            "
-          >
-            {d.label}
-          </text>
-        {/if}
-
-        <!-- Label to the right -->
+      <!-- Label in the centre -->
+      {#if d.width > 25 && expandX}
         <text
           out:fade
           in:fade="{{ delay: 400 }}"
           opacity={d.opacity}
-          stroke={d.fill}
+          stroke={'white'}
           style="
             font-size: 12px;
-            transform: translate({d.width + 7}px, {(d.height / 2) + 6}px);
+            transform: translate({d.width / 2}px, {(d.height / 2) + 4}px);
+            text-anchor: middle;
           "
         >
-          {d.text}
+          {d.areaLabel}
         </text>
+      {/if}
+
+      {#if d.height > 11}
+        {#key !d.x || d.x >= $xScale(0) ? d.labelY : d.name}
+          <!-- Label to the right -->
+          <text
+            out:fade
+            in:fade="{{ delay: 400 }}"
+            opacity={d.opacity}
+            stroke={d.fill}
+            style="
+              font-size: 12px;
+              transform: translate({d.width + 5}px, {(d.height / 2) + 4}px);
+              text-anchor: start;
+            "
+          >
+            {!d.x || d.x >= $xScale(0) ? d.name : d.labelY}
+          </text>
+
+          <!-- Label to the left -->
+          <text
+            out:fade
+            in:fade="{{ delay: 400 }}"
+            opacity={d.opacity}
+            stroke={d.fill}
+            style="
+              font-size: 12px;
+              transform: translate({-5}px, {(d.height / 2) + 4}px);
+              text-anchor: end;
+            "
+          >
+            {!d.x || d.x >= $xScale(0) ? d.labelY : d.name}
+          </text>
+        {/key}
       {/if}
     </g>
 
@@ -143,18 +161,18 @@
           fill={d.fill}
         ></rect>
 
-        <!-- Label inside the bar -->
+        <!-- Label to the right of the bar -->
         {#if d.heightCombined > 25}
           <text
             opacity={d.opacity}
-            stroke={'white'}
+            stroke={d.fill}
             style="
               font-size: 12px;
-              text-anchor: middle;
-              transform: translate({$xScale.range()[1] - d.width / 2}px, {d.yCombined - d.y + d.heightCombined / 2 + 6}px);
+              transform: translate({$xScale.range()[1] + 5}px, {d.yCombined - d.y + d.heightCombined / 2 + 6}px);
+              text-anchor: start;
             "
           >
-            {d.labelCombined}
+            {d.labelYCombined}
           </text>
         {/if}
       </g>
