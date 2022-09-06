@@ -5,6 +5,7 @@
   const { data, xGet, yGet, x, y, xScale, yScale } = getContext('LayerCake');
   
   const formatPercentage = (x): string => `${(x).toPrecision(2)}%`;
+  const formatDollars = (x): string => `$${(x).toPrecision(2)}`;
 
   // Toggle between 2D Bar chart and expanded weighted area chart
   export let expandX: boolean;
@@ -42,8 +43,11 @@
         fill: d.colour,
         name: d.name,
 
-        areaLabel: formatPercentage($x(d) * $y(d) / 100),
+        // areaLabel: formatPercentage($x(d) * $y(d) / 100),
+        areaLabel: formatPercentage(proportionOfTotal * 100),
         labelY: formatPercentage($y(d)),
+        // labelY: `${formatDollars($x(d))} (${formatPercentage($x(d))})`,
+        // labelYCombined: `${formatPercentage($x(d) * $y(d) / 100)} / $5.2 (${formatPercentage(proportionOfTotal * 100)})`,
         labelYCombined: formatPercentage(proportionOfTotal * 100),
 
         opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',

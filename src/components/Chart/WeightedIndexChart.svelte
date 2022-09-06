@@ -4,6 +4,7 @@
 
   import Bar from './Bar.svg.svelte';
   import AxisX from './AxisX.svelte';
+  import MarkerLine from './MarkerLine.svelte';
   // import AxisY from './AxisY.svelte';
 
   const xKey = 'inflation';
@@ -16,6 +17,7 @@
   export let showSecondColumn: boolean; 
 
   export let showDiscretionary: boolean;
+  export let markerLine: number;
 
   export let label = '';
   export let secondColumnLabel = '';
@@ -88,7 +90,12 @@
           />
         {/if}
 
+        {#if expandX}
+          <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} />
+        {/if}
+
         <Bar {expandX} {showSecondColumn} {showDiscretionary} />
+
       </Svg>
     </LayerCake>
   {/if}

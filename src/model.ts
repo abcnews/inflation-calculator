@@ -187,7 +187,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         return b.weighting.sub(a.weighting).toNumber();
       }
       if (orderBy === 'category') {
-        return b.group.localeCompare(a.group);
+        return -1 * b.group.localeCompare(a.group);
       }
       if (orderBy === 'discretionary') {
         if (b.isDiscretionary && !a.isDiscretionary) {

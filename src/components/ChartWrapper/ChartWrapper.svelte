@@ -21,7 +21,9 @@
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
   $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $customisationStore));
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-15, 25] : [-42, 80];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 20] : [-42, 80];
+  // TODO: Fact check 18.6
+  $: cpiLine = $customisationStore.timelineYears == 1 ? 6.1 : 18.6;
 </script>
 
 <Chart
@@ -31,6 +33,7 @@
   label="Your budget breakdown"
   secondColumnLabel="Your inflation breakdown (of {inflationOutput})"
   {xDomain}
+  markerLine={cpiLine}
   {width}
   {height}
 />

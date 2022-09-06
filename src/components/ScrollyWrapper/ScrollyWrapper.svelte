@@ -41,7 +41,7 @@
   >
     <ChartWrapper
       width={Math.min(width, 600)}
-      height={height * 0.6}
+      height={height * 0.8}
     />
   </Scrollyteller>
 {/if}
@@ -50,7 +50,7 @@
   /* Make the chart visible before the first panel of text */
   :global(.scrollyteller .content) {
     :global(.st-panel:first-child){
-      margin-top: 80vh;
+      margin-top: 90vh;
     }
   }
 </style>
