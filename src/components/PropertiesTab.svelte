@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { Decimal } from 'decimal.js-light';
   import Accordion from 'carbon-components-svelte/src/Accordion/Accordion.svelte';
   import AccordionItem from 'carbon-components-svelte/src/Accordion/AccordionItem.svelte';
   import MultiSelect from 'carbon-components-svelte/src/MultiSelect/MultiSelect.svelte';
   import Select from 'carbon-components-svelte/src/Select/Select.svelte';
   import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
 
+  import Slider from 'carbon-components-svelte/src/Slider/Slider.svelte';
   import Checkbox from 'carbon-components-svelte/src/Checkbox/Checkbox.svelte';
   // import NumberInput from 'carbon-components-svelte/src/NumberInput/NumberInput.svelte';
   // import TextInput from 'carbon-components-svelte/src/TextInput/TextInput.svelte';

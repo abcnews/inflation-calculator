@@ -3,11 +3,11 @@
   import { writable } from 'svelte/store';
   import { decode } from '@abcnews/base-36-props';
 
-  import { InflationData } from '../../types';
-  import { defaultCustomisation } from '../../constants';
+  import { InflationData } from '../types';
+  import { defaultCustomisation } from '../constants';
 
-  import Scrollyteller from '../Scrollyteller/Scrollyteller.svelte';
-  import ChartWrapper from '../ChartWrapper/ChartWrapper.svelte';
+  import Scrollyteller from './Scrollyteller/Scrollyteller.svelte';
+  import ChartWrapper from './ChartWrapper/ChartWrapper.svelte';
 
   export let indexData: InflationData;
   export let scrollyData: any;
@@ -41,7 +41,7 @@
   >
     <ChartWrapper
       width={Math.min(width, 600)}
-      height={height * 0.8}
+      height={height * 0.5}
     />
   </Scrollyteller>
 {/if}

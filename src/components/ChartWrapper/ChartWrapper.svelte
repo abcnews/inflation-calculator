@@ -3,7 +3,8 @@
   import { derived } from 'svelte/store';
   import { Decimal } from 'decimal.js-light';
 
-  import { calculateInflationRate, deriveChartData, Customisation } from '../../model';
+  import { calculateInflationRate, deriveChartData } from '../../model';
+  import { Customisation } from '../../types';
 
   import Chart from '../Chart/WeightedIndexChart.svelte';
 
@@ -30,7 +31,7 @@
   data={$outputStore}
   expandX={$customisationStore.showMarimako}
   showSecondColumn={$customisationStore.showInflationBreakdown}
-  label="Your budget breakdown"
+  label=""
   secondColumnLabel="Your inflation breakdown (of {inflationOutput})"
   {xDomain}
   markerLine={cpiLine}

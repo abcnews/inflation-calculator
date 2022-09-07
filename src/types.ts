@@ -12,7 +12,7 @@ export interface Customisation {
   splitGroups: string[];
   removedGroups: string[];
 
-  housingProfile: string;
+  housingProfile?: string;
 
   highlightedGroups: string[];
 

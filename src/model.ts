@@ -59,6 +59,9 @@ export function calculateInflationRate(data: InflationData, customisation: Custo
 }
 
 export function deriveChartData(data: InflationData, customisation: Customisation): WeightedBar[] {
+  if (Object.keys(data).length === 0) {
+    return [];
+  }
 
   const {
     index,
@@ -71,7 +74,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     housingProfile,
   } = customisation;
 
-  const housingProps = HOUSING_PROFILES[housingProfile];
+  const housingProps = housingProfile ? HOUSING_PROFILES[housingProfile] : {};
 
   // Apply the housing profile on top of the chart customisation
   const removedGroups = [...customisation.removedGroups, ...(housingProps?.removedGroups || [])];
@@ -92,9 +95,15 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const weightsAddedThroughOverrides = Object.keys(weightOverrides).reduce((total, k) => {
     const newWeight = weightOverrides[k];
     const existingWeight = allSubGroups.find(g => g.name === k)?.weights?.[index];
+
     if (!existingWeight) {
       throw new Error(`Trying to override weight for non-existent group: ${k}`);
     }
+
+    if (removedGroups.indexOf(k) > -1) {
+      return total;
+    }
+
     return total.add( newWeight.sub(existingWeight) );
   }, new Decimal(0));
 
@@ -119,7 +128,8 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         weighting = weightOverrides[expGroupName];
       } else {
         // Else, add (or subtract) the proportional amount of the extra weighting
-        const extraWeighting = totalWeightingRemoved.mul(weighting);
+        const proportionOfRemaining = weighting.div(remainingWeighting);
+        const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
         weighting = weighting.add(extraWeighting)
       }
 

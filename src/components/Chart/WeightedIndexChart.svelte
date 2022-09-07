@@ -2,7 +2,7 @@
   import { LayerCake, Svg } from 'layercake';
   import type { WeightedBar } from '../../model';
 
-  import Bar from './Bar.svg.svelte';
+  import Bars from './Bars.svg.svelte';
   import AxisX from './AxisX.svelte';
   import MarkerLine from './MarkerLine.svelte';
   // import AxisY from './AxisY.svelte';
@@ -57,6 +57,7 @@
   style="
     width: {width}px;
     height: {height}px;
+    padding-top: 50px;
     margin: auto;
   ">
 
@@ -94,7 +95,7 @@
           <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} />
         {/if}
 
-        <Bar {expandX} {showSecondColumn} {showDiscretionary} />
+        <Bars {expandX} {showSecondColumn} {showDiscretionary} />
 
       </Svg>
     </LayerCake>

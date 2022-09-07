@@ -89,7 +89,7 @@ function isPrimitive(obj: any): boolean {
     
       return {
         ...acc,
-        [inputName]: value,
+        [inputName]: String(value),
       };
     }, {});
 
