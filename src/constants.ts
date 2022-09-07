@@ -32,9 +32,7 @@ export const defaultCustomisation: Customisation = {
   showMarimako: false,
   showInflationBreakdown: false,
 
-  housingProfile: null, // 'renter',
-  weightOverrides: {
-    // 'Automotive Fuel': new Decimal(0.03),
-  },
+  housingProfile: undefined, // 'renter',
+  weightOverrides: {},
 };
 
