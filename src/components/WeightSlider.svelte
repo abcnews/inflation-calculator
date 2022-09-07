@@ -28,7 +28,12 @@
   $: inflationStore.set(indexData);
   
   // Create store for controlling the chart
-  const stateStore = writable<any>({ ...defaultCustomisation, weightOverrides: { [sliderField]: new Decimal(sliderDefault) } });
+  const stateStore = writable<any>({ ...defaultCustomisation, weightOverrides: {
+      'Automotive fuel': new Decimal(0.045),
+      'Tobacco': new Decimal(0.03),
+      // 'Food and non-alcoholic beverages': new Decimal(0.18),
+    }
+  });
   setContext('customisation', stateStore);
 
   export const outputStore = derived(
@@ -49,15 +54,39 @@
     contribution: d.weighting.mul(d.inflation).mul(100).toNumber(),
   }));
 
+  const updateWeighting = (field, value) => {
+    stateStore.set({
+      ...$stateStore,
+      weightOverrides: {
+        ...$stateStore.weightOverrides,
+        [field]: new Decimal(value / 100) }
+      })
+  }
 </script>
 
 <Slider
-  labelText="Proportion of budget spent on {sliderField}"
+  labelText="Proportion of budget spent on petrol"
   min={0}
   max={10}
   hideTextInput
-  value={$stateStore.weightOverrides[sliderField].toNumber()* 100}
-  on:change={e => stateStore.set({ ...$stateStore, weightOverrides: { [sliderField]: new Decimal(e.detail / 100) } })}
+  value={$stateStore.weightOverrides['Automotive fuel'].toNumber()* 100}
+  on:change={e => updateWeighting('Automotive fuel', e.detail)}
+/>
+<!-- <Slider -->
+<!--   labelText="Proportion of budget spent on food" -->
+<!--   min={0} -->
+<!--   max={10} -->
+<!--   hideTextInput -->
+<!--   value={$stateStore.weightOverrides['Food and non-alcoholic beverages'].toNumber()* 100} -->
+<!--   on:change={e => updateWeighting('Food and non-alcholic beverages', e.detail)} -->
+<!-- /> -->
+<Slider
+  labelText="Proportion of budget spent on tobacco"
+  min={0}
+  max={10}
+  hideTextInput
+  value={$stateStore.weightOverrides['Tobacco'].toNumber()* 100}
+  on:change={e => updateWeighting('Tobacco', e.detail)}
 />
 
 <div

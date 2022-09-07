@@ -37,7 +37,7 @@ Promise.all([
   const [indexData] = res;
 
   mountComponents('interactive-slider-petrol', WeightSlider, { indexData, sliderField: 'Automotive fuel', sliderDefault: 0.045 });
-  mountComponents('interactive-slider-vices', WeightSlider, { indexData, sliderField: 'Tobacco', sliderDefault: 0.03 });
+  // mountComponents('interactive-slider-vices', WeightSlider, { indexData, sliderField: 'Tobacco', sliderDefault: 0.03 });
 
   try {
     const scrollyData = loadScrollyteller('chart1', 'u-full', 'mark');
