@@ -41,16 +41,21 @@
   >
     <ChartWrapper
       width={Math.min(width, 600)}
-      height={height * 0.5}
+      height={height * 0.6}
     />
   </Scrollyteller>
 {/if}
 
 <style lang="scss">
-  /* Make the chart visible before the first panel of text */
-  :global(.scrollyteller .content) {
-    :global(.st-panel:first-child){
-      margin-top: 90vh;
+  @media only screen and (min-width: 1023px) {
+    :global(.scrollyteller .st-panel) {
+      margin-right: calc(30% - 24.75rem) !important;
+      width: 49.5rem !important;
+    }
+    :global(.scrollyteller > .graphic) {
+      padding: 2rem;
+      width: calc(100% - 35% - 24.75rem) !important;
+      overflow: visible !important;
     }
   }
 </style>

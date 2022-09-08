@@ -74,7 +74,7 @@
 
   {#if width && height}
     <LayerCake
-      padding={{ top: 30, bottom: 10, left: 30, right: 50 }}
+      padding={{ top: 30, bottom: 10, left: 20, right: 50 }}
       x={xKey}
       y={yKey}
       xDomain={_xDomain}

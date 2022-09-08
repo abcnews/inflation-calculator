@@ -78,9 +78,10 @@
     <Bar
       point={d}
       innerLabel={d.areaLabel}
-      rightLabel={!d.x || d.x >= $xScale(0) ? d.name : ''}
-      leftLabel={!d.x || d.x >= $xScale(0) ? '' : d.name}
+      rightLabel={d.name}
     />
+      <!-- rightLabel={!d.x || d.x >= $xScale(0) ? d.name : ''} -->
+      <!-- leftLabel={!d.x || d.x >= $xScale(0) ? '' : d.name} -->
 
     {#if showSecondColumn}
       <g class="weighted-bar" in:fade style="transform: translate({d.x}px, {d.y}px)">
