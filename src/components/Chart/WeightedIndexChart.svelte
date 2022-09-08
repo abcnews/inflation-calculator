@@ -74,7 +74,7 @@
 
   {#if width && height}
     <LayerCake
-      padding={{ top: 30, bottom: 10, left: 20, right: 50 }}
+      padding={{ top: 50, bottom: 10, left: 40, right: 50 }}
       x={xKey}
       y={yKey}
       xDomain={_xDomain}
@@ -87,12 +87,30 @@
             gridlines={false}
             baseline={true}
             snapTicks={true}
-            axisLabel={'Inflation (%)'}
+            axisLabel={'Price increase (%)'}
           />
         {/if}
 
+        <g style="transform: translate(-20px, -20px)">
+          <g style="transform: scale(0.7) translate(23px, -26px) rotate(180deg)">
+            <path
+              class="y-axis-arrow"
+              xmlns="http://www.w3.org/2000/svg"
+              d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
+            />
+          </g>
+          <text class="y-axis-label" style="transform: translate(-8px, 0px)">Proportion of budget</text>
+          <g style="transform: scale(0.7) translate(0px, 16px)">
+            <path
+              class="y-axis-arrow"
+              xmlns="http://www.w3.org/2000/svg"
+              d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
+            />
+          </g>
+        </g>
+
         {#if expandX}
-          <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} />
+          <!-- <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} /> -->
         {/if}
 
         <Bars {expandX} {showSecondColumn} {showDiscretionary} />
@@ -109,5 +127,14 @@
     justify-content: space-between;
     margin-bottom: -40px;
     font-family: ABCSans, Helvetica, sans-serif;
+  }
+  .y-axis-arrow {
+    fill: #aaa;
+  }
+  .y-axis-label {
+    font-family: ABCSans, Helvetica, sans-serif;
+    font-size: 12px;
+    fill: #666;
+    font-weight: 300;
   }
 </style>

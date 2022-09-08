@@ -81,19 +81,19 @@
     font-size: 0.725em;
     font-weight: 200;
     transition: transform 1s;
+    font-family: ABCSans, Helvetica, sans-serif;
   }
 
   .axis-label {
-    font-size: 1em;
-    font-weight: 300;
+    font-size: 12px;
     fill: #666;
     text-anchor: end;
+    font-family: ABCSans, Helvetica, sans-serif;
   }
 
   line,
   .tick line {
     stroke: #aaa;
-    stroke-dasharray: 2;
   }
 
   .tick text {

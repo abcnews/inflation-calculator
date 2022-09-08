@@ -65,7 +65,7 @@
   <text
     style="transform: translate({barWidth + 10}px, {$yScale(totalInflation) + 4}px)"
   >
-    {formatPercentage(totalInflation)} total inflation
+    Inflation = {formatPercentage(totalInflation)}
   </text>
   <line
     x1="{barWidth - 5}"

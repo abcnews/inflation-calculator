@@ -122,17 +122,18 @@
 
 
 <style lang="scss">
-  :global(.tobacco-slider) {
-    border: solid 2px #00297E;
+  :global(.tobacco-slider .bx--slider__thumb),
+  :global(.tobacco-slider .bx--slider__filled-track) {
+    background: #00297E;
   }
-  :global(.petrol-slider) {
-    border: solid 2px #A61268;
+  :global(.petrol-slider .bx--slider__thumb),
+  :global(.petrol-slider .bx--slider__filled-track) {
+    background: #A61268;
   }
 
   :global(.tobacco-slider),
   :global(.petrol-slider) {
     margin: 1rem;
-    padding: 1rem;
 
     :global(.bx--slider-container) {
       width: 100%;

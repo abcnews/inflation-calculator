@@ -31,7 +31,7 @@
 
       // Set the width to 1/3 of the canvas
       if (!expandX) {
-        xVal = $xScale.range()[0];
+        xVal = $xScale.range()[0] + 30;
         width = ($xScale.range()[1] - xVal) / 6;
       }
 

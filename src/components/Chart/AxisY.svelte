@@ -74,12 +74,14 @@
     stroke: #aaa;
   }
   .tick {
+    font-family: ABCSans, Helvetica, sans-serif;
     font-size: 0.725em;
     font-weight: 200;
     transition: transform 1s;
   }
 
   .axis-label {
+    font-family: ABCSans, Helvetica, sans-serif;
     font-size: 1em;
     font-weight: 300;
     fill: #666;
