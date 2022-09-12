@@ -26,7 +26,7 @@
   <ChartWrapper
     slot="figure"
     {width}
-    {height}
+    height={height}
   />
 
   <PropertiesTab slot="properties" />

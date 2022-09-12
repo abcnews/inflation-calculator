@@ -17,7 +17,7 @@
   export let showSecondColumn: boolean; 
 
   export let showDiscretionary: boolean;
-  export let markerLine: number;
+  // export let markerLine: number;
 
   export let label = '';
   export let secondColumnLabel = '';
