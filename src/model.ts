@@ -74,6 +74,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     housingProfile,
   } = customisation;
 
+  const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
   const housingProps = housingProfile ? HOUSING_PROFILES[housingProfile] : {};
 
   // Apply the housing profile on top of the chart customisation
@@ -81,7 +82,6 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const weightOverrides = {...customisation.weightOverrides, ...(housingProps?.weightOverrides || {})};
 
   // Collect the amount of weights to redistribute away from the `removedGroups`
-  const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
   const totalWeightingRemoved = removedGroups.reduce((acc, groupName) => {
     const subGroup = allSubGroups.find(g => g.name === groupName);
     if (!subGroup) {
@@ -107,7 +107,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     return total.add( newWeight.sub(existingWeight) );
   }, new Decimal(0));
 
-  const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved.add(weightsAddedThroughOverrides));
+  const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved.sub(weightsAddedThroughOverrides));
 
   const allBars = Object.keys(data).reduce((acc: WeightedBar[], groupName: string) => {
     // Split into expenditure groups
@@ -123,15 +123,16 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
         (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
 
       let weighting = group.weights[index];
+
+      // Use the override if its defined
       if (weightOverrides[expGroupName]) {
-        // Use the override if its defined
         weighting = weightOverrides[expGroupName];
-      } else {
-        // Else, add (or subtract) the proportional amount of the extra weighting
-        const proportionOfRemaining = weighting.div(remainingWeighting);
-        const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
-        weighting = weighting.add(extraWeighting)
-      }
+      } 
+
+      // Add (or subtract) the proportional amount of the extra weighting
+      const proportionOfRemaining = weighting.div(remainingWeighting);
+      const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
+      weighting = weighting.add(extraWeighting)
 
       return [
         ...acc,
