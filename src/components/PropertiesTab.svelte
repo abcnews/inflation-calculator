@@ -90,6 +90,14 @@
       />
 
       <MultiSelect
+        titleText="Hidden groups (but still taking up space)"
+        filterable
+        bind:selectedIds={$customisation.hiddenGroups}
+        items={[...allGroups, ...allSubGroups].map(g => ({ id: g, text: g }))}
+      />
+
+
+      <MultiSelect
         titleText="Highlighted groups"
         filterable
         bind:selectedIds={$customisation.highlightedGroups}

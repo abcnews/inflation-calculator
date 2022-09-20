@@ -35,6 +35,7 @@
   secondColumnLabel="Your inflation breakdown (of {inflationOutput})"
   {xDomain}
   markerLine={cpiLine}
+  hiddenGroups={$customisationStore.hiddenGroups}
   {width}
   {height}
 />

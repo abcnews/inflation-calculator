@@ -11,6 +11,7 @@
   // Toggle between 2D Bar chart and expanded weighted area chart
   export let expandX: boolean;
   export let showSecondColumn: boolean;
+  export let hiddenGroups: string[] = [];
 
   let bars;
   $: {
@@ -18,6 +19,10 @@
     const anyHighlighted = $data.reduce((acc, d) => acc || d.isHighlighted, false);
 
     bars = $data.reduce((acc, d) => {
+      // Skip hidden groups
+      if (hiddenGroups && hiddenGroups.indexOf(d.name) > -1) {
+        return acc;
+      }
 
       let width = $xGet(d);
       let xVal = $xScale(0);
@@ -51,14 +56,14 @@
         opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
 
         // 1 pixel of whitespace between bars
-        height: $yGet(d) - 1,
+        height: Math.max($yGet(d) - 1, 0),
         y: acc.y,
 
         yCombined: acc.yCombined,
         heightCombined: heightCombined - 1,
 
         // round up to 1 so there's a tiny sliver of bar when inflation=0 
-        width: (width || 1),
+        width: width > 1 ? width : 1,
       };
 
       return {

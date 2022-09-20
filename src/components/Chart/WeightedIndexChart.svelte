@@ -4,7 +4,7 @@
 
   import Bars from './Bars.svg.svelte';
   import AxisX from './AxisX.svelte';
-  import MarkerLine from './MarkerLine.svelte';
+  // import MarkerLine from './MarkerLine.svelte';
   // import AxisY from './AxisY.svelte';
 
   const xKey = 'inflation';
@@ -13,12 +13,15 @@
   export let data: WeightedBar[];
   export let xDomain: [number, number]; 
 
+  export let hiddenGroups: string[];
+
   export let expandX: boolean; 
   export let showSecondColumn: boolean; 
 
   export let showDiscretionary: boolean;
   // export let markerLine: number;
 
+  export let yAxisLabel = 'Proportion of budget';
   export let label = '';
   export let secondColumnLabel = '';
 
@@ -99,7 +102,7 @@
               d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
             />
           </g>
-          <text class="y-axis-label" style="transform: translate(-8px, 0px)">Proportion of budget</text>
+          <text class="y-axis-label" style="transform: translate(-8px, 0px)">{yAxisLabel}</text>
           <g style="transform: scale(0.7) translate(0px, 16px)">
             <path
               class="y-axis-arrow"
@@ -113,7 +116,7 @@
           <!-- <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} /> -->
         {/if}
 
-        <Bars {expandX} {showSecondColumn} {showDiscretionary} />
+        <Bars {expandX} {showSecondColumn} {showDiscretionary} {hiddenGroups} />
 
       </Svg>
     </LayerCake>

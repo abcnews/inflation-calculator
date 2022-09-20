@@ -11,6 +11,8 @@ export interface Customisation {
   weightOverrides: Record<string, Decimal>;
   splitGroups: string[];
   removedGroups: string[];
+  hiddenGroups: string[];
+
 
   housingProfile?: string;
 

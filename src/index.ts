@@ -9,7 +9,8 @@ import { loadScrollyteller } from './components/Scrollyteller';
 import { getStoreData } from './dataFetch';
 
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
-import WeightSlider from './components/WeightSlider.svelte';
+import Quiz from './components/Quiz.svelte';
+// import WeightSlider from './components/WeightSlider.svelte';
 
 let vizElem;
 
@@ -36,8 +37,10 @@ Promise.all([
 ]).then((res) => {
   const [indexData] = res;
 
-  mountComponents('interactive-slider-petrol', WeightSlider, { indexData, sliderField: 'Automotive fuel', sliderDefault: 0.045 });
+  // mountComponents('interactive-slider-petrol', WeightSlider, { indexData, sliderField: 'Automotive fuel', sliderDefault: 0.045 });
   // mountComponents('interactive-slider-vices', WeightSlider, { indexData, sliderField: 'Tobacco', sliderDefault: 0.03 });
+
+  mountComponents('interactive-quiz', Quiz, { indexData });
 
   try {
     const scrollyData = loadScrollyteller('chart1', 'u-full', 'mark');

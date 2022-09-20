@@ -25,6 +25,7 @@ export const defaultCustomisation: Customisation = {
   splitGroups: [],
   removedGroups: [],
   highlightedGroups: [],
+  hiddenGroups: [],
 
   orderBy: 'category',
   colourBy: 'category',
