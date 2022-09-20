@@ -18,6 +18,8 @@
     const totalArea = $data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
     const anyHighlighted = $data.reduce((acc, d) => acc || d.isHighlighted, false);
 
+    console.log($yScale.range());
+
     bars = $data.reduce((acc, d) => {
       // Skip hidden groups
       if (hiddenGroups && hiddenGroups.indexOf(d.name) > -1) {
@@ -42,6 +44,7 @@
 
       const proportionOfTotal = $x(d) * $y(d) / totalArea;
       const heightCombined = $yScale.range()[0] * proportionOfTotal;
+      const height = Math.max($yGet(d), 1);
 
       const point = {
         id: d.name,
@@ -56,8 +59,8 @@
         opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
 
         // 1 pixel of whitespace between bars
-        height: Math.max($yGet(d) - 1, 0),
-        y: acc.y,
+        height: height - 1,
+        y: acc.y - height,
 
         yCombined: acc.yCombined,
         heightCombined: heightCombined - 1,
@@ -67,11 +70,11 @@
       };
 
       return {
-        y: acc.y + $yGet(d),
+        y: acc.y - height, 
         yCombined: acc.yCombined + heightCombined,
         points: [...acc.points, point],
       };
-    }, { y: 0, yCombined: 0, points: [] });
+    }, { y: $yScale.range()[0], yCombined: 0, points: [] });
 
     bars = bars.points;
     bars.sort((a, b) => a.id.localeCompare(b.id));
