@@ -217,6 +217,12 @@
   };
 
   let width;
+  $: {
+    if (lastAnswered === 3) {
+      const quizRoot = document.querySelector('#interactive-quiz');
+      quizRoot.classList.add('finished'); // This unhides the rest of the article
+    }
+  }
 </script>
 
 <div bind:clientWidth={width}>
@@ -236,6 +242,7 @@
   <Select
     labelText={question.text}
     on:change={e => answerQuestion(e.detail, question, i)}
+    disabled={i > lastAnswered + 1}
   >
     <SelectItem text={""} disabled />
     {#each question.choices as choice}
@@ -246,10 +253,16 @@
 
 {#if lastAnswered === 3}
   <p class="result">Your personal inflation rate is {inflationOutput}. That's {inflationDiff} lower than the headline figure.</p>
+{:else}
+  <p class="result">To continue reading, complete the quiz above.</p>
 {/if}
 
 
 <style lang="scss">
+  :global(#interactive-quiz:not(.finished) ~ *) {
+    display: none;
+  }
+
   :global(.bx--select) {
     padding: 0.3rem;
   }
