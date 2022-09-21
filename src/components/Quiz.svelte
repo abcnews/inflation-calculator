@@ -163,7 +163,7 @@
 
     // Do you rent or own?
     if (question.id === 'housing') {
-      hiddenGroups = hiddenGroups.filter(g => g !== 'Housing');
+      hiddenGroups = hiddenGroups.filter(g => g !== 'Housing' && g != 'Insurance and financial services');
 
       if (answer === 'Rent') {
         housingProfile = 'renter';

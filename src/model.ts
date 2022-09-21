@@ -134,6 +134,14 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
       weighting = weighting.add(extraWeighting)
 
+      // console.log({
+      //   proportionOfRemaining: proportionOfRemaining.toNumber(),
+      //   remainingWeighting: remainingWeighting.toNumber(),
+      //   extraWeighting: extraWeighting.toNumber(),
+      // });
+      //
+      // console.log(group.name, weighting.toNumber());
+
       return [
         ...acc,
         {

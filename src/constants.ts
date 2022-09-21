@@ -23,7 +23,9 @@ export const defaultCustomisation: Customisation = {
   index: 'employed',
   timelineYears: 1,
   splitGroups: [],
+
   removedGroups: [],
+
   highlightedGroups: [],
   hiddenGroups: [],
 
