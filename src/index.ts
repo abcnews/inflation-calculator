@@ -1,6 +1,7 @@
 import acto from '@abcnews/alternating-case-to-object';
 import type { SvelteComponent } from 'svelte';
 
+import { proxy } from '@abcnews/dev-proxy';
 import { whenDOMReady, whenOdysseyLoaded } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
@@ -34,6 +35,7 @@ const mountComponents = (name: string, Component: typeof SvelteComponent, props?
 Promise.all([
   getStoreData(),
   whenOdysseyLoaded,
+  proxy('inflation'),
 ]).then((res) => {
   const [indexData] = res;
 
