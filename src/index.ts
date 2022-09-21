@@ -35,7 +35,7 @@ const mountComponents = (name: string, Component: typeof SvelteComponent, props?
 Promise.all([
   getStoreData(),
   whenOdysseyLoaded,
-  proxy('inflation'),
+  proxy('inflation-calculator'),
 ]).then((res) => {
   const [indexData] = res;
 
