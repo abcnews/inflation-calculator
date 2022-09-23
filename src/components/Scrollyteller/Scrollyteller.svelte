@@ -44,11 +44,15 @@
 
 	const getScrollingPos = () => {
 		const boundingRect = scrollytellerRef.getBoundingClientRect();
+
+    if (
+      boundingRect.top > 0 ||
+      (boundingRect.height === 0 && boundingRect.width === 0)
+    ) {
+			return ScrollPositions.ABOVE;
+		}
 		if (boundingRect.bottom - window.innerHeight < 0) {
 			return ScrollPositions.BELOW;
-		}
-		if (boundingRect.top > 0) {
-			return ScrollPositions.ABOVE;
 		}
 		return ScrollPositions.FULL;
 	};

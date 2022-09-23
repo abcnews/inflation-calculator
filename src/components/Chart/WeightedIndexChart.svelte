@@ -10,6 +10,7 @@
   const xKey = 'inflation';
   const yKey = 'weighting';
 
+  export let padding= { top: 50, bottom: 10, left: 40, right: 50 };
   export let data: WeightedBar[];
   export let xDomain: [number, number]; 
 
@@ -18,10 +19,12 @@
   export let expandX: boolean; 
   export let showSecondColumn: boolean; 
 
+  export let showLabel = true;
   export let showDiscretionary: boolean;
   // export let markerLine: number;
 
   export let yAxisLabel = 'Proportion of budget';
+  export let xAxisLabel = 'Price increase (%)';
   export let label = '';
   export let secondColumnLabel = '';
 
@@ -38,7 +41,7 @@
 
   let _xDomain: [number, number];
   $: {
-    _xDomain = xDomain;
+    _xDomain = xDomain || [0, 0];
 
     // Ensure the passed in domain isn't smaller than the bars
     const xMax = processedData.reduce((x, d) => Math.max(x, d[xKey]), 0);
@@ -77,7 +80,7 @@
 
   {#if width && height}
     <LayerCake
-      padding={{ top: 50, bottom: 10, left: 40, right: 50 }}
+      {padding}
       x={xKey}
       y={yKey}
       xDomain={_xDomain}
@@ -85,7 +88,7 @@
       data={processedData}
     >
       <Svg>
-        {#if expandX}
+        {#if expandX && xAxisLabel}
           <AxisX
             gridlines={false}
             baseline={true}
@@ -94,29 +97,31 @@
           />
         {/if}
 
-        <g style="transform: translate(-20px, -20px)">
-          <g style="transform: scale(0.7) translate(23px, -26px) rotate(180deg)">
-            <path
-              class="y-axis-arrow"
-              xmlns="http://www.w3.org/2000/svg"
-              d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
-            />
+        {#if yAxisLabel}
+          <g style="transform: translate(-20px, -20px)">
+            <g style="transform: scale(0.7) translate(23px, -26px) rotate(180deg)">
+              <path
+                class="y-axis-arrow"
+                xmlns="http://www.w3.org/2000/svg"
+                d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
+              />
+            </g>
+            <text class="y-axis-label" style="transform: translate(-8px, 0px)">{yAxisLabel}</text>
+            <g style="transform: scale(0.7) translate(0px, 16px)">
+              <path
+                class="y-axis-arrow"
+                xmlns="http://www.w3.org/2000/svg"
+                d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
+              />
+            </g>
           </g>
-          <text class="y-axis-label" style="transform: translate(-8px, 0px)">{yAxisLabel}</text>
-          <g style="transform: scale(0.7) translate(0px, 16px)">
-            <path
-              class="y-axis-arrow"
-              xmlns="http://www.w3.org/2000/svg"
-              d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
-            />
-          </g>
-        </g>
+        {/if}
 
         {#if expandX}
           <!-- <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} /> -->
         {/if}
 
-        <Bars {expandX} {showSecondColumn} {showDiscretionary} {hiddenGroups} />
+        <Bars {expandX} {showSecondColumn} {showLabel} {showDiscretionary} {hiddenGroups} />
 
       </Svg>
     </LayerCake>

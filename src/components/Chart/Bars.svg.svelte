@@ -12,13 +12,12 @@
   export let expandX: boolean;
   export let showSecondColumn: boolean;
   export let hiddenGroups: string[] = [];
+  export let showLabel = true;
 
   let bars;
   $: {
     const totalArea = $data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
     const anyHighlighted = $data.reduce((acc, d) => acc || d.isHighlighted, false);
-
-    console.log($yScale.range());
 
     bars = $data.reduce((acc, d) => {
       // Skip hidden groups
@@ -85,8 +84,8 @@
   {#each bars as d (d.id)}
     <Bar
       point={d}
-      innerLabel={d.areaLabel}
-      rightLabel={d.name}
+      innerLabel={showLabel && d.areaLabel}
+      rightLabel={showLabel && d.name}
     />
       <!-- rightLabel={!d.x || d.x >= $xScale(0) ? d.name : ''} -->
       <!-- leftLabel={!d.x || d.x >= $xScale(0) ? '' : d.name} -->

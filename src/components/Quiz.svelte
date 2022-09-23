@@ -27,6 +27,8 @@
   // Create store for controlling the chart
   const stateStore = writable<any>({ ...defaultCustomisation,
     orderBy: 'area',
+    index: 'cpi',
+    removedGroups: ['New dwelling purchase by owner-occupiers'],
   });
   setContext('customisation', stateStore);
 
@@ -59,6 +61,25 @@
   // }
 
   let QUESTIONS = [
+    // {
+    //   id: 'income',
+    //   text: "Where do you get most of your income?",
+    //   answered: false,
+    //   choices: [
+    //     {
+    //       label: "Salary / wages",
+    //     },
+    //     {
+    //       label: "Age pension",
+    //     },
+    //     {
+    //       label: "Superannuation",
+    //     },
+    //     {
+    //       label: "Other govt. payments",
+    //     },
+    //   ],
+    // },
     {
       id: 'drive',
       text: "Do you drive?",
@@ -74,7 +95,7 @@
     },
     {
       id: 'housing',
-      text: "Do you rent or own?",
+      text: "Do you rent or own your home?",
       answered: false,
       choices: [
         {
@@ -107,25 +128,6 @@
         },
       ],
     },
-    {
-      id: 'income',
-      text: "Where do you get most of your income? (This lets us roughly estimate the rest)",
-      answered: false,
-      choices: [
-        {
-          label: "Salary / wages",
-        },
-        {
-          label: "Age pension",
-        },
-        {
-          label: "Superannuation",
-        },
-        {
-          label: "Other govt. payments",
-        },
-      ],
-    }
   ];
 
   let hiddenGroups = [
@@ -178,6 +180,7 @@
 
     // Do you drink or smoke?
     if (question.id === 'vices') {
+      hiddenGroups = [];
       hiddenGroups = hiddenGroups.filter(g => g !== 'Alcohol and tobacco');
       removedGroups = removedGroups.filter(g => g !== 'Tobacco' && g !== 'Wine' && g !== 'Spirits' && g !== 'Beer');
 
@@ -193,7 +196,6 @@
     }
 
     if (question.id === 'income') {
-      hiddenGroups = [];
       if (answer === 'Salary / wages') {
         index = 'employed';
       }
@@ -216,27 +218,17 @@
     });
   };
 
+  $: isFinished = lastAnswered === 2;
+
   let width;
   $: {
-    if (lastAnswered === 3) {
+    if (isFinished) {
       const quizRoot = document.querySelector('#interactive-quiz');
       quizRoot.classList.add('finished'); // This unhides the rest of the article
     }
   }
 </script>
 
-<div bind:clientWidth={width}>
-  <WeightedIndexChart
-    data={$outputStore}
-    hiddenGroups={hiddenGroups}
-    xDomain={[-5, 20]}
-    yAxisLabel="Your budget breakdown"
-    expandX={false}
-    showSecondColumn={false}
-    width={width}
-    height={500}
-  />
-</div>
 
 {#each QUESTIONS as question, i}
   <Select
@@ -251,8 +243,24 @@
   </Select>
 {/each}
 
-{#if lastAnswered === 3}
-  <p class="result">Your personal inflation rate is {inflationOutput}. That's {inflationDiff} lower than the headline figure.</p>
+{#if isFinished}
+  <p class="result">We've estimated that your personal inflation rate is {inflationOutput}. That's {inflationDiff} lower than the headline figure.</p>
+
+  <!-- <div bind:clientWidth={width}> -->
+  <!--   <WeightedIndexChart -->
+  <!--     data={$outputStore} -->
+  <!--     padding={{ top: 20, bottom: 0, left: 0, right: 0 }} -->
+  <!--     hiddenGroups={hiddenGroups} -->
+  <!--     yAxisLabel="" -->
+  <!--     xAxisLabel="" -->
+  <!--     expandX={true} -->
+  <!--     showLabel={false} -->
+  <!--     showSecondColumn={false} -->
+  <!--     width={width} -->
+  <!--     height={250} -->
+  <!--   /> -->
+  <!-- </div> -->
+
 {:else}
   <p class="result">To continue reading, complete the quiz above.</p>
 {/if}

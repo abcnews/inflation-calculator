@@ -197,16 +197,16 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       if (orderBy === 'area') {
         const bv = b.inflation.mul(b.weighting)
         const av = a.inflation.mul(a.weighting);
-        return bv.sub(av).toNumber();
+        return av.sub(bv).toNumber();
       }
       if (orderBy === 'inflation') {
-        return b.inflation.sub(a.inflation).toNumber();
+        return a.inflation.sub(b.inflation).toNumber();
       }
       if (orderBy === 'weighting') {
-        return b.weighting.sub(a.weighting).toNumber();
+        return a.weighting.sub(b.weighting).toNumber();
       }
       if (orderBy === 'category') {
-        return -1 * b.group.localeCompare(a.group);
+        return -1 * a.group.localeCompare(b.group);
       }
       if (orderBy === 'discretionary') {
         if (b.isDiscretionary && !a.isDiscretionary) {
