@@ -6,7 +6,7 @@
   }
 
   const MARKERS: Marker[] = [
-    { label: 'Standalone graphic marker', note: '', prefix: 'scatter' },
+    // { label: 'Standalone graphic marker', note: '', prefix: 'scatter' },
     {
       label: 'Scrollyteller opener',
       note: `If you're placing multiple scrollytellers in a single story, each must have a unique NAME.`,
@@ -25,11 +25,8 @@
   import CodeSnippet from 'carbon-components-svelte/src/CodeSnippet/CodeSnippet.svelte';
   import InlineNotification from 'carbon-components-svelte/src/Notification/InlineNotification.svelte';
 
-  // import type { GraphStore } from '../store';
-  // import { alternatingCaseToPartialGraph, graphToAlternatingCase } from '../lib/encode';
-  // import { generateFallback } from '../lib/fallbacks';
-
   export let storeName: string;
+  export let stateDiff: any;
 
   let store = getContext<any>(storeName);
 
@@ -46,7 +43,7 @@
   $: markersData = MARKERS.map(({ label, note, prefix }) => ({
     label,
     note,
-    text: `#${prefix}STATE${encode($store)}`
+    text: `#${prefix}STATE${encode(stateDiff)}`
   }));
 </script>
 

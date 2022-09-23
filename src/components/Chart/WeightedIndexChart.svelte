@@ -17,16 +17,13 @@
   export let hiddenGroups: string[];
 
   export let expandX: boolean; 
-  export let showSecondColumn: boolean; 
 
   export let showLabel = true;
   export let showDiscretionary: boolean;
-  // export let markerLine: number;
 
   export let yAxisLabel = 'Proportion of budget';
   export let xAxisLabel = 'Price increase (%)';
   export let label = '';
-  export let secondColumnLabel = '';
 
   export let width: number;
   export let height: number;
@@ -72,10 +69,6 @@
     style="padding-left: 30px; padding-right: 50px;"
    >
     <h6>{label}</h6>
-
-    {#if showSecondColumn}
-      <h6>{secondColumnLabel}</h6>
-    {/if}
   </div>
 
   {#if width && height}
@@ -117,11 +110,7 @@
           </g>
         {/if}
 
-        {#if expandX}
-          <!-- <MarkerLine label="Headline inflation ({markerLine}%)" {markerLine} /> -->
-        {/if}
-
-        <Bars {expandX} {showSecondColumn} {showLabel} {showDiscretionary} {hiddenGroups} />
+        <Bars {expandX} showSecondColumn={false} {showLabel} {showDiscretionary} {hiddenGroups} />
 
       </Svg>
     </LayerCake>

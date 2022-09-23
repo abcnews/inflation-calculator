@@ -3,13 +3,14 @@
   import { writable } from 'svelte/store';
   import { decode } from '@abcnews/base-36-props';
 
-  import { InflationData } from '../types';
+  import { InflationData, Customisation } from '../types';
   import { defaultCustomisation } from '../constants';
 
   import Scrollyteller from './Scrollyteller/Scrollyteller.svelte';
   import ChartWrapper from './ChartWrapper/ChartWrapper.svelte';
 
   export let indexData: InflationData;
+  export let customisation: Customisation;
   export let scrollyData: any;
 
   // Create store with the latest inflation data
@@ -18,23 +19,90 @@
   $: inflationStore.set(indexData);
 
   // Create store for controlling the chart
-  // TODO: Impose personalisation controls over this
   const stateStore = writable<any>({ ...defaultCustomisation });
   setContext('customisation', stateStore);
 
-
   let updateState = ((marker: any) => {
     if (marker.state) {
-      const state = decode(marker.state);
-      stateStore.set({ ...defaultCustomisation, ...state });
+      const state: Partial<Customisation> = decode(marker.state);
+
+      if (state.applyPersonalisation) {
+        // console.log(state, customisation);
+
+        // These are the only two properties modified by the quiz.
+        const removedGroups = [...customisation.removedGroups, ...(state.removedGroups || [])];
+        const housingProfile = customisation.housingProfile || state.housingProfile;
+
+        stateStore.set({ ...defaultCustomisation, ...state, removedGroups, housingProfile });
+      } else {
+        stateStore.set({ ...defaultCustomisation, ...state });
+      }
     }
   });
+
+
+  $: {
+    const doesDrive = customisation.removedGroups.indexOf('Motor vehicles') === -1;
+    const isRenter = customisation.housingProfile === 'renter';
+    const hasMortgage = customisation.housingProfile === 'mortgage';
+
+    const templatedPanels = document.querySelectorAll('.st-panel .templated');
+    for (const panel of Array.from(templatedPanels || [])) {
+      let text = panel.getAttribute('data-template') || '';
+
+      if (doesDrive) {
+        text = text.replace(/{{drive:([^}]*)}}/, '$1');
+        text = text.replace(/{{nodrive:([^}]*)}}/, '');
+      } else {
+        text = text.replace(/{{nodrive:([^}]*)}}/, '$1');
+        text = text.replace(/{{drive:([^}]*)}}/, '');
+      }
+
+      if (isRenter) {
+        text = text.replace(/{{renter:([^}]*)}}/, '$1');
+      } else if (hasMortgage) {
+        text = text.replace(/{{mortgage:([^}]*)}}/, '$1');
+      } else {
+        text = text.replace(/{{outright:([^}]*)}}/, '$1');
+      }
+
+      // Remove the leftover templates
+      text = text.replaceAll(/{{([^}]*)}}/g, '');
+
+      panel.textContent = text;
+    }
+  }
+
+  const preprocessPanels = (panels) => {
+    if (!panels) {
+      return [];
+    }
+
+    // Reverse engineer the answers to the quiz
+
+    return panels.map(p => {
+      return {
+        ...p,
+        nodes: p.nodes.map(n => {
+          // No template
+          let text = n.getAttribute('data-template') || n.textContent;
+          if (text.indexOf('{{') === -1) {
+            return n;
+          }
+
+          n.classList.add('templated');
+          n.setAttribute('data-template', text);
+          return n;
+        }),
+      };
+    });
+  };
 
 </script>
 
 {#if !!scrollyData}
   <Scrollyteller
-    panels={scrollyData.panels}
+    panels={preprocessPanels(scrollyData.panels)}
     onMarker={updateState}
     let:height={height}
     let:width={width}

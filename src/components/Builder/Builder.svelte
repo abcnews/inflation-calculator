@@ -71,15 +71,15 @@
     }
 
     return true;
-}
+  }
 
-//check if value is primitive
-function isPrimitive(obj: any): boolean {
-    return (obj !== Object(obj));
-}
+  //check if value is primitive
+  function isPrimitive(obj: any): boolean {
+      return (obj !== Object(obj));
+  }
 
-  const saveStateToUrl = (state: any) => {
-    const stateDiffToSave = Object.keys(state).reduce((acc, inputName) => {
+  const stateDiff = (state: any) => {
+    return Object.keys(state).reduce((acc, inputName) => {
       const value = state[inputName];
 
       // We never export defaults
@@ -89,9 +89,12 @@ function isPrimitive(obj: any): boolean {
     
       return {
         ...acc,
-        [inputName]: String(value),
+        [inputName]: value,
       };
     }, {});
+  }
+  const saveStateToUrl = (state: any) => {
+    const stateDiffToSave = stateDiff(state);
 
     let stateStr = `?state=${encode(stateDiffToSave)}`;
     if (Object.keys(stateDiffToSave).length === 0) {
@@ -127,7 +130,7 @@ function isPrimitive(obj: any): boolean {
       <Tab label="Markers" />
       <svelte:fragment slot="content">
         <TabContent><slot name="properties" /></TabContent>
-        <TabContent><MarkersTab {storeName} /></TabContent>
+        <TabContent><MarkersTab {storeName} stateDiff={stateDiff($stateStore)} /></TabContent>
       </svelte:fragment>
     </Tabs>
   </aside>

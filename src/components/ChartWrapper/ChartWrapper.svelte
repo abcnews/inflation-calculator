@@ -1,9 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { derived } from 'svelte/store';
-  import { Decimal } from 'decimal.js-light';
 
-  import { calculateInflationRate, deriveChartData } from '../../model';
+  import { deriveChartData } from '../../model';
   import { Customisation } from '../../types';
 
   import Chart from '../Chart/WeightedIndexChart.svelte';
@@ -19,23 +18,17 @@
     ([inflationData, customisation]) => deriveChartData(inflationData as any, customisation as Customisation)
   );
 
-  const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
-  $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $customisationStore));
+  // $: console.log($customisationStore);
 
   $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 20] : [-42, 80];
-  // TODO: Fact check 18.6
-  $: cpiLine = $customisationStore.timelineYears == 1 ? 6.1 : 18.6;
 </script>
 
 <Chart
   data={$outputStore}
   expandX={$customisationStore.showMarimako}
-  showSecondColumn={$customisationStore.showInflationBreakdown}
   label=""
-  secondColumnLabel="Your inflation breakdown (of {inflationOutput})"
-  {xDomain}
-  markerLine={cpiLine}
   hiddenGroups={$customisationStore.hiddenGroups}
+  {xDomain}
   {width}
   {height}
 />

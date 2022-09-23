@@ -11,9 +11,8 @@ import { getStoreData } from './dataFetch';
 
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import Quiz from './components/Quiz.svelte';
-// import WeightSlider from './components/WeightSlider.svelte';
 
-let vizElem;
+const scrollyElems: any[] = [];
 
 let incomeIndex = 'employed';
 let housingProfile = 'renter'; // renter | mortgage | outright
@@ -22,6 +21,8 @@ let housingProfile = 'renter'; // renter | mortgage | outright
 // const getUpdatedIndex = (indexData) => {
 //   return indexData[incomeAnswer];
 // };
+
+let customisation = {};
 
 const mountComponents = (name: string, Component: typeof SvelteComponent, props?: any) =>
   selectMounts(name).forEach(
@@ -39,20 +40,24 @@ Promise.all([
 ]).then((res) => {
   const [indexData] = res;
 
-  // mountComponents('interactive-slider-petrol', WeightSlider, { indexData, sliderField: 'Automotive fuel', sliderDefault: 0.045 });
-  // mountComponents('interactive-slider-vices', WeightSlider, { indexData, sliderField: 'Tobacco', sliderDefault: 0.03 });
+  const onCustomisationChange = (customisationChange) => {
+    customisation = customisationChange;
+    for (const elem of scrollyElems) {
+      elem.$set({ customisation });
+    }
+  };
 
-  mountComponents('interactive-quiz', Quiz, { indexData });
+  mountComponents('interactive-quiz', Quiz, { indexData, onCustomisationChange });
 
   try {
     const scrollyData = loadScrollyteller('chart1', 'u-full', 'mark');
     const appMountEl = scrollyData.mountNode;
 
     if (appMountEl) {
-      new ScrollyWrapper({
+      scrollyElems.push(new ScrollyWrapper({
         target: appMountEl,
-        props: { scrollyData, indexData, housingProfile }
-      });
+        props: { scrollyData, indexData, customisation }
+      }));
     }
   } catch (e) {
     console.log(e);
@@ -63,10 +68,10 @@ Promise.all([
     const appMountEl = scrollyData.mountNode;
 
     if (appMountEl) {
-      new ScrollyWrapper({
+      scrollyElems.push(new ScrollyWrapper({
         target: appMountEl,
-        props: { scrollyData, indexData, housingProfile }
-      });
+        props: { scrollyData, indexData, customisation }
+      }));
     }
   } catch (e) {
     console.log(e);

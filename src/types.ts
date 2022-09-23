@@ -13,9 +13,9 @@ export interface Customisation {
   removedGroups: string[];
   hiddenGroups: string[];
 
+  zoomedInGroups: string[];
 
   housingProfile?: string;
-
   highlightedGroups: string[];
 
   orderBy: string;
@@ -23,6 +23,7 @@ export interface Customisation {
 
   showMarimako: boolean;
   showInflationBreakdown: boolean;
+  applyPersonalisation: boolean;
 
   // showDiscretionary: boolean;
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+  import type { Action } from 'svelte/action';
 	import type { PanelRef, PanelDefinition } from './types';
 
 	export let props: PanelDefinition;
@@ -16,13 +17,23 @@
       postprocessPanel(panelRef);
     }
 	});
+
+  const children: Action<Element, Node[]> = (el, chn) => {
+    chn.forEach((node) => el.appendChild(node));
+
+    return {
+      destroy() {
+        chn.forEach((node) => el.removeChild(node));
+      }
+    };
+  };
 </script>
 
-<div class={`st-panel ${align || ''} ${panelClass || ''}`} bind:this={panelRef}>
-  {#each nodes as node}
-    {@html node.outerHTML}
-  {/each}
-</div>
+<div
+	class={`st-panel ${align || ''} ${panelClass || ''}`}
+	bind:this={panelRef}
+	use:children={nodes}
+/>
 
 <style lang="scss">
   $breakpoint: 61.25rem;

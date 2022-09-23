@@ -71,6 +71,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     orderBy,
     colourBy,
 
+    zoomedInGroups,
     housingProfile,
   } = customisation;
 
@@ -78,7 +79,12 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const housingProps = housingProfile ? HOUSING_PROFILES[housingProfile] : {};
 
   // Apply the housing profile on top of the chart customisation
-  const removedGroups = [...customisation.removedGroups, ...(housingProps?.removedGroups || [])];
+  const removedGroupsByZooming = zoomedInGroups.length ? allSubGroups.filter(g => zoomedInGroups.indexOf(g.group) === -1) : [];
+  const removedGroups = [
+    ...customisation.removedGroups,
+    ...(housingProps?.removedGroups || []),
+    ...removedGroupsByZooming.map(g => g.name)
+  ];
   const weightOverrides = {...customisation.weightOverrides, ...(housingProps?.weightOverrides || {})};
 
   // Collect the amount of weights to redistribute away from the `removedGroups`

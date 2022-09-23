@@ -1,6 +1,8 @@
 import { Decimal } from 'decimal.js-light';
 import { Customisation } from './types';
 
+export const CPI = new Decimal(0.061);
+
 export const HOUSING_PROFILES = {
   'renter': {
     weightOverrides: {
@@ -20,11 +22,14 @@ export const HOUSING_PROFILES = {
 };
 
 export const defaultCustomisation: Customisation = {
-  index: 'employed',
+  index: 'cpi',
+  housingProfile: undefined, // 'renter',
+
   timelineYears: 1,
   splitGroups: [],
 
   removedGroups: [],
+  zoomedInGroups: [],
 
   highlightedGroups: [],
   hiddenGroups: [],
@@ -35,7 +40,8 @@ export const defaultCustomisation: Customisation = {
   showMarimako: false,
   showInflationBreakdown: false,
 
-  housingProfile: undefined, // 'renter',
+  applyPersonalisation: false,
+
   weightOverrides: {},
 };
 

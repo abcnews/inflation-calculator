@@ -1,9 +1,5 @@
 <script lang="ts">
-  import { setContext } from 'svelte';
-  import { derived, writable } from 'svelte/store';
   import { Decimal } from 'decimal.js-light';
-
-  import WeightedIndexChart from './Chart/WeightedIndexChart.svelte';
 
   import Select from 'carbon-components-svelte/src/Select/Select.svelte';
   import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
@@ -12,74 +8,26 @@
   import 'carbon-components/scss/globals/scss/_css--body.scss';
   import 'carbon-components/scss/globals/scss/_css--helpers.scss';
 
-  import { calculateInflationRate, deriveChartData } from '../model';
-  import { InflationData, Customisation } from '../types';
-
-  import { defaultCustomisation } from '../constants';
+  import { defaultCustomisation, CPI } from '../constants';
+  import { calculateInflationRate } from '../model';
+  import { InflationData } from '../types';
 
   export let indexData: InflationData;
+  export let onCustomisationChange = (x) => x;
 
-  // Create store with the latest inflation data
-  const inflationStore = writable<InflationData>({});
-  setContext('inflation-data', inflationStore);
-  $: inflationStore.set(indexData);
-  
-  // Create store for controlling the chart
-  const stateStore = writable<any>({ ...defaultCustomisation,
-    orderBy: 'area',
-    index: 'cpi',
+  let customisation = {
     removedGroups: ['New dwelling purchase by owner-occupiers'],
-  });
-  setContext('customisation', stateStore);
+    housingProfile: '',
+  };
 
-  export const outputStore = derived(
-    [inflationStore, stateStore],
-    ([inflationData, customisation]) => deriveChartData(inflationData as any, customisation as Customisation)
-  );
+  $: onCustomisationChange(customisation);
 
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
-  $: inflationOutput = formatPercentage(calculateInflationRate($inflationStore, $stateStore));
-  $: inflationDiff = formatPercentage(new Decimal(0.061).sub(calculateInflationRate($inflationStore, $stateStore)));
 
-  // const xKey = 'inflation';
-  // const yKey = 'contribution';
-  //
-  // $: processedData = $outputStore.map((d: WeightedBar) => ({
-  //   ...d,
-  //   inflation: d.inflation.mul(100).toNumber(),
-  //   weighting: d.weighting.mul(100).toNumber(),
-  //   contribution: d.weighting.mul(d.inflation).mul(100).toNumber(),
-  // }));
-  //
-  // const updateWeighting = (field, value) => {
-  //   stateStore.set({
-  //     ...$stateStore,
-  //     weightOverrides: {
-  //       ...$stateStore.weightOverrides,
-  //       [field]: new Decimal(value / 100) }
-  //     })
-  // }
+  $: personalInflation = calculateInflationRate(indexData, { ...defaultCustomisation, ...customisation });
+  $: inflationDiff = CPI.sub(personalInflation); 
 
   let QUESTIONS = [
-    // {
-    //   id: 'income',
-    //   text: "Where do you get most of your income?",
-    //   answered: false,
-    //   choices: [
-    //     {
-    //       label: "Salary / wages",
-    //     },
-    //     {
-    //       label: "Age pension",
-    //     },
-    //     {
-    //       label: "Superannuation",
-    //     },
-    //     {
-    //       label: "Other govt. payments",
-    //     },
-    //   ],
-    // },
     {
       id: 'drive',
       text: "Do you drive?",
@@ -130,33 +78,16 @@
     },
   ];
 
-  let hiddenGroups = [
-    'Transport',
-    'Housing',
-    'Alcohol and tobacco',
-    'Clothing and footwear',
-    'Communication',
-    'Education',
-    'Health',
-    'Insurance and financial services',
-    'Recreation and culture',
-    'Food and non-alcoholic beverages',
-    'Furnishings, household equipment and services',
-  ];
-
   let lastAnswered = -1;
   const answerQuestion = (answer, question, qIndex) => {
     question.answered = true;
     lastAnswered = Math.max(qIndex, lastAnswered);
 
-    let removedGroups = $stateStore.removedGroups;
-    let housingProfile = $stateStore.housingProfile;
-    let index = $stateStore.index;
+    let removedGroups = customisation.removedGroups;
+    let housingProfile = customisation.housingProfile;
 
     // Do you drive?
     if (question.id === 'drive') {
-      hiddenGroups = hiddenGroups.filter(g => g !== 'Transport');
-
       removedGroups = removedGroups.filter(g => g !== 'Automotive fuel' && g !== 'Motor vehicles');
       if (answer === 'No') {
         removedGroups = [...removedGroups, 'Automotive fuel', 'Motor vehicles'];
@@ -165,8 +96,6 @@
 
     // Do you rent or own?
     if (question.id === 'housing') {
-      hiddenGroups = hiddenGroups.filter(g => g !== 'Housing' && g != 'Insurance and financial services');
-
       if (answer === 'Rent') {
         housingProfile = 'renter';
       }
@@ -180,8 +109,6 @@
 
     // Do you drink or smoke?
     if (question.id === 'vices') {
-      hiddenGroups = [];
-      hiddenGroups = hiddenGroups.filter(g => g !== 'Alcohol and tobacco');
       removedGroups = removedGroups.filter(g => g !== 'Tobacco' && g !== 'Wine' && g !== 'Spirits' && g !== 'Beer');
 
       if (answer === 'Drink') {
@@ -195,36 +122,17 @@
       }
     }
 
-    if (question.id === 'income') {
-      if (answer === 'Salary / wages') {
-        index = 'employed';
-      }
-      if (answer === 'Age pension') {
-        index = 'agepension';
-      }
-      if (answer === 'Superannuation') {
-        index = 'superannuation';
-      }
-      if (answer === 'Other govt. payments') {
-        index = 'othergovt';
-      }
-    }
-
-    stateStore.set({
-      ...$stateStore,
-      index,
+    customisation = {
       removedGroups,
       housingProfile,
-    });
+    };
   };
 
   $: isFinished = lastAnswered === 2;
-
-  let width;
   $: {
     if (isFinished) {
       const quizRoot = document.querySelector('#interactive-quiz');
-      quizRoot.classList.add('finished'); // This unhides the rest of the article
+      quizRoot?.classList.add('finished'); // This unhides the rest of the article
     }
   }
 </script>
@@ -244,23 +152,10 @@
 {/each}
 
 {#if isFinished}
-  <p class="result">We've estimated that your personal inflation rate is {inflationOutput}. That's {inflationDiff} lower than the headline figure.</p>
-
-  <!-- <div bind:clientWidth={width}> -->
-  <!--   <WeightedIndexChart -->
-  <!--     data={$outputStore} -->
-  <!--     padding={{ top: 20, bottom: 0, left: 0, right: 0 }} -->
-  <!--     hiddenGroups={hiddenGroups} -->
-  <!--     yAxisLabel="" -->
-  <!--     xAxisLabel="" -->
-  <!--     expandX={true} -->
-  <!--     showLabel={false} -->
-  <!--     showSecondColumn={false} -->
-  <!--     width={width} -->
-  <!--     height={250} -->
-  <!--   /> -->
-  <!-- </div> -->
-
+  <p class="result">
+    We've estimated that your personal inflation rate is {formatPercentage(personalInflation)}.
+    That's {formatPercentage(inflationDiff)} lower than the headline figure.
+  </p>
 {:else}
   <p class="result">To continue reading, complete the quiz above.</p>
 {/if}
