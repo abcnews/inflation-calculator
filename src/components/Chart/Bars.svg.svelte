@@ -84,8 +84,8 @@
   {#each bars as d (d.id)}
     <Bar
       point={d}
-      innerLabel={showLabel && d.areaLabel}
-      rightLabel={showLabel && d.name}
+      innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
+      rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
     />
       <!-- rightLabel={!d.x || d.x >= $xScale(0) ? d.name : ''} -->
       <!-- leftLabel={!d.x || d.x >= $xScale(0) ? '' : d.name} -->
