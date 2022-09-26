@@ -13,15 +13,6 @@ import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import Quiz from './components/Quiz.svelte';
 
 const scrollyElems: any[] = [];
-
-let incomeIndex = 'employed';
-let housingProfile = 'renter'; // renter | mortgage | outright
-// let transportAnswer = 'nocar';
-
-// const getUpdatedIndex = (indexData) => {
-//   return indexData[incomeAnswer];
-// };
-
 let customisation = {};
 
 const mountComponents = (name: string, Component: typeof SvelteComponent, props?: any) =>

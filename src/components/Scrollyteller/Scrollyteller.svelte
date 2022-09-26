@@ -71,7 +71,7 @@
     if (scrollingPos === ScrollPositions.ABOVE) marker = panels[0].data;
     if (scrollingPos === ScrollPositions.BELOW) marker = panels[panels.length - 1].data;
 
-		steps.forEach((step, i) => {
+		steps.forEach((step) => {
 			observer.observe(step);
 		});
 

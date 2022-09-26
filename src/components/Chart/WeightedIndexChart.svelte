@@ -126,12 +126,12 @@
     font-family: ABCSans, Helvetica, sans-serif;
   }
   .y-axis-arrow {
-    fill: #aaa;
+    fill: black;
   }
   .y-axis-label {
     font-family: ABCSans, Helvetica, sans-serif;
     font-size: 12px;
-    fill: #666;
-    font-weight: 300;
+    fill: black;
+    font-weight: 400;
   }
 </style>

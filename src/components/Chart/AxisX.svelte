@@ -86,7 +86,7 @@
 
   .axis-label {
     font-size: 12px;
-    fill: #666;
+    fill: black;
     text-anchor: end;
     font-family: ABCSans, Helvetica, sans-serif;
   }
@@ -96,6 +96,9 @@
     stroke: #aaa;
   }
 
+  .baseline {
+    stroke: #666;
+  }
   .tick text {
     fill: #666;
   }

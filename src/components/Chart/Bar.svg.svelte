@@ -50,7 +50,21 @@
           text-anchor: start;
         "
       >
-        {rightLabel}
+        {#if rightLabel.indexOf('Gas') === 0}
+          <!-- Shortened to fit in the space -->
+          Household fuels
+        {:else if rightLabel.indexOf('Property rates and') === 0}
+          <tspan x="0" dy="-0.5em">Property rates and</tspan>
+          <tspan x="0" dy="1.2em">charges</tspan>
+        {:else if rightLabel.indexOf('Maintenance and repair') === 0}
+          <tspan x="0" dy="-0.5em">Maintenance and repair</tspan>
+          <tspan x="0" dy="1.2em">of the dwelling</tspan>
+        {:else if rightLabel.indexOf('Furnishings') === 0}
+          <tspan x="0" dy="-0.5em">Furnishings, household equipment</tspan>
+          <tspan x="0" dy="1.2em">and services</tspan>
+        {:else}
+          {rightLabel}
+        {/if}
       </text>
     {/if}
 
