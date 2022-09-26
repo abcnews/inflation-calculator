@@ -87,78 +87,8 @@
       innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
       rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
     />
-      <!-- rightLabel={!d.x || d.x >= $xScale(0) ? d.name : ''} -->
-      <!-- leftLabel={!d.x || d.x >= $xScale(0) ? '' : d.name} -->
-
-    {#if showSecondColumn}
-      <g class="weighted-bar" in:fade style="transform: translate({d.x}px, {d.y}px)">
-        {#key `${d.width}-${d.height}-${d.yCombined}-${d.y}`}k
-          <polygon
-            out:fade
-            in:fade="{{ delay: 800 }}"
-            points="
-              {d.width},0
-              {d.width},{d.height}
-              {$xScale.range()[1] - d.width},{d.yCombined - d.y + d.heightCombined}
-              {$xScale.range()[1] - d.width},{d.yCombined - d.y}
-            "
-            fill={d.fill}
-            opacity={Math.max(d.opacity - 0.7, 0.2)}
-          />
-        {/key}
-
-        <rect
-          x={$xScale.range()[1] - d.width}
-          y={d.yCombined - d.y}
-          height={d.heightCombined}
-          width={d.width}
-          opacity={d.opacity}
-          fill={d.fill}
-        ></rect>
-
-        <!-- Label to the right of the bar -->
-        {#if d.heightCombined > 25}
-          <text
-            opacity={d.opacity}
-            stroke={d.fill}
-            style="
-              font-size: 12px;
-              transform: translate({$xScale.range()[1] + 5}px, {d.yCombined - d.y + d.heightCombined / 2 + 6}px);
-              text-anchor: start;
-            "
-          >
-            {d.labelYCombined}
-          </text>
-        {/if}
-      </g>
-    {/if}
   {/each}
 </g>
 
 <style lang="scss">
-  .weighted-bar {
-    transition: transform 800ms;
-    transition-delay: 800ms;
-
-    rect, polygon {
-      transition: 
-        fill 200ms linear 0ms,
-        width 800ms linear 800ms,
-        height 800ms linear 800ms,
-        x 800ms linear 800ms,
-        y 800ms linear 800ms,
-        opacity 800ms linear 800ms;
-      /* transition-delay: 400ms; */
-      /* transition-duration: 800ms; */
-    }
-
-    text {
-      font-family: ABCSans;
-      font-size: 7pt;
-      text-anchor: start;
-
-      transition: transform 800ms linear, opacity 800ms;
-      transition-delay: 800ms;
-    }
-  }
 </style>

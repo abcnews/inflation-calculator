@@ -51,19 +51,19 @@
       let text = panel.getAttribute('data-template') || '';
 
       if (doesDrive) {
-        text = text.replace(/{{drive:([^}]*)}}/, '$1');
-        text = text.replace(/{{nodrive:([^}]*)}}/, '');
+        text = text.replace(/{{drive:([^}]*)}}/g, '$1');
+        text = text.replace(/{{nodrive:([^}]*)}}/g, '');
       } else {
-        text = text.replace(/{{nodrive:([^}]*)}}/, '$1');
-        text = text.replace(/{{drive:([^}]*)}}/, '');
+        text = text.replace(/{{nodrive:([^}]*)}}/g, '$1');
+        text = text.replace(/{{drive:([^}]*)}}/g, '');
       }
 
       if (isRenter) {
-        text = text.replace(/{{renter:([^}]*)}}/, '$1');
+        text = text.replace(/{{renter:([^}]*)}}/g, '$1');
       } else if (hasMortgage) {
-        text = text.replace(/{{mortgage:([^}]*)}}/, '$1');
+        text = text.replace(/{{mortgage:([^}]*)}}/g, '$1');
       } else {
-        text = text.replace(/{{outright:([^}]*)}}/, '$1');
+        text = text.replace(/{{outright:([^}]*)}}/g, '$1');
       }
 
       // Remove the leftover templates

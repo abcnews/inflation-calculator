@@ -8,7 +8,13 @@
 
 </script>
 
-<g in:fade="{{ delay: 800 }}" class="weighted-bar" style="transform: translate({point.x}px, {point.y}px)">
+<!-- Needs an out transition to avoid leaving boxes behind... -->
+<g
+  class="weighted-bar"
+  in:fade="{{ delay: 800 }}"
+  out:fade="{{ duration: 1 }}"
+  style="transform: translate({point.x}px, {point.y}px)"
+>
   <rect
     x="0"
     y="0"
