@@ -8,7 +8,7 @@ export const HOUSING_PROFILES = {
     weightOverrides: {
       Rents: new Decimal(0.20),
     },
-    removedGroups: ['Interest charges', 'Property rates and charges'],
+    removedGroups: ['Interest charges', 'Property rates and charges', 'Maintenance and repair of the dwelling'],
   },
   'mortgage': {
     weightOverrides: {

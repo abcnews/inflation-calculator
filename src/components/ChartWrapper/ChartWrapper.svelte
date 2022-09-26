@@ -18,7 +18,7 @@
     ([inflationData, customisation]) => deriveChartData(inflationData as any, customisation as Customisation)
   );
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-1, 20] : [-42, 80];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 80];
 </script>
 
 <Chart

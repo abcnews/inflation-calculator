@@ -5,7 +5,7 @@
   import Bars from './Bars.svg.svelte';
   import AxisX from './AxisX.svelte';
   // import MarkerLine from './MarkerLine.svelte';
-  // import AxisY from './AxisY.svelte';
+  import AxisY from './AxisY.svelte';
 
   const xKey = 'inflation';
   const yKey = 'weighting';
@@ -19,7 +19,6 @@
   export let expandX: boolean; 
 
   export let showLabel = true;
-  export let showDiscretionary: boolean;
 
   export let yAxisLabel = 'Proportion of budget';
   export let xAxisLabel = 'Price increase (%)';
@@ -32,6 +31,7 @@
     ...d,
     inflation: d.inflation.mul(100).toNumber(),
     weighting: d.weighting.mul(100).toNumber(),
+    expandX,
   }));
 
   // Use the highest/low inflation values
@@ -43,12 +43,8 @@
     // Ensure the passed in domain isn't smaller than the bars
     const xMax = processedData.reduce((x, d) => Math.max(x, d[xKey]), 0);
     const xMin = processedData.reduce((x, d) => Math.min(x, d[xKey]), 0);
-    _xDomain[0] = Math.min(_xDomain[0], xMin - 1);
-    _xDomain[1] = Math.max(_xDomain[1], xMax + 1);
-
-    if (!expandX) {
-      _xDomain = [0, 100];
-    }
+    _xDomain[0] = Math.min(_xDomain[0], xMin);
+    _xDomain[1] = Math.max(_xDomain[1], xMax);
   }
 
   // Use the combined weightings (should add up to 100)
@@ -89,6 +85,13 @@
             axisLabel={'Price increase (%)'}
           />
         {/if}
+        {#if expandX}
+          <AxisY
+            gridlines={false}
+            baseline={true}
+            ticks={0}
+          />
+        {/if}
 
         {#if yAxisLabel}
           <g style="transform: translate(-20px, -20px)">
@@ -110,7 +113,7 @@
           </g>
         {/if}
 
-        <Bars {expandX} showSecondColumn={false} {showLabel} {showDiscretionary} {hiddenGroups} />
+        <Bars {showLabel} {hiddenGroups} />
 
       </Svg>
     </LayerCake>

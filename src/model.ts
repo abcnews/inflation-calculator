@@ -79,7 +79,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const housingProps = housingProfile ? HOUSING_PROFILES[housingProfile] : {};
 
   // Apply the housing profile on top of the chart customisation
-  const removedGroupsByZooming = zoomedInGroups.length ? allSubGroups.filter(g => zoomedInGroups.indexOf(g.group) === -1) : [];
+  const removedGroupsByZooming = zoomedInGroups?.length ? allSubGroups.filter(g => zoomedInGroups.indexOf(g.group) === -1) : [];
   const removedGroups = [
     ...customisation.removedGroups,
     ...(housingProps?.removedGroups || []),

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { fade } from 'svelte/transition';
+  // import { fade } from 'svelte/transition';
 
   import Bar from './Bar.svg.svelte';
 
@@ -8,18 +8,14 @@
   
   const formatPercentage = (x): string => `${(x).toPrecision(2)}%`;
 
-  // Toggle between 2D Bar chart and expanded weighted area chart
-  export let expandX: boolean;
-  export let showSecondColumn: boolean;
   export let hiddenGroups: string[] = [];
   export let showLabel = true;
 
-  let bars;
-  $: {
-    const totalArea = $data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
-    const anyHighlighted = $data.reduce((acc, d) => acc || d.isHighlighted, false);
+ const calcBars = (data, xRange, yRange) => {
+   const totalArea = data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
+   const anyHighlighted = data.reduce((acc, d) => acc || d.isHighlighted, false);
 
-    bars = $data.reduce((acc, d) => {
+   const res = data.reduce((acc, d) => {
       // Skip hidden groups
       if (hiddenGroups && hiddenGroups.indexOf(d.name) > -1) {
         return acc;
@@ -36,13 +32,13 @@
       }
 
       // Set the width to 1/3 of the canvas
-      if (!expandX) {
-        xVal = $xScale.range()[0] + 30;
-        width = ($xScale.range()[1] - xVal) / 6;
+      if (!d.expandX) {
+        xVal = $xScale(0);
+        width = (xRange[1] - xVal) / 10;
       }
 
       const proportionOfTotal = $x(d) * $y(d) / totalArea;
-      const heightCombined = $yScale.range()[0] * proportionOfTotal;
+      const heightCombined = yRange[0] * proportionOfTotal;
       const height = Math.max($yGet(d), 1);
 
       const point = {
@@ -73,22 +69,21 @@
         yCombined: acc.yCombined + heightCombined,
         points: [...acc.points, point],
       };
-    }, { y: $yScale.range()[0], yCombined: 0, points: [] });
+    }, { y: yRange[0], yCombined: 0, points: [] });
 
-    bars = bars.points;
-    bars.sort((a, b) => a.id.localeCompare(b.id));
-  }
+    return res.points.sort((a, b) => a.id.localeCompare(b.id));
+  };
+
+  $: bars = calcBars($data, $xScale.range(), $yScale.range());
 </script>
 
-<g class="bars-group">
-  {#each bars as d (d.id)}
-    <Bar
-      point={d}
-      innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
-      rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
-    />
-  {/each}
-</g>
+{#each bars as d (d.id)}
+  <Bar
+    point={d}
+    innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
+    rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
+  />
+{/each}
 
 <style lang="scss">
 </style>

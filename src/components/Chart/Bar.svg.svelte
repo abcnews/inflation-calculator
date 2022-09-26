@@ -37,6 +37,7 @@
           font-size: 12px;
           transform: translate({point.width / 2}px, {(point.height / 2) + 4}px);
           text-anchor: middle;
+          fill: white;
         "
       >
         {innerLabel}
@@ -44,7 +45,7 @@
     {/if}
 
     <!-- Label to the right -->
-    {#if rightLabel}
+    {#if rightLabel && !innerLabel}
       <text
         out:fade
         in:fade="{{ delay: 400 }}"
@@ -56,9 +57,11 @@
           text-anchor: start;
         "
       >
+        <!-- Shortened (or wrapped-text) to fit in the space -->
         {#if rightLabel.indexOf('Gas') === 0}
-          <!-- Shortened to fit in the space -->
           Household fuels
+        {:else if rightLabel.indexOf('Deposit and loan facilities (direct charges)') === 0}
+          Deposit and loan facilities
         {:else if rightLabel.indexOf('Property rates and') === 0}
           <tspan x="0" dy="-0.5em">Property rates and</tspan>
           <tspan x="0" dy="1.2em">charges</tspan>
