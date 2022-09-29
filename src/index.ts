@@ -67,6 +67,20 @@ Promise.all([
   } catch (e) {
     console.log(e);
   }
+
+  try {
+    const scrollyData = loadScrollyteller('chart3', 'u-full', 'mark');
+    const appMountEl = scrollyData.mountNode;
+
+    if (appMountEl) {
+      scrollyElems.push(new ScrollyWrapper({
+        target: appMountEl,
+        props: { scrollyData, indexData, customisation }
+      }));
+    }
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 if (process.env.NODE_ENV === 'development') {
