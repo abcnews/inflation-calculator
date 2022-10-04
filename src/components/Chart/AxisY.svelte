@@ -1,5 +1,7 @@
 <script>
   import { getContext } from 'svelte';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
 
   const { padding, height, xRange, xScale, yScale } = getContext('LayerCake');
 
@@ -15,6 +17,8 @@
   export let dyTick = -4;
   export let textAnchor = 'start';
 
+  export let yAxisMax;
+
   export let axisLabel = '';
 
   $: isBandwidth = typeof $yScale.bandwidth === 'function';
@@ -28,6 +32,14 @@
 
   $: yOffset = -$padding.left;
   $: tickOffset = (ticksAtZeroX ? $xScale(0) : 0) - 20;
+
+
+  const yAxisTop = tweened($height, {
+    duration: 1000,
+    easing: cubicOut,
+  });
+  $: yAxisTop.set($height - $yScale(yAxisMax));
+
 </script>
 
 <g class='axis y-axis' transform='translate({yOffset}, 0)'>
@@ -61,18 +73,16 @@
   {/each}
 
   {#if baseline}
-    <line class="baseline" x1="{$xScale(0) - yOffset}" x2="{$xScale(0) - yOffset}" y1="0" y2="{$height}" />
+    <!-- <line class="baseline" x1="{$xScale(0) - yOffset}" x2="{$xScale(0) - yOffset}" y1="0" y2="{$height}" /> -->
+    <line class="baseline" x1="{-1 * yOffset}" x2="{-1 * yOffset}" y1={$yAxisTop} y2="{$height}" />
   {/if}
 
   {#if axisLabel}
-    <text class="axis-label" x={$xScale(0) - yOffset + 8} y={0}>{axisLabel}</text>
+    <text class="axis-label" x={-1 * yOffset} y={$yAxisTop - 5}>{axisLabel}</text>
   {/if}
 </g>
 
 <style>
-  .baseline {
-    stroke: #aaa;
-  }
   .tick {
     font-family: ABCSans, Helvetica, sans-serif;
     font-size: 0.725em;
@@ -82,9 +92,9 @@
 
   .axis-label {
     font-family: ABCSans, Helvetica, sans-serif;
-    font-size: 1em;
-    font-weight: 300;
-    fill: #666;
+    font-size: 12px;
+    font-weight: 400;
+    fill: black;
     text-anchor: start;
   }
 
@@ -94,6 +104,9 @@
     stroke-dasharray: 2;
   }
 
+  .baseline {
+    stroke: #666;
+  }
   .tick text {
     fill: #666;
   }

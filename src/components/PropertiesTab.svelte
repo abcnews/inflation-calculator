@@ -98,14 +98,6 @@
       />
 
       <MultiSelect
-        titleText="Hidden groups (but still taking up space)"
-        filterable
-        bind:selectedIds={$customisation.hiddenGroups}
-        items={[...allGroups, ...allSubGroups].map(g => ({ id: g, text: g }))}
-      />
-
-
-      <MultiSelect
         titleText="Highlighted groups"
         filterable
         bind:selectedIds={$customisation.highlightedGroups}
@@ -115,6 +107,10 @@
       <Checkbox
         labelText="Apply Personalisation (this makes the quiz influence it inside the story)"
         bind:checked={$customisation.applyPersonalisation}
+      />
+      <Checkbox
+        labelText="Prevent zoom splitting"
+        bind:checked={$customisation.preventZoomSplitting}
       />
       <Checkbox
         labelText="Show Marimako"

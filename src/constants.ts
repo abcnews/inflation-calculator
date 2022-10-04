@@ -28,11 +28,12 @@ export const defaultCustomisation: Customisation = {
   timelineYears: 1,
   splitGroups: [],
 
+  // Actually remove from the model (and labels etc)
   removedGroups: [],
-  zoomedInGroups: [],
 
+  // Visual modifications
+  zoomedInGroups: [],
   highlightedGroups: [],
-  hiddenGroups: [],
 
   orderBy: 'category',
   colourBy: 'category',
@@ -41,6 +42,7 @@ export const defaultCustomisation: Customisation = {
   showInflationBreakdown: false,
 
   applyPersonalisation: false,
+  preventZoomSplitting: false,
 
   weightOverrides: {},
 };

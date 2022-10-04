@@ -27,6 +27,7 @@
     slot="figure"
     {width}
     height={height}
+    preventZoomSplitting
   />
 
   <PropertiesTab slot="properties" />

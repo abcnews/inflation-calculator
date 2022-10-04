@@ -3,51 +3,7 @@ import { COLOURS, FOCUS, NON_FOCUS } from './colours';
 
 import { Customisation, ExpenditureGroup, ExpenditureGroupWeights, WeightedBar, InflationData } from './types';
 import { HOUSING_PROFILES } from './constants';
-
-// 
-// Weighted average
-// see: http://textbook.stpauls.br/Macroeconomics/page_90.htm
-//
-// export function calculateInflationRate(data: InflationData, customisation: Customisation): Decimal {
-//   const {
-//     index,
-//     timelineYears,
-//     removedGroups,
-//   } = customisation;
-//
-//   const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
-//   const totalWeightingRemoved = removedGroups.reduce((acc, groupName) => {
-//     const subGroup = allSubGroups.find(g => g.name === groupName);
-//     if (!subGroup) {
-//       return acc;
-//     }
-//     const weightToRemove = subGroup.weights[index];
-//     return acc.add(weightToRemove);
-//   }, new Decimal(0));
-//
-//   const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved);
-//
-//   return Object.keys(data).reduce((acc: Decimal, groupName: string) => {
-//     const weightedSum = Object.keys(data[groupName]).reduce((acc: Decimal, expGroupName: string) => {
-//       if (removedGroups.indexOf(expGroupName) > -1) {
-//         return acc;
-//       }
-//
-//       const group: ExpenditureGroup = data[groupName][expGroupName];
-//
-//       const originalWeighting = group.weights[index];
-//       // Add the proportional amount of the extra weighting
-//       const extraWeighting = totalWeightingRemoved.mul(originalWeighting);
-//       const weighting = originalWeighting.add(extraWeighting)
-//
-//       const inflation = group.inflation[timelineYears];
-//
-//       return acc.add(weighting.mul(inflation));
-//     }, new Decimal(0));
-//
-//     return acc.add(weightedSum);
-//   }, new Decimal(0));
-// }
+import { getColour, toPercentage } from './utils';
 
 // Weighted average
 // see: http://textbook.stpauls.br/Macroeconomics/page_90.htm
@@ -66,24 +22,24 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   const {
     index,
     timelineYears,
-    highlightedGroups,
+    housingProfile,
 
-    orderBy,
+    // orderBy,
     colourBy,
 
-    zoomedInGroups,
-    housingProfile,
+    // highlightedGroups,
+    // zoomedInGroups,
   } = customisation;
 
   const allSubGroups = Object.values(data).map(g => Object.values(g)).flat();
   const housingProps = housingProfile ? HOUSING_PROFILES[housingProfile] : {};
 
   // Apply the housing profile on top of the chart customisation
-  const removedGroupsByZooming = zoomedInGroups?.length ? allSubGroups.filter(g => zoomedInGroups.indexOf(g.group) === -1) : [];
+  // const removedGroupsByZooming = zoomedInGroups?.length ? allSubGroups.filter(g => zoomedInGroups.indexOf(g.group) === -1) : [];
   const removedGroups = [
     ...customisation.removedGroups,
     ...(housingProps?.removedGroups || []),
-    ...removedGroupsByZooming.map(g => g.name)
+    // ...removedGroupsByZooming.map(g => g.name)
   ];
   const weightOverrides = {...customisation.weightOverrides, ...(housingProps?.weightOverrides || {})};
 
@@ -113,7 +69,15 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     return total.add( newWeight.sub(existingWeight) );
   }, new Decimal(0));
 
-  const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved.sub(weightsAddedThroughOverrides));
+  const weightingToRedistribute = totalWeightingRemoved.sub(weightsAddedThroughOverrides);
+  const remainingWeighting = new Decimal(1).sub(totalWeightingRemoved).sub(weightsAddedThroughOverrides);
+
+  // console.log({
+  //   remainingWeighting: remainingWeighting.toNumber(),
+  //   totalWeightingRemoved: totalWeightingRemoved.toNumber(),
+  //   weightsAddedThroughOverrides: weightsAddedThroughOverrides.toNumber(),
+  //   weightingToRedistribute: weightingToRedistribute.toNumber(),
+  // });
 
   const allBars = Object.keys(data).reduce((acc: WeightedBar[], groupName: string) => {
     // Split into expenditure groups
@@ -124,27 +88,33 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
       const group: ExpenditureGroup = data[groupName][expGroupName];
 
-      const isHighlighted = highlightedGroups.indexOf(expGroupName) > -1 ||
-        highlightedGroups.indexOf(groupName) > -1 ||
-        (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
+      // const isHighlighted = highlightedGroups.indexOf(expGroupName) > -1 ||
+      //   highlightedGroups.indexOf(groupName) > -1 ||
+      //   (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
 
       let weighting = group.weights[index];
 
       // Use the override if its defined
       if (weightOverrides[expGroupName]) {
         weighting = weightOverrides[expGroupName];
-      } 
+      } else {
+        const proportionOfRemaining = weighting.div( remainingWeighting );
+        const extraWeighting = weightingToRedistribute.mul( proportionOfRemaining );
+        
+        // console.log({
+        //   proportionOfRemaining: proportionOfRemaining.toNumber(),
+        //   remainingWeighting: remainingWeighting.toNumber(),
+        //   extraWeighting: extraWeighting.toNumber(),
+        // });
+
+        weighting = weighting.add(extraWeighting)
+      }
 
       // Add (or subtract) the proportional amount of the extra weighting
-      const proportionOfRemaining = weighting.div(remainingWeighting);
-      const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
-      weighting = weighting.add(extraWeighting)
+      // const proportionOfRemaining = weighting.div(remainingWeighting);
+      // const extraWeighting = totalWeightingRemoved.add(weightsAddedThroughOverrides).mul(proportionOfRemaining);
 
-      // console.log({
-      //   proportionOfRemaining: proportionOfRemaining.toNumber(),
-      //   remainingWeighting: remainingWeighting.toNumber(),
-      //   extraWeighting: extraWeighting.toNumber(),
-      // });
+
       //
       // console.log(group.name, weighting.toNumber());
 
@@ -159,7 +129,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
           colour: getColour(group.group, group.isDiscretionary, colourBy),
 
-          isHighlighted,
+          // isHighlighted,
           isDiscretionary: group.isDiscretionary,
         }
       ];
@@ -172,6 +142,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
     // Else, merge into a combined bar
     const combinedWeighting = bars.reduce((acc, bar) => acc.add(bar.weighting), new Decimal(0));
+    // console.log(bars.map(b => b.weighting.toNumber() * 100));
 
     const combinedInflationContribution = bars.reduce((acc, bar) => acc.add(bar.inflation.mul(bar.weighting)), new Decimal(0));
     const inflation = combinedInflationContribution.div(combinedWeighting);
@@ -180,7 +151,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     // const inflation = Object.values(data[groupName])[0].inflationCombined[customisation.timelineYears];
 
     // Set the group as discretionary if more than half the weighting from subgroups is discretionary
-    const isHighlighted = highlightedGroups.indexOf(groupName) > -1;
+    // const isHighlighted = highlightedGroups.indexOf(groupName) > -1;
 
     const bar = {
       name: groupName,
@@ -191,7 +162,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
       colour: getColour(groupName, false, colourBy),
 
-      isHighlighted,
+      // isHighlighted,
       isDiscretionary: false,
     };
 
@@ -199,48 +170,6 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
   }, []);
 
   return allBars
-    .sort((a, b) => {
-      if (orderBy === 'area') {
-        const bv = b.inflation.mul(b.weighting)
-        const av = a.inflation.mul(a.weighting);
-        return av.sub(bv).toNumber();
-      }
-      if (orderBy === 'inflation') {
-        return a.inflation.sub(b.inflation).toNumber();
-      }
-      if (orderBy === 'weighting') {
-        return a.weighting.sub(b.weighting).toNumber();
-      }
-      if (orderBy === 'category') {
-        return a.group.localeCompare(b.group);
-      }
-      if (orderBy === 'discretionary') {
-        if (b.isDiscretionary && !a.isDiscretionary) {
-          return 1;
-        }
-        if (!b.isDiscretionary && a.isDiscretionary) {
-          return -1;
-        }
-        return 0;
-      }
-      return 0;
-    })
     .filter(b => customisation.removedGroups.indexOf(b.name) === -1)
     .filter(b => b.weighting.toNumber() > 0);
 }
-
-const getColour = (name: string, isDiscretionary: boolean, colourBy: string) => {
-  if (colourBy === 'category') {
-    return COLOURS[name];
-  }
-  if (colourBy === 'discretionary') {
-    return isDiscretionary ? FOCUS : NON_FOCUS;
-  }
-
-  return NON_FOCUS;
-};
-
-const toPercentage = (x: string | number): Decimal => {
-  return new Decimal(x).div(100);
-};
-

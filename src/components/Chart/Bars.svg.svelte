@@ -8,7 +8,6 @@
   
   const formatPercentage = (x): string => `${(x).toPrecision(2)}%`;
 
-  export let hiddenGroups: string[] = [];
   export let showLabel = true;
 
  const calcBars = (data, xRange, yRange) => {
@@ -16,11 +15,6 @@
    const anyHighlighted = data.reduce((acc, d) => acc || d.isHighlighted, false);
 
    const res = data.reduce((acc, d) => {
-      // Skip hidden groups
-      if (hiddenGroups && hiddenGroups.indexOf(d.name) > -1) {
-        return acc;
-      }
-
       let width = $xGet(d);
       let xVal = $xScale(0);
       width = width - xVal;

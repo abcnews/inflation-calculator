@@ -1,6 +1,7 @@
 <script lang="ts">
   import { LayerCake, Svg } from 'layercake';
-  import type { WeightedBar } from '../../model';
+  import type { WeightedBar } from '../../types';
+  import { sortBars } from '../../utils';
 
   import Bars from './Bars.svg.svelte';
   import AxisX from './AxisX.svelte';
@@ -10,32 +11,70 @@
   const xKey = 'inflation';
   const yKey = 'weighting';
 
-  export let padding= { top: 50, bottom: 10, left: 40, right: 50 };
+  export let width: number;
+  export let height: number;
+  export let padding = { top: 50, bottom: 10, left: 40, right: 50 };
+
   export let data: WeightedBar[];
   export let xDomain: [number, number]; 
 
-  export let hiddenGroups: string[];
+  export let zoomedInGroups: string[];
+  export let highlightedGroups: string[];
+  export let orderBy: string;
 
   export let expandX: boolean; 
-
+  export let preventZoomSplitting: boolean;
   export let showLabel = true;
 
   export let yAxisLabel = 'Proportion of budget';
   export let xAxisLabel = 'Price increase (%)';
   export let label = '';
 
-  export let width: number;
-  export let height: number;
+  //
+  // States to manage the zoom in animation sequence:
+  //
+  // 0 -> Not started
+  // 1 -> Re-order so groups at bottom (implemented in sortBars util)
+  // 2 -> Re-size y-axis and hide other bars
+  // 3 -> Split remaining bars
+  // 4 -> Expand all up to full size
+  // 5 -> Done
+  export let zoomInAnimationStage = 0;
 
-  $: processedData = data.map((d: WeightedBar) => ({
-    ...d,
-    inflation: d.inflation.mul(100).toNumber(),
-    weighting: d.weighting.mul(100).toNumber(),
-    expandX,
-  }));
+  const nextStage = () => {
+    zoomInAnimationStage += 1;
+    if (zoomInAnimationStage === 4) {
+      setTimeout(() => nextStage(), 1000);
+    } else if (zoomInAnimationStage < 4) {
+      setTimeout(() => nextStage(), 1000);
+    }
+  };
+
+  $: {
+    if (zoomInAnimationStage === 0 && zoomedInGroups.length > 0) {
+      if (preventZoomSplitting) {
+        // Skip the full zoom-in animation in the intro explanation section (as this is the only place we're using this setting)
+        zoomInAnimationStage = 5;
+      } else {
+        nextStage();
+      }
+    } else if (zoomedInGroups.length === 0) {
+      zoomInAnimationStage = 0;
+    }
+  }
+
+  $: processedData = data
+      .sort(sortBars(orderBy, zoomInAnimationStage > 0 ? zoomedInGroups : []))
+      .map((d: WeightedBar) => ({
+        ...d,
+        inflation: d.inflation.mul(100).toNumber(),
+        weighting: d.weighting.mul(100).toNumber(),
+        expandX,
+        isHighlighted: highlightedGroups.indexOf(d.name) > -1 || highlightedGroups.indexOf(d.group) > -1,
+        isZoomed: zoomedInGroups.indexOf(d.group) > -1,
+      }))
 
   // Use the highest/low inflation values
-
   let _xDomain: [number, number];
   $: {
     _xDomain = xDomain || [0, 0];
@@ -47,8 +86,18 @@
     _xDomain[1] = Math.max(_xDomain[1], xMax);
   }
 
-  // Use the combined weightings (should add up to 100)
-  $: yMax = processedData.reduce((x, d) => x + d[yKey], 0);
+  $: yMax = processedData.reduce((x, d) => {
+    if (zoomInAnimationStage > 4 && !d.isZoomed) {
+      return x;
+    }
+    return x + d[yKey];
+  }, 0);
+  $: yAxisMax = processedData.reduce((x, d) => {
+    if (zoomInAnimationStage > 1 && !d.isZoomed) {
+      return x;
+    }
+    return x + d[yKey];
+  }, 0);
 </script>
 
 <div
@@ -74,7 +123,7 @@
       y={yKey}
       xDomain={_xDomain}
       yDomain={[yMax, 0]}
-      data={processedData}
+      data={processedData.filter(d => zoomInAnimationStage < 2 || d.isZoomed)}
     >
       <Svg>
         {#if expandX && xAxisLabel}
@@ -85,13 +134,13 @@
             axisLabel={'Price increase (%)'}
           />
         {/if}
-        {#if expandX}
           <AxisY
             gridlines={false}
-            baseline={true}
+            baseline={showLabel}
             ticks={0}
+            {yAxisMax}
+            axisLabel={showLabel ? `${yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of budget` : ''}
           />
-        {/if}
 
         {#if yAxisLabel}
           <g style="transform: translate(-20px, -20px)">
@@ -113,7 +162,7 @@
           </g>
         {/if}
 
-        <Bars {showLabel} {hiddenGroups} />
+        <Bars {showLabel} />
 
       </Svg>
     </LayerCake>

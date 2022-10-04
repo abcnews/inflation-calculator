@@ -11,7 +11,6 @@ export interface Customisation {
   weightOverrides: Record<string, Decimal>;
   splitGroups: string[];
   removedGroups: string[];
-  hiddenGroups: string[];
 
   zoomedInGroups: string[];
 
@@ -24,6 +23,7 @@ export interface Customisation {
   showMarimako: boolean;
   showInflationBreakdown: boolean;
   applyPersonalisation: boolean;
+  preventZoomSplitting: boolean;
 
   // showDiscretionary: boolean;
 }
@@ -52,9 +52,10 @@ export interface ExpenditureGroupWeights {
 export interface WeightedBar {
   name: string;
   group: string;
-  colour?: string;
   inflation: Decimal;
   weighting: Decimal;
+
+  colour?: string;
   isDiscretionary: boolean;
-  isHighlighted: boolean;
+  isHighlighted?: boolean;
 }
