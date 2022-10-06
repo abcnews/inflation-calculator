@@ -4,7 +4,6 @@
   
   export let point;
   export let innerLabel: string = '';
-  export let leftLabel: string = '';
   export let rightLabel: string = '';
 
   $: blockColour = point.isHighlighted ? FOCUS : NON_FOCUS;
@@ -34,68 +33,55 @@
 
     <!-- Label in the centre -->
     {#if point.width > 45 && innerLabel}
-      <text
-        out:fade
-        in:fade="{{ delay: 400 }}"
-        fill={'white'}
-        style="
-          transform: translate({point.width / 2}px, {(point.height / 2) + 4}px);
-          text-anchor: middle;
-        "
-      >
-        {#if innerLabel.indexOf('New dwelling') === 0}
-          <tspan x="0" dy="-0.4em">New dwelling purchase</tspan>
-          <tspan x="0" dy="1em">by owner-occupiers</tspan>
-        {:else}
-          {innerLabel}
-        {/if}
-      </text>
+      <g class="text-wrapper" style="transform: translate({point.width / 2}px, {(point.height / 2) + 4}px);">
+        <text
+          out:fade
+          in:fade="{{ delay: 400 }}"
+          fill={'white'}
+          style="
+            text-anchor: middle;
+          "
+        >
+          {#if innerLabel.indexOf('New dwelling') === 0}
+            <tspan x="0" dy="-0.4em">New dwelling purchase</tspan>
+            <tspan x="0" dy="1em">by owner-occupiers</tspan>
+          {:else}
+            {innerLabel}
+          {/if}
+        </text>
+      </g>
     {/if}
 
     <!-- Label to the right -->
     {#if rightLabel && !innerLabel}
-      <text
-        out:fade
-        in:fade="{{ delay: 400 }}"
-        fill={labelColour}
-        style="
-          transform: translate({point.width + 5}px, {(point.height / 2) + 4}px);
-          text-anchor: start;
-        "
-      >
-        <!-- Shortened (or wrapped-text) to fit in the space -->
-        {#if rightLabel.indexOf('Gas') === 0}
-          Household fuels
-        {:else if rightLabel.indexOf('Deposit and loan facilities (direct charges)') === 0}
-          Deposit and loan facilities
-        {:else if rightLabel.indexOf('Property rates and') === 0}
-          <tspan x="0" dy="-0.4em">Property rates &</tspan>
-          <tspan x="0" dy="1em">charges</tspan>
-        {:else if rightLabel.indexOf('Maintenance and repair') === 0}
-          <tspan x="0" dy="-0.4em">Maintenance & repair</tspan>
-          <tspan x="0" dy="1em">of the dwelling</tspan>
-        {:else if rightLabel.indexOf('Furnishings') === 0}
-          <tspan x="0" dy="-0.4em">Furnishings, household</tspan>
-          <tspan x="0" dy="1em">equipment & services</tspan>
-        {:else}
-          {rightLabel.replace(/ and /g, ' & ')}
-        {/if}
-      </text>
-    {/if}
-
-    <!-- Label to the left -->
-    {#if leftLabel}
-      <text
-        out:fade
-        in:fade="{{ delay: 400 }}"
-        stroke={point.fill}
-        style="
-          transform: translate({-5}px, {(point.height / 2) + 4}px);
-          text-anchor: end;
-        "
-      >
-        {leftLabel}
-      </text>
+      <g class="text-wrapper" style="transform: translate({point.width}px, {(point.height / 2) + 4}px);">
+        <text
+          out:fade
+          in:fade="{{ delay: 400 }}"
+          fill={labelColour}
+          style="
+            text-anchor: start;
+          "
+        >
+          <!-- Shortened (or wrapped-text) to fit in the space -->
+          {#if rightLabel.indexOf('Gas') === 0}
+            Household fuels
+          {:else if rightLabel.indexOf('Deposit and loan facilities (direct charges)') === 0}
+            Deposit and loan facilities
+          {:else if rightLabel.indexOf('Property rates and') === 0}
+            <tspan x="0" dy="-0.4em">Property rates &</tspan>
+            <tspan x="0" dy="1em">charges</tspan>
+          {:else if rightLabel.indexOf('Maintenance and repair') === 0}
+            <tspan x="0" dy="-0.4em">Maintenance & repair</tspan>
+            <tspan x="0" dy="1em">of the dwelling</tspan>
+          {:else if rightLabel.indexOf('Furnishings') === 0}
+            <tspan x="0" dy="-0.4em">Furnishings, household</tspan>
+            <tspan x="0" dy="1em">equipment & services</tspan>
+          {:else}
+            {rightLabel.replace(/ and /g, ' & ')}
+          {/if}
+        </text>
+      </g>
     {/if}
   {/if}
 </g>
@@ -109,18 +95,22 @@
       width 800ms,
       height 800ms,
       x 800ms,
-      y 800ms,
+      y 800ms;
+
+    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   text {
     font-family: ABCSans;
     text-anchor: start;
     letter-spacing: 0.03em;
-    /* font-weight: 700; */
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 400;
+  }
 
+  .text-wrapper {
     transition: transform 800ms;
+    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 }
 </style>

@@ -32,12 +32,10 @@
   $: tickOffset = (ticksAtZeroX ? $xScale(0) : 0) - 20;
 
   const yAxisTop = tweened($height, {
-    duration: 1000,
+    duration: 800,
     easing: cubicOut,
   });
   $: yAxisTop.set($height - $yScale(yAxisMax));
-
-  $: console.log($yScale(yAxisMax));
 </script>
 
 <g class='axis y-axis' transform='translate({$padding.left}, 0)'>
@@ -80,9 +78,8 @@
       <tspan x="0" dy="0">Proportion of</tspan>
       <tspan x="0" dy="1.2em">typical budget</tspan>
     {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage holder'}
-      <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of</tspan>
-      <tspan x="0" dy="1.2em">{budgetDescription}</tspan>
-      <tspan x="0" dy="1.2em">budget</tspan>
+      <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of {budgetDescription.split(' ')[0]}</tspan>
+      <tspan x="0" dy="1.2em">{budgetDescription.split(' ')[1] || ''} budget</tspan>
     {:else}
       <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of</tspan>
       <tspan x="0" dy="1.2em">{budgetDescription}</tspan>

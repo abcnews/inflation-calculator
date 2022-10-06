@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Decimal } from 'decimal.js-light';
 
-  import SvelteSelect from 'svelte-select';
+  // import SvelteSelect from 'svelte-select';
 
   // import Select from 'carbon-components-svelte/src/Select/Select.svelte';
   // import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
@@ -27,13 +27,13 @@
   const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
 
   $: personalInflation = calculateInflationRate(indexData, { ...defaultCustomisation, ...customisation });
-  $: inflationDiff = CPI.sub(personalInflation); 
+  $: inflationDiff = personalInflation.div(CPI); 
 
   let QUESTIONS = [
     {
       id: 'drive',
       text: "Do you drive?",
-      answered: false,
+      answered: '',
       choices: [
         {
           label: "Yes",
@@ -48,7 +48,7 @@
     {
       id: 'housing',
       text: "Do you rent or own your home?",
-      answered: false,
+      answered: '',
       choices: [
         {
           label: "Rent",
@@ -67,7 +67,7 @@
     {
       id: 'vices',
       text: "Do you drink and/or smoke?",
-      answered: false,
+      answered: '',
       choices: [
         {
           label: "Drink",
@@ -91,7 +91,7 @@
 
   let lastAnswered = -1;
   const answerQuestion = (answer, question, qIndex) => {
-    question.answered = true;
+    question.answered = answer;
     lastAnswered = Math.max(qIndex, lastAnswered);
 
     let removedGroups = customisation.removedGroups;
@@ -137,6 +137,9 @@
       removedGroups,
       housingProfile,
     };
+
+    // Signal that we need to re-render the buttons
+    QUESTIONS = QUESTIONS;
   };
 
   $: isFinished = lastAnswered === 2;
@@ -152,20 +155,39 @@
 {#each QUESTIONS as question, i}
   <div class="quiz-question">
     <div class:disabled={i > lastAnswered + 1} class="label">{question.text}</div>
-    <SvelteSelect
-      on:select={e => answerQuestion(e.detail.value, question, i)}
-      isDisabled={i > lastAnswered + 1}
-      isClearable={false}
-      items={question.choices}
-    >
-    </SvelteSelect>
+    <div class:disabled={i > lastAnswered + 1} class="button-group">
+      {#each question.choices as choice}
+        <button
+          class="button"
+          class:active={question.answered === choice.value}
+          on:click={() => answerQuestion(choice.value, question, i)}
+        >
+          {choice.label.toUpperCase()}
+        </button>
+      {/each}
+    </div>
+
+    <!-- <SvelteSelect -->
+    <!--   on:select={e => answerQuestion(e.detail.value, question, i)} -->
+    <!--   isDisabled={i > lastAnswered + 1} -->
+    <!--   isClearable={false} -->
+    <!--   items={question.choices} -->
+    <!-- > -->
+    <!-- </SvelteSelect> -->
   </div>
 {/each}
 
 {#if isFinished}
   <p class="result">
-    We've estimated that your personal inflation rate is {formatPercentage(personalInflation)}.
-    That's {formatPercentage(inflationDiff)} lower than the headline figure.
+    We've estimated that your personal inflation rate is {formatPercentage(personalInflation)}
+  </p>
+   
+  <p class="result">
+    This means that the items that make up your budget are {formatPercentage(personalInflation)} more expensive than they were last year.
+  </p>
+
+  <p class="result">
+    Compared to Australia's official figure of 6.1%, the prices of the things you buy are only going up {formatPercentage(inflationDiff)} as quickly.
   </p>
 {:else}
   <p class="result">To continue reading, complete the quiz above.</p>
@@ -175,6 +197,51 @@
 <style lang="scss">
   :global(#interactive-quiz:not(.finished) ~ *) {
     display: none;
+  }
+
+  .button-group {
+    display: flex;
+    width: 100%;
+
+    &.disabled {
+      cursor: none;
+    }
+
+    .button {
+      flex-grow: 1;
+
+      font-family: 'ABCSans';
+      display: inline-block;
+      background: transparent;
+      font-size: 0.875rem;
+      font-weight: bold;
+      padding: 0.625rem 1.5rem 0.5rem;
+      margin: 0;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      border: 1px solid;
+      border-color: var(--tint-4);
+      transition: var(--dls-link-transition);
+      touch-action: manipulation;
+
+      &.active {
+        background: var(--tint-4);
+      }
+
+      border-radius: 0;
+      &:first-child {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+      }
+      &:last-child {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+      &:not(last-child){
+        margin-left: -1px;
+      }
+    }
   }
 
   .quiz-question {
