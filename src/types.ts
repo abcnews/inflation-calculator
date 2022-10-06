@@ -55,7 +55,5 @@ export interface WeightedBar {
   inflation: Decimal;
   weighting: Decimal;
 
-  colour?: string;
-  isDiscretionary: boolean;
   isHighlighted?: boolean;
 }

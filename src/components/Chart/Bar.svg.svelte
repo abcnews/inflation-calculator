@@ -1,11 +1,18 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
+  import { FOCUS, NON_FOCUS } from '../../colours';
   
   export let point;
   export let innerLabel: string = '';
   export let leftLabel: string = '';
   export let rightLabel: string = '';
 
+  $: blockColour = point.isHighlighted ? FOCUS : NON_FOCUS;
+  $: labelColour = point.isHighlighted ? FOCUS : 'black';
+
+  // Push everything off the y-axis so it's easier to see
+  $: xOffset = point.x > 0 ? 2 : -2;
+  $: width = Math.max(point.width - 4, 1);
 </script>
 
 <!-- Needs an out transition to avoid leaving boxes behind... -->
@@ -13,15 +20,14 @@
   class="weighted-bar"
   in:fade="{{ delay: 800 }}"
   out:fade="{{ duration: 1 }}"
-  style="transform: translate({point.x}px, {point.y}px)"
+  style="transform: translate({point.x + xOffset}px, {point.y}px)"
 >
   <rect
     x="0"
     y="0"
     height={point.height}
-    width={point.width}
-    opacity={point.opacity}
-    fill={point.fill}
+    width={width}
+    fill={blockColour}
   ></rect>
 
   {#if point.height > 11}
@@ -31,16 +37,18 @@
       <text
         out:fade
         in:fade="{{ delay: 400 }}"
-        opacity={point.opacity}
-        stroke={'white'}
+        fill={'white'}
         style="
-          font-size: 12px;
           transform: translate({point.width / 2}px, {(point.height / 2) + 4}px);
           text-anchor: middle;
-          fill: white;
         "
       >
-        {innerLabel}
+        {#if inner.indexOf('New dwelling') === 0}
+          <tspan x="0" dy="-0.4em">New dwelling purchase</tspan>
+          <tspan x="0" dy="1em">by owner-occupiers</tspan>
+        {:else}
+          {innerLabel}
+        {/if{
       </text>
     {/if}
 
@@ -49,10 +57,8 @@
       <text
         out:fade
         in:fade="{{ delay: 400 }}"
-        opacity={point.opacity}
-        stroke={point.fill}
+        fill={labelColour}
         style="
-          font-size: 12px;
           transform: translate({point.width + 5}px, {(point.height / 2) + 4}px);
           text-anchor: start;
         "
@@ -63,16 +69,16 @@
         {:else if rightLabel.indexOf('Deposit and loan facilities (direct charges)') === 0}
           Deposit and loan facilities
         {:else if rightLabel.indexOf('Property rates and') === 0}
-          <tspan x="0" dy="-0.5em">Property rates and</tspan>
-          <tspan x="0" dy="1.2em">charges</tspan>
+          <tspan x="0" dy="-0.4em">Property rates &</tspan>
+          <tspan x="0" dy="1em">charges</tspan>
         {:else if rightLabel.indexOf('Maintenance and repair') === 0}
-          <tspan x="0" dy="-0.5em">Maintenance and repair</tspan>
-          <tspan x="0" dy="1.2em">of the dwelling</tspan>
+          <tspan x="0" dy="-0.4em">Maintenance & repair</tspan>
+          <tspan x="0" dy="1em">of the dwelling</tspan>
         {:else if rightLabel.indexOf('Furnishings') === 0}
-          <tspan x="0" dy="-0.5em">Furnishings, household equipment</tspan>
-          <tspan x="0" dy="1.2em">and services</tspan>
+          <tspan x="0" dy="-0.4em">Furnishings, household</tspan>
+          <tspan x="0" dy="1em">equipment & services</tspan>
         {:else}
-          {rightLabel}
+          {rightLabel.replace(/ and /g, ' & ')}
         {/if}
       </text>
     {/if}
@@ -82,10 +88,8 @@
       <text
         out:fade
         in:fade="{{ delay: 400 }}"
-        opacity={point.opacity}
         stroke={point.fill}
         style="
-          font-size: 12px;
           transform: translate({-5}px, {(point.height / 2) + 4}px);
           text-anchor: end;
         "
@@ -106,15 +110,17 @@
       height 800ms,
       x 800ms,
       y 800ms,
-      opacity 800ms;
   }
 
   text {
     font-family: ABCSans;
-    font-size: 7pt;
     text-anchor: start;
+    letter-spacing: 0.03em;
+    /* font-weight: 700; */
+    font-size: 13px;
+    font-weight: 700;
 
-    transition: transform 800ms, opacity 800ms;
+    transition: transform 800ms;
   }
 }
 </style>

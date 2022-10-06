@@ -12,7 +12,6 @@
 
  const calcBars = (data, xRange, yRange) => {
    const totalArea = data.reduce((acc, d) => acc + $x(d) * $y(d), 0);
-   const anyHighlighted = data.reduce((acc, d) => acc || d.isHighlighted, false);
 
    const res = data.reduce((acc, d) => {
       let width = $xGet(d);
@@ -38,14 +37,12 @@
       const point = {
         id: d.name,
         x: xVal,
-        fill: d.colour,
         name: d.name,
+        isHighlighted: d.isHighlighted,
 
         // areaLabel: formatPercentage($x(d) * $y(d) / 100),
         labelY: formatPercentage($y(d)),
         labelYCombined: formatPercentage(proportionOfTotal * 100),
-
-        opacity: anyHighlighted && !d.isHighlighted ? '0.4' : '1',
 
         // 1 pixel of whitespace between bars
         height: height - 1,
@@ -74,8 +71,8 @@
 {#each bars as d (d.id)}
   <Bar
     point={d}
-    innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
-    rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
+    innerLabel={showLabel && d.width > $xScale.range()[1] * 0.5 && d.name}
+    rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.5 && d.name}
   />
 {/each}
 

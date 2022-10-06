@@ -1,12 +1,14 @@
 <script lang="ts">
   import { Decimal } from 'decimal.js-light';
 
-  import Select from 'carbon-components-svelte/src/Select/Select.svelte';
-  import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
+  import SvelteSelect from 'svelte-select';
 
-  import 'carbon-components/scss/components/select/_select.scss';
-  import 'carbon-components/scss/globals/scss/_css--body.scss';
-  import 'carbon-components/scss/globals/scss/_css--helpers.scss';
+  // import Select from 'carbon-components-svelte/src/Select/Select.svelte';
+  // import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
+
+  // import 'carbon-components/scss/components/select/_select.scss';
+  // import 'carbon-components/scss/globals/scss/_css--body.scss';
+  // import 'carbon-components/scss/globals/scss/_css--helpers.scss';
 
   import { defaultCustomisation, CPI } from '../constants';
   import { calculateInflationRate } from '../model';
@@ -35,9 +37,11 @@
       choices: [
         {
           label: "Yes",
+          value: "Yes",
         },
         {
           label: "No",
+          value: "No",
         },
       ],
     },
@@ -48,12 +52,15 @@
       choices: [
         {
           label: "Rent",
+          value: "Rent",
         },
         {
           label: "Own outright",
+          value: "Own outright",
         },
         {
           label: "Own with a mortgage",
+          value: "Own with a mortgage",
         },
       ],
     },
@@ -64,15 +71,19 @@
       choices: [
         {
           label: "Drink",
+          value: "Drink",
         },
         {
           label: "Smoke",
+          value: "Smoke",
         },
         {
           label: "Neither",
+          value: "Neither",
         },
         {
           label: "Both",
+          value: "Both",
         },
       ],
     },
@@ -139,16 +150,16 @@
 
 
 {#each QUESTIONS as question, i}
-  <Select
-    labelText={question.text}
-    on:change={e => answerQuestion(e.detail, question, i)}
-    disabled={i > lastAnswered + 1}
-  >
-    <SelectItem text={""} disabled />
-    {#each question.choices as choice}
-      <SelectItem value={choice.label} text={choice.label} />
-    {/each}
-  </Select>
+  <div class="quiz-question">
+    <div class:disabled={i > lastAnswered + 1} class="label">{question.text}</div>
+    <SvelteSelect
+      on:select={e => answerQuestion(e.detail.value, question, i)}
+      isDisabled={i > lastAnswered + 1}
+      isClearable={false}
+      items={question.choices}
+    >
+    </SvelteSelect>
+  </div>
 {/each}
 
 {#if isFinished}
@@ -166,14 +177,62 @@
     display: none;
   }
 
-  :global(.bx--select) {
-    padding: 0.3rem;
-  }
-  :global(.bx--label) {
-    color: #111;
-    font-size: 13px;
+  .quiz-question {
+    padding: 0.5rem;
     font-family: 'ABCSans';
+
+    --tint-3: hsl(0, 0%, 60%);
+    --tint-4: hsl(0, 0%, 80%);
+    --tint-5: hsl(0, 0%, 90%);
+    --tint-6: hsl(0, 0%, 95%);
+
+    --height: 50px;
+    --padding: 0.75rem 2.5rem 0.6rem 1rem;
+    --inputFontSize: 1rem;
+    --optionFontSize: 0.875rem;
+    --borderRadius: 0;
+    --inputLetterSpacing: normal;
+
+    --border: 1px solid var(--tint-4);
+    --borderFocusColor: var(--tint-3);
+    --itemIsActiveBG: var(--tint-6);
+    --itemIsActiveColor: rgb(0, 88, 204);
+
+    --itemHoverBG: var(--itemIsActiveColor);
+    --itemHoverColor: white;
+    --itemFirstBorderRadius: 0;
+    --listBorderRadius: 0;
+
+    :global(.selectContainer.focused) {
+      border-left-width: 0.5rem;
+      border-color: var(--tint-3);
+      transition: border-width 0.2s ease-out;
+    }
+    :global(input) {
+      cursor: pointer !important;
+      font-family: 'ABCSans';
+    }
+
+    :global(.item) {
+      font-size: var(--optionFontSize);
+      cursor: pointer;
+
+      &:hover, &:active {
+        background: var(--itemHoverBG, #e7f2ff);
+        color: var(--itemHoverColor, inherit);
+      }
+    }
+    :global(.item.active) {
+      border-left: 8px solid var(--itemIsActiveColor);
+    }
+
+    .label {
+      display: inline-block;
+      margin: 0 0 0.5rem;
+      font-weight: bold;
+    }
   }
+
   .result {
     font-size: 1rem;
     font-family: 'ABCSans';

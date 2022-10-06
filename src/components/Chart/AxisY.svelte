@@ -18,8 +18,7 @@
   export let textAnchor = 'start';
 
   export let yAxisMax;
-
-  export let axisLabel = '';
+  export let budgetDescription;
 
   $: isBandwidth = typeof $yScale.bandwidth === 'function';
 
@@ -30,9 +29,7 @@
         ticks($yScale.ticks()) :
           $yScale.ticks(ticks);
 
-  $: yOffset = -$padding.left;
   $: tickOffset = (ticksAtZeroX ? $xScale(0) : 0) - 20;
-
 
   const yAxisTop = tweened($height, {
     duration: 1000,
@@ -40,11 +37,12 @@
   });
   $: yAxisTop.set($height - $yScale(yAxisMax));
 
+  $: console.log($yScale(yAxisMax));
 </script>
 
-<g class='axis y-axis' transform='translate({yOffset}, 0)'>
+<g class='axis y-axis' transform='translate({$padding.left}, 0)'>
   {#each tickVals as tick (tick)}
-    <g class='tick tick-{tick}' transform='translate({$xRange[0] + (isBandwidth ? $padding.left : 0) + tickOffset - yOffset}, {$yScale(tick)})'>
+    <g class='tick tick-{tick}' transform='translate({$xRange[0] + (isBandwidth ? $padding.left : 0) + tickOffset - $padding.left}, {$yScale(tick)})'>
       {#if gridlines !== false}
         <line
           class="gridline"
@@ -73,20 +71,33 @@
   {/each}
 
   {#if baseline}
-    <!-- <line class="baseline" x1="{$xScale(0) - yOffset}" x2="{$xScale(0) - yOffset}" y1="0" y2="{$height}" /> -->
-    <line class="baseline" x1="{-1 * yOffset}" x2="{-1 * yOffset}" y1={$yAxisTop} y2="{$height}" />
+    <line class="baseline" x1="{$xScale(0) - $padding.left}" x2="{$xScale(0) - $padding.left}" y1={$yAxisTop} y2="{$height + 1}" />
+    <!-- <line class="baseline" x1="{-1 * yOffset}" x2="{-1 * yOffset}" y1={$yAxisTop} y2="{$height + 1}" /> -->
   {/if}
 
-  {#if axisLabel}
-    <text class="axis-label" x={-1 * yOffset} y={$yAxisTop - 5}>{axisLabel}</text>
-  {/if}
+  <text class="axis-label" transform="translate({-1 * $padding.left} {$yAxisTop - 30})">
+    {#if budgetDescription === 'typical budget'}
+      <tspan x="0" dy="0">Proportion of</tspan>
+      <tspan x="0" dy="1.2em">typical budget</tspan>
+    {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage holder'}
+      <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of</tspan>
+      <tspan x="0" dy="1.2em">{budgetDescription}</tspan>
+      <tspan x="0" dy="1.2em">budget</tspan>
+    {:else}
+      <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of</tspan>
+      <tspan x="0" dy="1.2em">{budgetDescription}</tspan>
+    {/if}
+  </text>
 </g>
 
 <style>
+  .y-axis {
+    --axis-colour: #646464;
+  }
   .tick {
     font-family: ABCSans, Helvetica, sans-serif;
-    font-size: 0.725em;
-    font-weight: 200;
+    font-size: 12px;
+    font-weight: 400;
     transition: transform 1s;
   }
 
@@ -94,21 +105,20 @@
     font-family: ABCSans, Helvetica, sans-serif;
     font-size: 12px;
     font-weight: 400;
-    fill: black;
+    fill: var(--axis-colour);
     text-anchor: start;
   }
 
-  line,
   .tick line {
-    stroke: #aaa;
+    stroke: var(--axis-colour);
     stroke-dasharray: 2;
   }
 
   .baseline {
-    stroke: #666;
+    stroke: var(--axis-colour);
   }
   .tick text {
-    fill: #666;
+    fill: var(--axis-colour);
   }
 
   .tick .tick-mark,

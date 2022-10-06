@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
   import { LayerCake, Svg } from 'layercake';
   import type { WeightedBar } from '../../types';
   import { sortBars } from '../../utils';
@@ -13,7 +15,7 @@
 
   export let width: number;
   export let height: number;
-  export let padding = { top: 50, bottom: 10, left: 40, right: 50 };
+  export let padding = { top: 70, bottom: 10, left: 40, right: 40 };
 
   export let data: WeightedBar[];
   export let xDomain: [number, number]; 
@@ -26,9 +28,10 @@
   export let preventZoomSplitting: boolean;
   export let showLabel = true;
 
-  export let yAxisLabel = 'Proportion of budget';
-  export let xAxisLabel = 'Price increase (%)';
-  export let label = '';
+  export let xAxisLabel = 'Price increase';
+  export let budgetDescription: string;
+
+  $: label = (zoomedInGroups.indexOf('Housing') > -1 && zoomInAnimationStage > 5) ? zoomedInGroups.join(', ') : '';
 
   //
   // States to manage the zoom in animation sequence:
@@ -43,9 +46,9 @@
 
   const nextStage = () => {
     zoomInAnimationStage += 1;
-    if (zoomInAnimationStage === 4) {
+    if (zoomInAnimationStage === 5) {
       setTimeout(() => nextStage(), 1000);
-    } else if (zoomInAnimationStage < 4) {
+    } else if (zoomInAnimationStage < 5) {
       setTimeout(() => nextStage(), 1000);
     }
   };
@@ -54,7 +57,7 @@
     if (zoomInAnimationStage === 0 && zoomedInGroups.length > 0) {
       if (preventZoomSplitting) {
         // Skip the full zoom-in animation in the intro explanation section (as this is the only place we're using this setting)
-        zoomInAnimationStage = 5;
+        zoomInAnimationStage = 6;
       } else {
         nextStage();
       }
@@ -70,11 +73,11 @@
         inflation: d.inflation.mul(100).toNumber(),
         weighting: d.weighting.mul(100).toNumber(),
         expandX,
-        isHighlighted: highlightedGroups.indexOf(d.name) > -1 || highlightedGroups.indexOf(d.group) > -1,
+        isHighlighted: highlightedGroups.indexOf(d.name) > -1,
         isZoomed: zoomedInGroups.indexOf(d.group) > -1,
       }))
 
-  // Use the highest/low inflation values
+  // Use the highest/low inflation values (x axis)
   let _xDomain: [number, number];
   $: {
     _xDomain = xDomain || [0, 0];
@@ -86,6 +89,7 @@
     _xDomain[1] = Math.max(_xDomain[1], xMax);
   }
 
+  // Determine the budget % of all the bars combined (y axis)
   $: yMax = processedData.reduce((x, d) => {
     if (zoomInAnimationStage > 4 && !d.isZoomed) {
       return x;
@@ -104,17 +108,18 @@
   class="chart-container"
   style="
     width: {width}px;
-    height: {height}px;
-    padding-top: 50px;
+    height: {height - (label ? 50 : 0)}px;
     margin: auto;
   ">
 
-  <div
-    class="label-container"
-    style="padding-left: 30px; padding-right: 50px;"
-   >
-    <h6>{label}</h6>
-  </div>
+  {#if label}
+    <div
+      in:slide="{{ duration: 800, easing: quintOut }}"
+      class="label-container"
+     >
+       <h6 style="margin: auto;">{label}</h6>
+    </div>
+  {/if}
 
   {#if width && height}
     <LayerCake
@@ -123,15 +128,16 @@
       y={yKey}
       xDomain={_xDomain}
       yDomain={[yMax, 0]}
-      data={processedData.filter(d => zoomInAnimationStage < 2 || d.isZoomed)}
+      data={processedData.filter(d => zoomInAnimationStage < 3 || d.isZoomed)}
     >
       <Svg>
         {#if expandX && xAxisLabel}
           <AxisX
             gridlines={false}
             baseline={true}
-            snapTicks={true}
-            axisLabel={'Price increase (%)'}
+            snapTicks={false}
+            ticks={8}
+            axisLabel={'Price increase'}
           />
         {/if}
           <AxisY
@@ -139,28 +145,8 @@
             baseline={showLabel}
             ticks={0}
             {yAxisMax}
-            axisLabel={showLabel ? `${yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of budget` : ''}
+            {budgetDescription}
           />
-
-        {#if yAxisLabel}
-          <g style="transform: translate(-20px, -20px)">
-            <g style="transform: scale(0.7) translate(23px, -26px) rotate(180deg)">
-              <path
-                class="y-axis-arrow"
-                xmlns="http://www.w3.org/2000/svg"
-                d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
-              />
-            </g>
-            <text class="y-axis-label" style="transform: translate(-8px, 0px)">{yAxisLabel}</text>
-            <g style="transform: scale(0.7) translate(0px, 16px)">
-              <path
-                class="y-axis-arrow"
-                xmlns="http://www.w3.org/2000/svg"
-                d="M11 21.883l-6.235-7.527-.765.644 7.521 9 7.479-9-.764-.645-6.236 7.529v-21.884h-1v21.883z"
-              />
-            </g>
-          </g>
-        {/if}
 
         <Bars {showLabel} />
 
@@ -169,21 +155,13 @@
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .label-container {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin-bottom: -40px;
     font-family: ABCSans, Helvetica, sans-serif;
-  }
-  .y-axis-arrow {
-    fill: black;
-  }
-  .y-axis-label {
-    font-family: ABCSans, Helvetica, sans-serif;
-    font-size: 12px;
-    fill: black;
-    font-weight: 400;
+
+    margin-top: 30px;
   }
 </style>

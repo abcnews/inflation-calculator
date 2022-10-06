@@ -30,18 +30,42 @@
     }
   }
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 80];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 30] : [-42, 80];
+  let budgetDescription = '';
+  $: {
+    if ($customisationStore.applyPersonalisation) {
+      // Personalisation of 1st scrollyteller
+      budgetDescription = 'your budget';
+    } else if ($customisationStore.housingProfile === 'renter') {
+      // Different tenure types in 2nd scrollyteller
+      budgetDescription = 'renter';
+    } else if ($customisationStore.housingProfile === 'mortgage') {
+      // Different tenure types in 2nd scrollyteller
+      budgetDescription = 'mortgage holder';
+    } else if ($customisationStore.housingProfile === 'outright') {
+      // Different tenure types in 2nd scrollyteller
+      budgetDescription = 'outright owner';
+    } else if (
+      $customisationStore.removedGroups.indexOf('New dwelling purchase by owner-occupiers') === -1 &&
+      $customisationStore.zoomedInGroups.indexOf('Housing') > -1
+    ) {
+      // Only for final scrollyteller to explicitly say its CPI
+      budgetDescription = 'Consumer price index';
+    } else {
+      // Only for initial scrollyteller to avoid complexity
+      budgetDescription = 'typical budget';
+    }
+  }
 </script>
 
 <WeightedIndexChart
   data={$outputStore}
   expandX={$customisationStore.showMarimako}
-  label=""
-  yAxisLabel=""
   zoomedInGroups={$customisationStore.zoomedInGroups}
   highlightedGroups={$customisationStore.highlightedGroups}
   preventZoomSplitting={$customisationStore.preventZoomSplitting}
   orderBy={$customisationStore.orderBy}
+  {budgetDescription}
   bind:zoomInAnimationStage={zoomStage}
   {xDomain}
   {width}

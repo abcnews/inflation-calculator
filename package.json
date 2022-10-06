@@ -38,6 +38,7 @@
 		"d3-fetch": "^3.0.1",
 		"decimal.js-light": "^2.5.1",
 		"layercake": "^7.0.0",
-		"svelte": "^3.49.0"
+		"svelte": "^3.49.0",
+		"svelte-select": "^4.4.7"
 	}
 }

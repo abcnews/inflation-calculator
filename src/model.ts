@@ -1,9 +1,9 @@
 import { Decimal } from 'decimal.js-light';
-import { COLOURS, FOCUS, NON_FOCUS } from './colours';
+// import { COLOURS, FOCUS, NON_FOCUS } from './colours';
 
 import { Customisation, ExpenditureGroup, ExpenditureGroupWeights, WeightedBar, InflationData } from './types';
 import { HOUSING_PROFILES } from './constants';
-import { getColour, toPercentage } from './utils';
+import { toPercentage } from './utils';
 
 // Weighted average
 // see: http://textbook.stpauls.br/Macroeconomics/page_90.htm
@@ -25,9 +25,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     housingProfile,
 
     // orderBy,
-    colourBy,
-
-    // highlightedGroups,
+    highlightedGroups,
     // zoomedInGroups,
   } = customisation;
 
@@ -89,8 +87,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       const group: ExpenditureGroup = data[groupName][expGroupName];
 
       // const isHighlighted = highlightedGroups.indexOf(expGroupName) > -1 ||
-      //   highlightedGroups.indexOf(groupName) > -1 ||
-      //   (group.isDiscretionary && highlightedGroups.indexOf('Discretionary') > -1);
+        // highlightedGroups.indexOf(groupName) > -1;
 
       let weighting = group.weights[index];
 
@@ -127,7 +124,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
           inflation: group.inflation[timelineYears],
           weighting,
 
-          colour: getColour(group.group, group.isDiscretionary, colourBy),
+          // colour: getColour(group.group, group.isDiscretionary, colourBy),
 
           // isHighlighted,
           isDiscretionary: group.isDiscretionary,
@@ -142,7 +139,6 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
 
     // Else, merge into a combined bar
     const combinedWeighting = bars.reduce((acc, bar) => acc.add(bar.weighting), new Decimal(0));
-    // console.log(bars.map(b => b.weighting.toNumber() * 100));
 
     const combinedInflationContribution = bars.reduce((acc, bar) => acc.add(bar.inflation.mul(bar.weighting)), new Decimal(0));
     const inflation = combinedInflationContribution.div(combinedWeighting);
@@ -160,7 +156,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       inflation,
       weighting: combinedWeighting,
 
-      colour: getColour(groupName, false, colourBy),
+      // colour: getColour(groupName, false, colourBy),
 
       // isHighlighted,
       isDiscretionary: false,

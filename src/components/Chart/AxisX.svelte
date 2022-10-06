@@ -64,7 +64,7 @@
         y={yTick}
         dx=""
         dy=""
-        text-anchor={textAnchor(i)}>{formatTick(tick)}</text
+        text-anchor={textAnchor(i)}>{formatTick(tick)}%</text
       >
     </g>
   {/each}
@@ -72,35 +72,35 @@
     <line class="baseline" y1={$height + 0.5} y2={$height + 0.5} x1="0" x2={$width} />
   {/if}
   {#if axisLabel}
-    <text class="axis-label" x={$xScale.range()[1]} y={$yRange[0] - 6}>{axisLabel}</text>
+    <text class="axis-label" x={$xScale.range()[1]} y={$yRange[0] + 35}>{axisLabel}</text>
   {/if}
 </g>
 
 <style>
+  .x-axis {
+    --axis-colour: #646464;
+  }
+
   .tick {
-    font-size: 0.725em;
-    font-weight: 200;
+    font-size: 12px;
+    font-weight: 400;
     transition: transform 1s;
     font-family: ABCSans, Helvetica, sans-serif;
   }
 
   .axis-label {
-    font-size: 12px;
-    fill: black;
-    text-anchor: end;
     font-family: ABCSans, Helvetica, sans-serif;
+    font-size: 12px;
+    fill: var(--axis-colour);
+    text-anchor: end;
   }
 
   line,
   .tick line {
-    stroke: #aaa;
-  }
-
-  .baseline {
-    stroke: #666;
+    stroke: var(--axis-colour);
   }
   .tick text {
-    fill: #666;
+    fill: var(--axis-colour);
   }
 
   .tick .tick-mark,
