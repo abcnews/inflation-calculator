@@ -48,7 +48,7 @@
           <tspan x="0" dy="1em">by owner-occupiers</tspan>
         {:else}
           {innerLabel}
-        {/if{
+        {/if}
       </text>
     {/if}
 
