@@ -43,7 +43,7 @@
           text-anchor: middle;
         "
       >
-        {#if inner.indexOf('New dwelling') === 0}
+        {#if innerLabel.indexOf('New dwelling') === 0}
           <tspan x="0" dy="-0.4em">New dwelling purchase</tspan>
           <tspan x="0" dy="1em">by owner-occupiers</tspan>
         {:else}

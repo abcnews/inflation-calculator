@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
   import { LayerCake, Svg } from 'layercake';
   import type { WeightedBar } from '../../types';
   import { sortBars } from '../../utils';
@@ -30,8 +28,6 @@
 
   export let xAxisLabel = 'Price increase';
   export let budgetDescription: string;
-
-  $: label = (zoomedInGroups.indexOf('Housing') > -1 && zoomInAnimationStage > 5) ? zoomedInGroups.join(', ') : '';
 
   //
   // States to manage the zoom in animation sequence:
@@ -108,18 +104,9 @@
   class="chart-container"
   style="
     width: {width}px;
-    height: {height - (label ? 50 : 0)}px;
+    height: {height}px;
     margin: auto;
   ">
-
-  {#if label}
-    <div
-      in:slide="{{ duration: 800, easing: quintOut }}"
-      class="label-container"
-     >
-       <h6 style="margin: auto;">{label}</h6>
-    </div>
-  {/if}
 
   {#if width && height}
     <LayerCake
@@ -156,12 +143,4 @@
 </div>
 
 <style lang="scss">
-  .label-container {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-family: ABCSans, Helvetica, sans-serif;
-
-    margin-top: 30px;
-  }
 </style>
