@@ -30,7 +30,7 @@
     }
   }
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 80];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 55];
   let budgetDescription = '';
   $: {
     if ($customisationStore.applyPersonalisation) {

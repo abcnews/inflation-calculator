@@ -69,8 +69,8 @@
   {/each}
 
   {#if baseline}
-    <line class="baseline" x1="{$xScale(0) - $padding.left}" x2="{$xScale(0) - $padding.left}" y1={$yAxisTop} y2="{$height + 1}" />
-    <!-- <line class="baseline" x1="{-1 * yOffset}" x2="{-1 * yOffset}" y1={$yAxisTop} y2="{$height + 1}" /> -->
+    <line class="baseline" x1="{$xScale(0) - $padding.left}" x2="{$xScale(0) - $padding.left}" y1={$yAxisTop - 5} y2="{$height + 2}" />
+    <line class="baseline-tick" x1="{$xScale(0) - $padding.left - 4}" x2="{$xScale(0) - $padding.left}" y1={$yAxisTop - 5} y2="{$yAxisTop - 5}" />
   {/if}
 
   <text class="axis-label" transform="translate({-1 * $padding.left} {$yAxisTop - 30})">
@@ -111,6 +111,7 @@
     stroke-dasharray: 2;
   }
 
+  .baseline-tick,
   .baseline {
     stroke: var(--axis-colour);
   }

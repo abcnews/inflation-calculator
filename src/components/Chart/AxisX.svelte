@@ -69,7 +69,7 @@
     </g>
   {/each}
   {#if baseline === true}
-    <line class="baseline" y1={$height + 0.5} y2={$height + 0.5} x1="0" x2={$width} />
+    <line class="baseline" y1={$height + 2} y2={$height + 2} x1="0" x2={$width} />
   {/if}
   {#if axisLabel}
     <text class="axis-label" x={$xScale.range()[1]} y={$yRange[0] + 35}>{axisLabel}</text>

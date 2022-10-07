@@ -71,8 +71,7 @@
 {#each bars as d (d.id)}
   <Bar
     point={d}
-    innerLabel={showLabel && d.width > $xScale.range()[1] * 0.7 && d.name}
-    rightLabel={showLabel && d.width <= $xScale.range()[1] * 0.7 && d.name}
+    {showLabel}
   />
 {/each}
 

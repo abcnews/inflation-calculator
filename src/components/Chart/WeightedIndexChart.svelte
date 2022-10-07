@@ -5,7 +5,6 @@
 
   import Bars from './Bars.svg.svelte';
   import AxisX from './AxisX.svelte';
-  // import MarkerLine from './MarkerLine.svelte';
   import AxisY from './AxisY.svelte';
 
   const xKey = 'inflation';
@@ -82,7 +81,7 @@
     const xMax = processedData.reduce((x, d) => Math.max(x, d[xKey]), 0);
     const xMin = processedData.reduce((x, d) => Math.min(x, d[xKey]), 0);
     _xDomain[0] = Math.min(_xDomain[0], xMin);
-    _xDomain[1] = Math.max(_xDomain[1], xMax);
+    _xDomain[1] = Math.min(Math.max(_xDomain[1], xMax), 80);
   }
 
   // Determine the budget % of all the bars combined (y axis)
@@ -123,7 +122,7 @@
             gridlines={false}
             baseline={true}
             snapTicks={false}
-            ticks={8}
+            ticks={6}
             axisLabel={'Price increase'}
           />
         {/if}
