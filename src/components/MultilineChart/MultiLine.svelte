@@ -35,7 +35,7 @@
 </g>
 
 <circle
-  fill={'black'}
+  fill='rgba(229, 42, 0, 1)'
   cx={$xScale(0)}
   cy={$yScale(0)}
   r={4}

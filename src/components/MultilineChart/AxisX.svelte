@@ -28,7 +28,7 @@
   export let xTick = 0;
 
   /** @type {Number} [yTick=16] - The distance from the baseline to place each tick value. */
-  export let yTick = 16;
+  export let yTick = 22;
 
   $: isBandwidth = typeof $xScale.bandwidth === 'function';
 
@@ -82,23 +82,15 @@
 </g>
 
 <style>
-  .tick {
-    font-size: 0.725em;
-    font-weight: 200;
-  }
-
-  line,
-  .tick line {
-    stroke: #aaa;
-    stroke-dasharray: 2;
-  }
-
   .tick text {
-    fill: #838FA0;
+    font-size: 12px;
+    font-weight: 700;
+    fill: rgba(100, 100, 100, 1);
   }
 
   .tick .tick-mark,
   .baseline {
+    stroke: rgba(100, 100, 100, 0.2);
     stroke-dasharray: 0;
   }
   /* This looks slightly better */

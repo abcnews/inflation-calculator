@@ -25,10 +25,11 @@
 
   $: onCustomisationChange(customisation);
 
-  const formatPercentage = (x: Decimal): string => `${x.mul(100).toPrecision(2)}%`;
+  const formatPercentage = (x: Decimal): string => `${x.mul(100).toFixed(1)}%`;
 
   $: personalInflation = calculateInflationRate(indexData, { ...defaultCustomisation, ...customisation });
-  $: inflationDiff = personalInflation.div(CPI); 
+  $: inflationDiff = CPI.sub(personalInflation); 
+  // $: inflationPerc = personalInflation.div(CPI); 
 
   let QUESTIONS = [
     {
@@ -154,6 +155,7 @@
 
 
 {#each QUESTIONS as question, i}
+  {#if i <= lastAnswered + 1}
   <div class="quiz-question">
     <div class:disabled={i > lastAnswered + 1} class="label">{question.text}</div>
     <div class:disabled={i > lastAnswered + 1} class="button-group">
@@ -161,7 +163,7 @@
         <button
           class="button"
           class:active={question.answered === choice.value}
-          on:click={() => answerQuestion(choice.value, question, i)}
+          on:click={() => i <= lastAnswered + 1 && answerQuestion(choice.value, question, i)}
         >
           {choice.label.toUpperCase()}
         </button>
@@ -176,20 +178,29 @@
     <!-- > -->
     <!-- </SvelteSelect> -->
   </div>
+  {/if}
 {/each}
 
 {#if isFinished}
   <div class="result">
     <p>
       We estimate that your personal inflation rate is
-    </p>
- 
-    <p class="emphasized">
-      {formatPercentage(personalInflation)}
+      <span class="emphasized">
+        {formatPercentage(personalInflation)}
+      </span>
+      which is
+      <span class="bold">
+        {formatPercentage(inflationDiff)} lower
+      </span>
+      than the official rate.
     </p>
      
     <p>
-      This means that the items that make up your budget are approximately {formatPercentage(personalInflation)} more expensive than they were last year.
+      This means that the items that make up your budget are approximately
+      <span class="emphasized">
+        {formatPercentage(personalInflation)}
+      </span>
+      more expensive than they were last year.
     </p>
   </div>
 
@@ -251,7 +262,7 @@
   }
 
   .quiz-question {
-    padding: 1rem;
+    padding: 0.8rem;
     font-family: 'ABCSans';
 
     .label {
@@ -319,15 +330,19 @@
     margin: 40px auto;
 
     p {
-      font-weight: 400;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
     }
 
+    .bold {
+      font-weight: 900;
+    }
     .emphasized {
       color: rgba(229, 42, 0, 1);
-      font-size: 75px;
-      font-family: 'ABCSerif';
-      margin-top: 0px;
-      font-weight: 600;
+      /* font-size: 75px; */
+      /* font-family: 'ABCSerif'; */
+      /* margin-top: 0px; */
+      font-weight: 900;
     }
   }
 </style>

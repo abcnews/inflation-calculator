@@ -34,19 +34,20 @@
   <div
     class="label"
     style="
-      color: {group.colour};
+      color: {group.labelColour || group.colour};
       top: {top(group)}px;
       left: calc({left(group.values) * 100}% + 75px);
     "
-  ><span>{cap((group.label))}</span></div>
+  ><span>{cap((group.label))} {group.values[1].y.toFixed(1) + '%'}</span></div>
 {/each}
 
 <style>
   .label {
     position: absolute;
-    transform: translate(-100%, -100%)translateY(1px);
+    transform: translate(-100%, -100%);
     width: 60px;
     font-size: 12px;
+    font-weight: 700;
     z-index: 19;
     transition: all 1s;
   }

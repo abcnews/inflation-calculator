@@ -7,6 +7,8 @@
 
   const { width, padding, xRange, xScale, yScale } = getContext('LayerCake');
 
+  export let baseline = false;
+
   /** @type {Boolean} [gridlines=true] - Extend lines from the ticks into the chart space */
   export let gridlines = true;
 
@@ -19,20 +21,13 @@
   /** @type {Number|Array|Function} [ticks=4] - If this is a number, it passes that along to the [d3Scale.ticks](https://github.com/d3/d3-scale) function. If this is an array, hardcodes the ticks to those values. If it's a function, passes along the default tick values and expects an array of tick values in return. */
   export let ticks = 4;
 
-  /** @type {Number} [xTick=0] - How far over to position the text marker. */
   export let xTick = 0;
-
-  /** @type {Number} [yTick=0] - How far up and down to position the text marker. */
   export let yTick = 0;
-
-  /** @type {Number} [dxTick=0] - Any optional value passed to the `dx` attribute on the text marker and tick mark (if visible). This is ignored on the text marker if your scale is ordinal. */
-  export let dxTick = 0;
-
-  /** @type {Number} [dyTick=-4] - Any optional value passed to the `dy` attribute on the text marker and tick mark (if visible). This is ignored on the text marker if your scale is ordinal. */
-  export let dyTick = -4;
+  export let dxTick = -50;
+  export let dyTick = 4;
 
   /** @type {String} [textAnchor='start'] The CSS `text-anchor` passed to the label. This is automatically set to "end" if the scale has a bandwidth method, like in ordinal scales. */
-  export let textAnchor = 'start';
+  export let textAnchor = 'end';
 
   $: isBandwidth = typeof $yScale.bandwidth === 'function';
 
@@ -44,7 +39,7 @@
           $yScale.ticks(ticks);
 </script>
 
-<g class='axis y-axis' transform='translate({-$padding.left}, 0)'>
+<g class='axis y-axis' transform='translate({$padding.left}, 0)'>
   {#each tickVals as tick (tick)}
     <g class='tick tick-{tick}' transform='translate({$xRange[0] + (isBandwidth ? $padding.left : 0)}, {Math.floor($yScale(tick))})'>
       {#if gridlines !== false}
@@ -69,17 +64,25 @@
         x='{xTick}'
         y='{yTick + (isBandwidth ? $yScale.bandwidth() / 2 : 0)}'
         dx='{isBandwidth ? -9 : dxTick}'
-        dy='{isBandwidth ? 4 : dyTick}'
+        dy='{isBandwidth ? 7 : dyTick}'
         style="text-anchor:{isBandwidth ? 'end' : textAnchor};"
       >{formatTick(tick)}</text>
     </g>
   {/each}
+
+  {#if baseline}
+    <line class="baseline" x1="{-$padding.left}" x2="{$xRange[1] - $padding.left}" y1={$yScale(0)} y2="{$yScale(0)}" />
+  {/if}
+
 </g>
 
 <style>
   .tick {
     font-size: .725em;
-    font-weight: 200;
+    font-weight: 700;
+  }
+  .baseline {
+    stroke: rgba(100, 100, 100, 0.2);
   }
 
   .tick-0 > .gridline {
@@ -95,7 +98,7 @@
   }
 
   .tick text {
-    fill: #838FA0;
+    fill: black;
   }
 
   .tick.tick-0 line {

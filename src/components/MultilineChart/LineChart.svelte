@@ -26,14 +26,15 @@
   $: data = [
     {
       label: 'Official rate',
-      colour: 'black',
+      labelColour: 'black',
+      colour: 'rgba(0, 123, 199, 1)',
       values: [
         { x: 0, y: 0 },
         { x: 1, y: 6.1 },
       ]
     },
     {
-      label: 'Your personal rate',
+      label: `Your personal rate`,
       colour: 'rgba(229, 42, 0, 1)',
       values: [
         { x: 0, y: 0 },
@@ -74,7 +75,7 @@
     }
     return '';
   };
-  const formatTickY = (d: number): string => `${d}%`; // format(`.${precisionFixed(d)}`)(d);
+  const formatTickY = (d: number): string => d === 0 ? `${d}%` : '';
 
   let width: number;
   $: dataLong = addZ(data);
@@ -110,7 +111,7 @@
 
 <div class="chart-container" bind:clientWidth={width}>
   <LayerCake
-    padding={{ top: 7, right: 70, bottom: 20, left: 15 }}
+    padding={{ top: 7, right: 85, bottom: 20, left: 40 }}
     x={'x'}
     y={'y'}
     z={'z'}
@@ -127,7 +128,9 @@
         snapTicks={false}
       />
       <AxisY
-        ticks={4}
+        gridlines={false}
+        baseline={true}
+        ticks={1}
         formatTick={formatTickY}
       />
       <MultiLine/>
