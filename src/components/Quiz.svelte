@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Decimal } from 'decimal.js-light';
+  import LineChart from '../components/MultilineChart/LineChart.svelte';
 
   // import SvelteSelect from 'svelte-select';
 
@@ -178,17 +179,22 @@
 {/each}
 
 {#if isFinished}
-  <p class="result">
-    We've estimated that your personal inflation rate is {formatPercentage(personalInflation)}
-  </p>
-   
-  <p class="result">
-    This means that the items that make up your budget are {formatPercentage(personalInflation)} more expensive than they were last year.
-  </p>
+  <div class="result">
+    <p>
+      We estimate that your personal inflation rate is
+    </p>
+ 
+    <p class="emphasized">
+      {formatPercentage(personalInflation)}
+    </p>
+     
+    <p>
+      This means that the items that make up your budget are approximately {formatPercentage(personalInflation)} more expensive than they were last year.
+    </p>
+  </div>
 
-  <p class="result">
-    Compared to Australia's official figure of 6.1%, the prices of the things you buy are only going up {formatPercentage(inflationDiff)} as quickly.
-  </p>
+  <LineChart inflationRate={personalInflation.mul(100).toNumber()} />
+
 {:else}
   <p class="result">To continue reading, complete the quiz above.</p>
 {/if}
@@ -208,25 +214,25 @@
     }
 
     .button {
-      flex-grow: 1;
+      flex: 1;
 
       font-family: 'ABCSans';
       display: inline-block;
       background: transparent;
       font-size: 0.875rem;
       font-weight: bold;
-      padding: 0.625rem 1.5rem 0.5rem;
+      height: 48px;
       margin: 0;
       text-align: center;
       vertical-align: middle;
       cursor: pointer;
       border: 1px solid;
-      border-color: var(--tint-4);
+      border-color: rgba(0, 0, 0, 0.6);
       transition: var(--dls-link-transition);
       touch-action: manipulation;
 
       &.active {
-        background: var(--tint-4);
+        background: rgba(217, 217, 217, 1);
       }
 
       border-radius: 0;
@@ -245,8 +251,14 @@
   }
 
   .quiz-question {
-    padding: 0.5rem;
+    padding: 1rem;
     font-family: 'ABCSans';
+
+    .label {
+      display: inline-block;
+      margin: 0 0 0.8rem;
+      font-weight: bold;
+    }
 
     --tint-3: hsl(0, 0%, 60%);
     --tint-4: hsl(0, 0%, 80%);
@@ -293,17 +305,29 @@
       border-left: 8px solid var(--itemIsActiveColor);
     }
 
-    .label {
-      display: inline-block;
-      margin: 0 0 0.5rem;
-      font-weight: bold;
-    }
   }
 
   .result {
     font-size: 1rem;
     font-family: 'ABCSans';
-    font-weight: bold;
-    margin-top: 30px;
+    font-weight: 600;
+    padding-left: 22px;
+    padding-right: 22px;
+    text-align: center;
+
+    max-width: 600px;
+    margin: 40px auto;
+
+    p {
+      font-weight: 400;
+    }
+
+    .emphasized {
+      color: rgba(229, 42, 0, 1);
+      font-size: 75px;
+      font-family: 'ABCSerif';
+      margin-top: 0px;
+      font-weight: 600;
+    }
   }
 </style>
