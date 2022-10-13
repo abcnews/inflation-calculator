@@ -23,7 +23,7 @@
 
     // Avoid overlapping labels
     if (label === 'Your personal rate') {
-      return finalValue + 26;
+      return finalValue + 22;
     } else {
       return finalValue + 8;
     }
@@ -36,19 +36,19 @@
     style="
       color: {group.labelColour || group.colour};
       top: {top(group)}px;
-      left: calc({left(group.values) * 100}% + 75px);
+      left: calc({left(group.values) * 100}% + 110px);
     "
-  ><span>{cap((group.label))} {group.values[1].y.toFixed(1) + '%'}</span></div>
+  ><span style="font-weight:900">{group.values[1].y.toFixed(1) + '%'}</span> {cap((group.label))}</div>
 {/each}
 
 <style>
   .label {
     position: absolute;
     transform: translate(-100%, -100%);
-    width: 60px;
+    width: 100px;
     font-size: 12px;
     font-weight: 700;
     z-index: 19;
-    transition: all 1s;
+    /* transition: all 1s; */
   }
 </style>

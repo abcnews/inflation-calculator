@@ -6,9 +6,11 @@ import { ExpenditureGroup, InflationData } from './types';
 export async function getStoreData(): Promise<InflationData> {
   const absolutePath = __webpack_public_path__ || '/';
 
-  const DISCRETIONARY = await csv(`${absolutePath}discretionary.csv`);
-  const WEIGHTS = await csv(`${absolutePath}all-weights.csv`);
-  const INFLATION = await csv(`${absolutePath}inflation-long-term.csv`);
+  // const DISCRETIONARY = await csv(`${absolutePath}discretionary.csv`);
+  const [WEIGHTS, INFLATION] = await Promise.all([
+    csv(`${absolutePath}all-weights.csv`),
+    csv(`${absolutePath}inflation-long-term.csv`),
+  ]);
   const INFLATION_ONE_YEAR = INFLATION.find(i => i.Group === 'Last Year');
   const INFLATION_TEN_YEARS = INFLATION.find(i => i.Group === 'Last 10 Years');
 
@@ -21,13 +23,13 @@ export async function getStoreData(): Promise<InflationData> {
       return acc;
     }
 
-    const isDiscretionary = DISCRETIONARY.find(r => r.Name === row['Expenditure Group']).Discretionary === '1';
+    // const isDiscretionary = DISCRETIONARY.find(r => r.Name === row['Expenditure Group']).Discretionary === '1';
 
     const key = (k: string) => `Index Numbers ;  ${k} ;  Australia ;`;
     const group: ExpenditureGroup = {
       name: row['Expenditure Group'],
       group: lastGroup,
-      isDiscretionary,
+      // isDiscretionary,
       weights: {
         employed: new Decimal(row['Employee households']).div(100),
         agepension: new Decimal(row['Age pensioner households']).div(100),

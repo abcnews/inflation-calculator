@@ -72,12 +72,17 @@
         y={yTick}
         dx=""
         dy=""
-        text-anchor={textAnchor(i)}>{formatTick(tick)}</text
-      >
+        text-anchor={textAnchor(i)}>
+
+        {#each formatTick(tick).split('\n') as txt}
+          <tspan x="0" dy="1.2em">{txt}</tspan>
+        {/each}
+
+      </text>
     </g>
   {/each}
   {#if baseline === true}
-    <line class="baseline" y1={$height + 0.5} y2={$height + 0.5} x1="0" x2={$width} />
+    <line class="baseline" y1={0} y2={$height + 0.5} x1={$width} x2={$width} />
   {/if}
 </g>
 

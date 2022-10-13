@@ -73,13 +73,16 @@
     <line class="baseline-tick" x1="{$xScale(0) - $padding.left - 4}" x2="{$xScale(0) - $padding.left}" y1={$yAxisTop - 5} y2="{$yAxisTop - 5}" />
   {/if}
 
-  <text class="axis-label" transform="translate({-1 * $padding.left} {$yAxisTop - 30})">
+  <text class="axis-label" transform="translate({$xScale(0) - $padding.left - 60} {$yAxisTop - 30})">
     {#if budgetDescription === 'typical budget'}
       <tspan x="0" dy="0">Proportion of</tspan>
       <tspan x="0" dy="1.2em">typical budget</tspan>
     {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage holder'}
       <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of {budgetDescription.split(' ')[0]}</tspan>
       <tspan x="0" dy="1.2em">{budgetDescription.split(' ')[1] || ''} budget</tspan>
+    {:else if budgetDescription === 'Consumer price index'}
+      <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of consumer</tspan>
+      <tspan x="0" dy="1.2em">price index</tspan>
     {:else}
       <tspan x="0" dy="0">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}% of</tspan>
       <tspan x="0" dy="1.2em">{budgetDescription}</tspan>

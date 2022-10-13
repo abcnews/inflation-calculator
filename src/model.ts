@@ -127,7 +127,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
           // colour: getColour(group.group, group.isDiscretionary, colourBy),
 
           // isHighlighted,
-          isDiscretionary: group.isDiscretionary,
+          // isDiscretionary: group.isDiscretionary,
         }
       ];
     }, []);

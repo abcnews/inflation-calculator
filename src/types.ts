@@ -31,7 +31,7 @@ export interface Customisation {
 export interface ExpenditureGroup {
   name: string;
   group: string;
-  isDiscretionary: boolean;
+  // isDiscretionary: boolean;
   weights: ExpenditureGroupWeights;
   inflation: {
     1: Decimal;

@@ -39,7 +39,6 @@
 		"d3-scale": "^4.0.2",
 		"decimal.js-light": "^2.5.1",
 		"layercake": "^7.0.0",
-		"svelte": "^3.49.0",
-		"svelte-select": "^4.4.7"
+		"svelte": "^3.49.0"
 	}
 }

@@ -1,15 +1,8 @@
 <script lang="ts">
   import { Decimal } from 'decimal.js-light';
-  import LineChart from '../components/MultilineChart/LineChart.svelte';
 
-  // import SvelteSelect from 'svelte-select';
-
-  // import Select from 'carbon-components-svelte/src/Select/Select.svelte';
-  // import SelectItem from 'carbon-components-svelte/src/Select/SelectItem.svelte';
-
-  // import 'carbon-components/scss/components/select/_select.scss';
-  // import 'carbon-components/scss/globals/scss/_css--body.scss';
-  // import 'carbon-components/scss/globals/scss/_css--helpers.scss';
+  import LineChart from './MultilineChart/LineChart.svelte';
+  import ButtonGroup from '../lib/components/ButtonGroup.svelte';
 
   import { defaultCustomisation, CPI } from '../constants';
   import { calculateInflationRate } from '../model';
@@ -156,55 +149,41 @@
 
 {#each QUESTIONS as question, i}
   {#if i <= lastAnswered + 1}
-  <div class="quiz-question">
-    <div class:disabled={i > lastAnswered + 1} class="label">{question.text}</div>
-    <div class:disabled={i > lastAnswered + 1} class="button-group">
-      {#each question.choices as choice}
-        <button
-          class="button"
-          class:active={question.answered === choice.value}
-          on:click={() => i <= lastAnswered + 1 && answerQuestion(choice.value, question, i)}
-        >
-          {choice.label.toUpperCase()}
-        </button>
-      {/each}
-    </div>
+    <div class="quiz-question">
+      <div class:disabled={i > lastAnswered + 1} class="label">{question.text}</div>
 
-    <!-- <SvelteSelect -->
-    <!--   on:select={e => answerQuestion(e.detail.value, question, i)} -->
-    <!--   isDisabled={i > lastAnswered + 1} -->
-    <!--   isClearable={false} -->
-    <!--   items={question.choices} -->
-    <!-- > -->
-    <!-- </SvelteSelect> -->
-  </div>
+      <ButtonGroup
+        disabled={i > lastAnswered + 1}
+        items={question.choices}
+        selected={question.answered}
+        onClick={value => i <= lastAnswered + 1 && answerQuestion(value, question, i)}
+      />
+    </div>
   {/if}
 {/each}
 
 {#if isFinished}
-  <div class="result">
-    <p>
-      We estimate that your personal inflation rate is
-      <span class="emphasized">
-        {formatPercentage(personalInflation)}
-      </span>
-      which is
-      <span class="bold">
-        {formatPercentage(inflationDiff)} lower
-      </span>
-      than the official rate.
-    </p>
+  <p class="result">
+    We estimate that your personal inflation rate is
+    <span class="emphasized">
+      {formatPercentage(personalInflation)}
+    </span>
+    for the past year, which is
+    <span class="bold">
+      {formatPercentage(inflationDiff)} lower
+    </span>
+    than the official rate.
+  </p>
      
-    <p>
-      This means that the items that make up your budget are approximately
-      <span class="emphasized">
-        {formatPercentage(personalInflation)}
-      </span>
-      more expensive than they were last year.
-    </p>
-  </div>
-
   <LineChart inflationRate={personalInflation.mul(100).toNumber()} />
+
+  <p class="result">
+    This means that the items that make up your budget are approximately
+    <span class="emphasized">
+      {formatPercentage(personalInflation)}
+    </span>
+    more expensive than they were last year.
+  </p>
 
 {:else}
   <p class="result">To continue reading, complete the quiz above.</p>
@@ -216,49 +195,8 @@
     display: none;
   }
 
-  .button-group {
-    display: flex;
-    width: 100%;
-
-    &.disabled {
-      cursor: none;
-    }
-
-    .button {
-      flex: 1;
-
-      font-family: 'ABCSans';
-      display: inline-block;
-      background: transparent;
-      font-size: 0.875rem;
-      font-weight: bold;
-      height: 48px;
-      margin: 0;
-      text-align: center;
-      vertical-align: middle;
-      cursor: pointer;
-      border: 1px solid;
-      border-color: rgba(0, 0, 0, 0.6);
-      transition: var(--dls-link-transition);
-      touch-action: manipulation;
-
-      &.active {
-        background: rgba(217, 217, 217, 1);
-      }
-
-      border-radius: 0;
-      &:first-child {
-        border-top-left-radius: 3px;
-        border-bottom-left-radius: 3px;
-      }
-      &:last-child {
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
-      }
-      &:not(last-child){
-        margin-left: -1px;
-      }
-    }
+  :global(#interactive-quiz) {
+    margin-bottom: 3rem;
   }
 
   .quiz-question {
@@ -270,52 +208,6 @@
       margin: 0 0 0.8rem;
       font-weight: bold;
     }
-
-    --tint-3: hsl(0, 0%, 60%);
-    --tint-4: hsl(0, 0%, 80%);
-    --tint-5: hsl(0, 0%, 90%);
-    --tint-6: hsl(0, 0%, 95%);
-
-    --height: 50px;
-    --padding: 0.75rem 2.5rem 0.6rem 1rem;
-    --inputFontSize: 1rem;
-    --optionFontSize: 0.875rem;
-    --borderRadius: 0;
-    --inputLetterSpacing: normal;
-
-    --border: 1px solid var(--tint-4);
-    --borderFocusColor: var(--tint-3);
-    --itemIsActiveBG: var(--tint-6);
-    --itemIsActiveColor: rgb(0, 88, 204);
-
-    --itemHoverBG: var(--itemIsActiveColor);
-    --itemHoverColor: white;
-    --itemFirstBorderRadius: 0;
-    --listBorderRadius: 0;
-
-    :global(.selectContainer.focused) {
-      border-left-width: 0.5rem;
-      border-color: var(--tint-3);
-      transition: border-width 0.2s ease-out;
-    }
-    :global(input) {
-      cursor: pointer !important;
-      font-family: 'ABCSans';
-    }
-
-    :global(.item) {
-      font-size: var(--optionFontSize);
-      cursor: pointer;
-
-      &:hover, &:active {
-        background: var(--itemHoverBG, #e7f2ff);
-        color: var(--itemHoverColor, inherit);
-      }
-    }
-    :global(.item.active) {
-      border-left: 8px solid var(--itemIsActiveColor);
-    }
-
   }
 
   .result {
@@ -327,21 +219,13 @@
     text-align: center;
 
     max-width: 600px;
-    margin: 40px auto;
-
-    p {
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
+    margin: 20px auto;
 
     .bold {
       font-weight: 900;
     }
     .emphasized {
       color: rgba(229, 42, 0, 1);
-      /* font-size: 75px; */
-      /* font-family: 'ABCSerif'; */
-      /* margin-top: 0px; */
       font-weight: 900;
     }
   }

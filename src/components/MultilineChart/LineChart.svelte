@@ -2,6 +2,9 @@
   import { LayerCake, Svg, Html } from 'layercake';
   import { scaleOrdinal } from 'd3-scale';
 
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
+
   import MultiLine from './MultiLine.svelte';
   import AxisX from './AxisX.svelte';
   import AxisY from './AxisY.svelte';
@@ -23,6 +26,12 @@
 
   export let inflationRate: number;
 
+  const rateTweened = tweened(0, {
+    duration: 800,
+    easing: cubicOut,
+  });
+  $: rateTweened.set(inflationRate);
+
   $: data = [
     {
       label: 'Official rate',
@@ -38,7 +47,7 @@
       colour: 'rgba(229, 42, 0, 1)',
       values: [
         { x: 0, y: 0 },
-        { x: 1, y: inflationRate },
+        { x: 1, y: $rateTweened },
       ]
     }
   ];
@@ -68,14 +77,14 @@
 
   const formatTickX = (d: number): string => {
     if (d === 0) {
-      return 'Last year';
+      return 'Your budget at\nlast year\'s prices';
     }
     if (d === 1) {
-      return 'Now';
+      return 'Cost of same\nitems now';
     }
     return '';
   };
-  const formatTickY = (d: number): string => d === 0 ? `${d}%` : '';
+  const formatTickY = (d: number): string => d === 0 ? '' : '';
 
   let width: number;
   $: dataLong = addZ(data);
@@ -90,19 +99,14 @@
     expand to fill it.
   */
   .chart-container {
-    height: 300px;
+    height: 250px;
     width: 100%;
     max-width: 500px;
     font-family: "ABCSans";
     margin: 50px auto;
     padding-left: 20px;
+    margin-bottom: 80px;
   }
-
-   @media (min-width: 76rem) {
-    .chart-container {
-       height: 400px;
-     }
-   }
 
   .chart-container :global(svg) {
     z-index: 5;
@@ -111,7 +115,7 @@
 
 <div class="chart-container" bind:clientWidth={width}>
   <LayerCake
-    padding={{ top: 7, right: 85, bottom: 20, left: 40 }}
+    padding={{ top: 7, right: 120, bottom: 20, left: 70 }}
     x={'x'}
     y={'y'}
     z={'z'}
@@ -126,10 +130,10 @@
         ticks={numTicksX}
         formatTick={formatTickX}
         snapTicks={false}
+        baseline={true}
       />
       <AxisY
         gridlines={false}
-        baseline={true}
         ticks={1}
         formatTick={formatTickY}
       />

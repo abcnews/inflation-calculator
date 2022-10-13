@@ -5,7 +5,7 @@
 <script>
   import { getContext } from 'svelte';
 
-  const { data, xGet, yGet, xScale, yScale } = getContext('LayerCake');
+  const { data, xGet, yGet, xScale, yScale, width } = getContext('LayerCake');
 
   $: path = values => {
     return 'M' + values
@@ -18,9 +18,9 @@
 
 <g class="line-group">
   {#each $data as group}
+    <!-- style="transition: {$width > 0 ? 'all 1s' : 'none'}" -->
     <path
       class='path-line'
-      style="transition: {group.values[1].y > 0 ? 'all 1s' : 'none'}"
       d='{path(group.values)}'
       stroke="{group.colour}"
     ></path>
@@ -49,7 +49,7 @@
     stroke-width: 2px;
   }
 
-  .path-dot {
-    transition: all 1s;
-  }
+  /* .path-dot { */
+  /*   transition: all 1s; */
+  /* } */
 </style>
