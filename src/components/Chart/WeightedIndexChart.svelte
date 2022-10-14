@@ -23,7 +23,6 @@
 
   export let expandX: boolean; 
   export let preventZoomSplitting: boolean;
-  export let showLabel = true;
 
   export let xAxisLabel = 'Price increase';
   export let budgetDescription: string;
@@ -81,7 +80,7 @@
     const xMax = processedData.reduce((x, d) => Math.max(x, d[xKey]), 0);
     const xMin = processedData.reduce((x, d) => Math.min(x, d[xKey]), 0);
     _xDomain[0] = Math.min(_xDomain[0], xMin);
-    _xDomain[1] = Math.min(Math.max(_xDomain[1], xMax), 80);
+    _xDomain[1] = Math.min(Math.max(_xDomain[1], xMax), 100);
   }
 
   // Determine the budget % of all the bars combined (y axis)
@@ -128,13 +127,13 @@
         {/if}
           <AxisY
             gridlines={false}
-            baseline={showLabel}
+            baseline={true}
             ticks={0}
             {yAxisMax}
             {budgetDescription}
           />
 
-        <Bars {showLabel} />
+        <Bars />
 
       </Svg>
     </LayerCake>

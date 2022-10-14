@@ -143,9 +143,6 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
     const combinedInflationContribution = bars.reduce((acc, bar) => acc.add(bar.inflation.mul(bar.weighting)), new Decimal(0));
     const inflation = combinedInflationContribution.div(combinedWeighting);
 
-    // Taken from the CPI numbers (not used because it doesn't take into account changing subgroup weightings)
-    // const inflation = Object.values(data[groupName])[0].inflationCombined[customisation.timelineYears];
-
     // Set the group as discretionary if more than half the weighting from subgroups is discretionary
     // const isHighlighted = highlightedGroups.indexOf(groupName) > -1;
 

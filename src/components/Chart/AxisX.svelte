@@ -10,16 +10,9 @@
   export let baseline = false;
   export let snapTicks = false;
 
-  /** @type {Function} [formatTick=d => d] - A function that passes the current tick value and expects a nicely formatted value in return. */
   export let formatTick = d => d;
-
-  /** @type {Number|Array|Function} [ticks] - If this is a number, it passes that along to the [d3Scale.ticks](https://github.com/d3/d3-scale) function. If this is an array, hardcodes the ticks to those values. If it's a function, passes along the default tick values and expects an array of tick values in return. If nothing, it uses the default ticks supplied by the D3 function. */
   export let ticks = undefined;
-
-  /** @type {Number} [xTick=0] - TK */
   export let xTick = 0;
-
-  /** @type {Number} [yTick=16] - The distance from the baseline to place each tick value. */
   export let yTick = 16;
 
   $: isBandwidth = typeof $xScale.bandwidth === 'function';

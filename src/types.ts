@@ -37,10 +37,6 @@ export interface ExpenditureGroup {
     1: Decimal;
     10: Decimal;
   };
-  inflationCombined: {
-    1: Decimal;
-    10: Decimal;
-  };
 }
 export interface ExpenditureGroupWeights {
   employed: Decimal;
@@ -49,11 +45,23 @@ export interface ExpenditureGroupWeights {
   superannuation: Decimal;
   cpi: Decimal;
 }
+
 export interface WeightedBar {
   name: string;
   group: string;
+  expandX?: boolean;
+  isHighlighted?: boolean;
+
   inflation: Decimal;
   weighting: Decimal;
+}
 
+export interface BarProps {
+  name: string;
   isHighlighted?: boolean;
+
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 }

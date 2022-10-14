@@ -41,12 +41,6 @@ export async function getStoreData(): Promise<InflationData> {
         10: new Decimal(INFLATION_TEN_YEARS[key(row['Expenditure Group'])]).sub(1),
         1: new Decimal(INFLATION_ONE_YEAR[key(row['Expenditure Group'])]).sub(1)
       },
-      // Include the inflation for the combined group (eg. Transport, Housing) as this can't
-      // be reconstructed from subgroups. There's a bit of redundant data but no big deal
-      inflationCombined: {
-        10: new Decimal(INFLATION_TEN_YEARS[key(lastGroup)]).sub(1),
-        1: new Decimal(INFLATION_ONE_YEAR[key(lastGroup)]).sub(1)
-      }
     };
 
     return {

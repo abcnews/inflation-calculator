@@ -10,6 +10,7 @@
   export let height: number;
   export let width: number;
   export let preventZoomSplitting = false;
+  export let overrideBudgetDescription = '';
 
   const inflationStore = getContext<any>('inflation-data');
   const customisationStore = getContext<any>('customisation');
@@ -33,7 +34,9 @@
   $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 55];
   let budgetDescription = '';
   $: {
-    if ($customisationStore.applyPersonalisation) {
+    if (overrideBudgetDescription) {
+      budgetDescription = overrideBudgetDescription;
+    } else if ($customisationStore.applyPersonalisation) {
       // Personalisation of 1st scrollyteller
       budgetDescription = 'your budget';
     } else if ($customisationStore.housingProfile === 'renter') {
