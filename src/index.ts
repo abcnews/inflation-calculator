@@ -12,6 +12,7 @@ import { getStoreData } from './dataFetch';
 import InlineChart from './components/InlineChart.svelte';
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import Quiz from './components/Quiz.svelte';
+import Header from './components/Header.svelte';
 
 const scrollyElems: any[] = [];
 let customisation = {};
@@ -44,6 +45,7 @@ Promise.all([
 
   mountComponents('interactive-quiz', Quiz, { indexData, onCustomisationChange });
   mountComponents('inlinechart', InlineChart, { indexData });
+  mountComponents('headerimg', Header);
 
   try {
     const scrollyData = loadScrollyteller('chart1', 'u-full', 'mark');
