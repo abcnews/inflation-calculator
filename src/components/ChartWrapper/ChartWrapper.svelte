@@ -31,7 +31,6 @@
     }
   }
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-42, 55];
   let budgetDescription = '';
   $: {
     if (overrideBudgetDescription) {
@@ -59,6 +58,8 @@
       budgetDescription = 'typical budget';
     }
   }
+
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-25, 55];
 </script>
 
 <WeightedIndexChart

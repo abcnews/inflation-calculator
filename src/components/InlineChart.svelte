@@ -44,9 +44,10 @@
   }
 
   .chart-title {
-    padding-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
+
+    margin: 0;
 
     font-family: 'ABCSans';
     font-size: 20px;
