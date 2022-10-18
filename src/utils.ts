@@ -56,3 +56,29 @@ export function toPercentage(x: string | number): Decimal {
   return new Decimal(x).div(100);
 };
 
+
+export function personaliseText(customisation: Customisation, text: string): string {
+  const doesDrive = customisation.removedGroups.indexOf('Motor vehicles') === -1;
+  const isRenter = customisation.housingProfile === 'renter';
+  const hasMortgage = customisation.housingProfile === 'mortgage';
+
+  if (doesDrive) {
+    text = text.replace(/{{drive:([^}]*)}}/g, '$1');
+    text = text.replace(/{{nodrive:([^}]*)}}/g, '');
+  } else {
+    text = text.replace(/{{nodrive:([^}]*)}}/g, '$1');
+    text = text.replace(/{{drive:([^}]*)}}/g, '');
+  }
+
+  if (isRenter) {
+    text = text.replace(/{{renter:([^}]*)}}/g, '$1');
+  } else if (hasMortgage) {
+    text = text.replace(/{{mortgage:([^}]*)}}/g, '$1');
+  } else {
+    text = text.replace(/{{outright:([^}]*)}}/g, '$1');
+  }
+
+  // Remove the leftover templates
+  text = text.replaceAll(/{{([^}]*)}}/g, '');
+  return text;
+}

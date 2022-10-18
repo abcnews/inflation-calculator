@@ -67,7 +67,7 @@
         inflation: d.inflation.mul(100).toNumber(),
         weighting: d.weighting.mul(100).toNumber(),
         expandX,
-        isHighlighted: highlightedGroups.indexOf(d.name) > -1,
+        isHighlighted: highlightedGroups.indexOf(d.name) > -1 && (zoomInAnimationStage < 2 || zoomInAnimationStage > 5),
         isZoomed: zoomedInGroups.indexOf(d.group) > -1,
       }))
 
@@ -85,7 +85,7 @@
 
   // Determine the budget % of all the bars combined (y axis)
   $: yMax = processedData.reduce((x, d) => {
-    if (zoomInAnimationStage > 4 && !d.isZoomed) {
+    if (zoomInAnimationStage > 2 && !d.isZoomed) {
       return x;
     }
     return x + d[yKey];
@@ -113,7 +113,7 @@
       y={yKey}
       xDomain={_xDomain}
       yDomain={[yMax, 0]}
-      data={processedData.filter(d => zoomInAnimationStage < 3 || d.isZoomed)}
+      data={processedData.filter(d => zoomInAnimationStage < 1 || d.isZoomed)}
     >
       <Svg>
         {#if expandX && xAxisLabel}

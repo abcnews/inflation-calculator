@@ -89,7 +89,6 @@
 <style>
   .tick text {
     font-size: 12px;
-    font-weight: 700;
     fill: rgba(100, 100, 100, 1);
   }
 

@@ -12,6 +12,7 @@
 
   export let indexData: InflationData;
   export let marker: string;
+  export let size = 'lg';
 
   $: params = acto(marker);
 
@@ -26,13 +27,17 @@
   $: stateStore.set({ ...defaultCustomisation, ...decode(params.state as string) });
 
   let width: number;
+  $: description = $stateStore.timelineYears === 10 ? 'Inflation since June 2012' : 'Inflation since June 2021';
 </script>
 
-<h6 class="chart-title">{decodeText(params.title)}</h6>
+{#if size === 'lg'}
+  <h6 class="chart-title">{decodeText(params.title)}</h6>
+  <p class="chart-description">{description}</p>
+{/if}
 <div class="inline-wrapper" bind:clientWidth={width}>
   <ChartWrapper
     width={width}
-    height={600}
+    height={size === 'lg' ? 600 : 400}
     overrideBudgetDescription={'Consumer price index'}
   />
 </div>
@@ -43,6 +48,16 @@
     padding-bottom: 25px;
   }
 
+  .chart-description {
+    padding-left: 15px;
+    padding-right: 15px;
+
+    font-family: 'ABCSans';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
   .chart-title {
     padding-left: 15px;
     padding-right: 15px;

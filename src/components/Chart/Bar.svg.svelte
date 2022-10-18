@@ -24,7 +24,7 @@
     'Alcohol and tobacco': 1,
     'Insurance': 4,
     'Other financial services': -2,
-    'Deposit and loan facilities (direct charges)': 1,
+    'Deposit and loan facilities (direct charges)': 2,
   };
 
   $: annotationOffsetX = needsAnnotation ? 15 : 0;
@@ -39,6 +39,7 @@
   $: wrapperY = labelLocation === 'inside' ? (point.height / 2) + 4 : (point.height / 2) + 4 + annotationOffsetY;
   $: textAnchor = labelLocation === 'inside' ? 'middle' : 'start';
   $: textFill = labelLocation === 'inside' ? 'white' : labelColour;
+  $: textWeight = point.isHighlighted ? 600 : 400;
 </script>
 
 <!-- Needs an out transition to avoid leaving boxes behind... -->
@@ -56,7 +57,7 @@
     fill={blockColour}
   />
 
-  {#if point.height > 6}
+  {#if point.height > 4}
 
     {#if needsAnnotation && labelLocation === 'right'}
       <line class="annotation-line"
@@ -74,6 +75,7 @@
         style="
           fill: {textFill};
           text-anchor: {textAnchor};
+          font-weight: {textWeight};
         "
       >
         <!-- Shortened (or wrapped-text) to fit in the space -->
@@ -123,6 +125,7 @@
     text-anchor: start;
     letter-spacing: 0.03em;
     font-size: 13px;
+    line-height: 15.6px;
     font-weight: 400;
   }
 

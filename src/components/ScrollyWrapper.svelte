@@ -5,6 +5,7 @@
 
   import { InflationData, Customisation } from '../types';
   import { defaultCustomisation } from '../constants';
+  import { personaliseText } from '../utils';
 
   import Scrollyteller from './Scrollyteller/Scrollyteller.svelte';
   import ChartWrapper from './ChartWrapper/ChartWrapper.svelte';
@@ -27,8 +28,6 @@
       const state: Partial<Customisation> = decode(marker.state);
 
       if (state.applyPersonalisation) {
-        // console.log(state, customisation);
-
         // These are the only two properties modified by the quiz.
         const removedGroups = [...customisation.removedGroups, ...(state.removedGroups || [])];
         const housingProfile = customisation.housingProfile || state.housingProfile;
@@ -42,34 +41,11 @@
 
 
   $: {
-    const doesDrive = customisation.removedGroups.indexOf('Motor vehicles') === -1;
-    const isRenter = customisation.housingProfile === 'renter';
-    const hasMortgage = customisation.housingProfile === 'mortgage';
-
+    // If customisation changes, re-render the templates
     const templatedPanels = document.querySelectorAll('.st-panel .templated');
     for (const panel of Array.from(templatedPanels || [])) {
-      let text = panel.getAttribute('data-template') || '';
-
-      if (doesDrive) {
-        text = text.replace(/{{drive:([^}]*)}}/g, '$1');
-        text = text.replace(/{{nodrive:([^}]*)}}/g, '');
-      } else {
-        text = text.replace(/{{nodrive:([^}]*)}}/g, '$1');
-        text = text.replace(/{{drive:([^}]*)}}/g, '');
-      }
-
-      if (isRenter) {
-        text = text.replace(/{{renter:([^}]*)}}/g, '$1');
-      } else if (hasMortgage) {
-        text = text.replace(/{{mortgage:([^}]*)}}/g, '$1');
-      } else {
-        text = text.replace(/{{outright:([^}]*)}}/g, '$1');
-      }
-
-      // Remove the leftover templates
-      text = text.replaceAll(/{{([^}]*)}}/g, '');
-
-      panel.textContent = text;
+      const text = panel.getAttribute('data-template') || '';
+      panel.textContent = personaliseText(customisation, text);
     }
   }
 
@@ -79,17 +55,17 @@
     }
 
     // Reverse engineer the answers to the quiz
-
     return panels.map(p => {
       return {
         ...p,
         nodes: p.nodes.map(n => {
-          // No template
+          // No templated text in the DOM element, so skip it
           let text = n.getAttribute('data-template') || n.textContent;
           if (text.indexOf('{{') === -1) {
             return n;
           }
 
+          // Save the original text to "data-template" so it can be re-used if the answer changes
           n.classList.add('templated');
           n.setAttribute('data-template', text);
           return n;
@@ -125,5 +101,10 @@
       width: calc(100% - 35% - 24.75rem) !important;
       overflow: visible !important;
     }
+  }
+
+  // Hide fallback images when scrollyteller is active
+  :global([data-tag="startfallback"]) {
+    display: none;
   }
 </style>

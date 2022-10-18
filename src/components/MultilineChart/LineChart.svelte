@@ -26,8 +26,10 @@
 
   export let inflationRate: number;
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const rateTweened = tweened(0, {
-    duration: 800,
+    duration: prefersReducedMotion ? 1 : 800,
     easing: cubicOut,
   });
   $: rateTweened.set(inflationRate);
@@ -37,6 +39,7 @@
       label: 'Official rate',
       labelColour: 'black',
       colour: 'rgba(0, 123, 199, 1)',
+      lineWidth: 2,
       values: [
         { x: 0, y: 0 },
         { x: 1, y: 6.1 },
@@ -45,6 +48,7 @@
     {
       label: `Your personal rate`,
       colour: 'rgba(229, 42, 0, 1)',
+      lineWidth: 2.5,
       values: [
         { x: 0, y: 0 },
         { x: 1, y: $rateTweened },
@@ -115,7 +119,7 @@
 
 <div class="chart-container" bind:clientWidth={width}>
   <LayerCake
-    padding={{ top: 7, right: 120, bottom: 20, left: 70 }}
+    padding={{ top: 7, right: 140, bottom: 20, left: 70 }}
     x={'x'}
     y={'y'}
     z={'z'}

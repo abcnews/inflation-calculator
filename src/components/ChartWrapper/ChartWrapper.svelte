@@ -20,7 +20,7 @@
     ([inflationData, customisation]) => deriveChartData(inflationData as any, customisation as Customisation)
   );
 
-  // Automatically split the groups at stage 3/5 of the zoom-in animation
+  // Automatically split the groups at the final stage of the zoom-in animation
   let zoomStage: number;
   $: {
     if (zoomStage > 3 && !preventZoomSplitting && !$customisationStore.preventZoomSplitting) {
@@ -59,7 +59,7 @@
     }
   }
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-4, 20] : [-25, 55];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 20] : [-25, 55];
 </script>
 
 <WeightedIndexChart

@@ -212,6 +212,7 @@
 
   .result {
     font-size: 1rem;
+    line-height: 22px;
     font-family: 'ABCSans';
     font-weight: 600;
     padding-left: 22px;
