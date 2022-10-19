@@ -23,7 +23,7 @@
   // Automatically split the groups at the final stage of the zoom-in animation
   let zoomStage: number;
   $: {
-    if (zoomStage > 3 && !preventZoomSplitting && !$customisationStore.preventZoomSplitting) {
+    if (zoomStage > 2 && !preventZoomSplitting && !$customisationStore.preventZoomSplitting) {
       customisationStore.set({
         ...$customisationStore,
         splitGroups: [...$customisationStore.splitGroups, ...$customisationStore.zoomedInGroups],

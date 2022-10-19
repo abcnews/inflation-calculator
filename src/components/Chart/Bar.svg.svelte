@@ -1,12 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { FOCUS, NON_FOCUS } from '../../colours';
+  import { FOCUS, NON_FOCUS, NON_FOCUS_ALT } from '../../colours';
   import { BarProps } from '../../types';
 
   const { xScale } = getContext('LayerCake');
   
   export let point: BarProps;
+  export let budgetDescription: string;
 
   // Push everything off the y-axis so it's easier to see
   $: xOffset = point.x > 0 ? 2 : -2;
@@ -31,7 +32,8 @@
   $: annotationOffsetY = needsAnnotation ? (ANNOTATIONS_Y[point.name] || 3) : 0;
 
   // Colours
-  $: blockColour = point.isHighlighted ? FOCUS : NON_FOCUS;
+  $: nonFocusColour = budgetDescription === 'Consumer price index' ? NON_FOCUS_ALT : NON_FOCUS;
+  $: blockColour = point.isHighlighted ? FOCUS : nonFocusColour;
   $: labelColour = point.isHighlighted ? FOCUS : 'black';
 
   // Styling to apply to label

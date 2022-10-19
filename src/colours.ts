@@ -15,3 +15,4 @@ export const COLOURS = {
 
 export let FOCUS = '#E52A00';
 export let NON_FOCUS = '#007BC7';
+export let NON_FOCUS_ALT = '#00297E';

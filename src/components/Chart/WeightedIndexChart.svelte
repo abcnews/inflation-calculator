@@ -125,15 +125,16 @@
             axisLabel={'Price increase'}
           />
         {/if}
-          <AxisY
-            gridlines={false}
-            baseline={true}
-            ticks={0}
-            {yAxisMax}
-            {budgetDescription}
-          />
 
-        <Bars />
+        <AxisY
+          gridlines={false}
+          baseline={true}
+          ticks={0}
+          {yAxisMax}
+          {budgetDescription}
+        />
+
+        <Bars {budgetDescription} />
 
       </Svg>
     </LayerCake>

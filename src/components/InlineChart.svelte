@@ -27,7 +27,7 @@
   $: stateStore.set({ ...defaultCustomisation, ...decode(params.state as string) });
 
   let width: number;
-  $: description = $stateStore.timelineYears === 10 ? 'Inflation since June 2012' : 'Inflation since June 2021';
+  $: description = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'CPI Inflation since June 2021.';
 </script>
 
 {#if size === 'lg'}
@@ -48,6 +48,7 @@
     padding-bottom: 25px;
   }
 
+  // Styling to match DW embeds
   .chart-description {
     padding-left: 15px;
     padding-right: 15px;
@@ -57,6 +58,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: 24px;
+    margin: 5px 0 0px;
   }
   .chart-title {
     padding-left: 15px;
@@ -69,5 +71,17 @@
     font-style: normal;
     font-weight: 900;
     line-height: 24px;
+  }
+
+  @media only screen and (max-width: 400px) {
+    .chart-description {
+      font-size: 15px;
+      line-height: 22px;
+    }
+
+    .chart-title {
+      font-size: 18px;
+      line-height: 21.6px;
+    }
   }
 </style>

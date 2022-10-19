@@ -4,6 +4,8 @@
 
   import Bar from './Bar.svg.svelte';
 
+  export let budgetDescription = '';
+
   const { data, xGet, yGet, xScale, yScale } = getContext('LayerCake');
   
   const calcBars = (data: WeightedBar[], xRange: number[], yRange: number[]): BarProps[] => {
@@ -52,5 +54,5 @@
 </script>
 
 {#each bars as d (d.name)}
-  <Bar point={d} />
+  <Bar point={d} {budgetDescription} />
 {/each}
