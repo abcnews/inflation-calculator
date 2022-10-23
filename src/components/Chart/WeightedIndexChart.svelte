@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition';
   import { LayerCake, Svg } from 'layercake';
+
   import type { WeightedBar } from '../../types';
   import { sortBars } from '../../utils';
 
@@ -31,19 +33,17 @@
   // States to manage the zoom in animation sequence:
   //
   // 0 -> Not started
-  // 1 -> Re-order so groups at bottom (implemented in sortBars util)
-  // 2 -> Re-size y-axis and hide other bars
+  // 1 -> Re-order so groups at bottom (implemented in sortBars util), hide other bars, re-size y-axis
   // 3 -> Split remaining bars
-  // 4 -> Expand all up to full size
-  // 5 -> Done
+  // 2 -> Re-size y-axis and hide other bars
+  // 3 -> Expand all up to full size
+  // 4 -> Done
   export let zoomInAnimationStage = 0;
 
   const nextStage = () => {
     zoomInAnimationStage += 1;
-    if (zoomInAnimationStage === 5) {
-      setTimeout(() => nextStage(), 1000);
-    } else if (zoomInAnimationStage < 5) {
-      setTimeout(() => nextStage(), 1000);
+    if (zoomInAnimationStage < 4) {
+      setTimeout(() => nextStage(), 1200);
     }
   };
 
@@ -51,7 +51,7 @@
     if (zoomInAnimationStage === 0 && zoomedInGroups.length > 0) {
       if (preventZoomSplitting) {
         // Skip the full zoom-in animation in the intro explanation section (as this is the only place we're using this setting)
-        zoomInAnimationStage = 6;
+        zoomInAnimationStage = 4;
       } else {
         nextStage();
       }
@@ -67,7 +67,7 @@
         inflation: d.inflation.mul(100).toNumber(),
         weighting: d.weighting.mul(100).toNumber(),
         expandX,
-        isHighlighted: highlightedGroups.indexOf(d.name) > -1 && (zoomInAnimationStage < 2 || zoomInAnimationStage > 5),
+        isHighlighted: highlightedGroups.indexOf(d.name) > -1 && (zoomInAnimationStage < 1 || zoomInAnimationStage > 3),
         isZoomed: zoomedInGroups.indexOf(d.group) > -1,
       }))
 
@@ -96,13 +96,18 @@
     }
     return x + d[yKey];
   }, 0);
+
+  $: showZoomTitle = zoomedInGroups.indexOf('Housing') > -1 && zoomInAnimationStage > 3;
 </script>
 
+{#if showZoomTitle}
+  <div in:slide class="zoomed-in-title">Housing, insurance & financial services</div>
+{/if}
 <div
   class="chart-container"
   style="
     width: {width}px;
-    height: {height}px;
+    height: {height - (showZoomTitle ? 30 : 0)}px;
     margin: auto;
   ">
 
@@ -142,4 +147,14 @@
 </div>
 
 <style lang="scss">
+  .zoomed-in-title {
+    font-family: ABCSans;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+
+    margin-top: 20px;
+    margin-bottom: -10px;
+  }
 </style>

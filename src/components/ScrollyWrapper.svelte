@@ -85,7 +85,7 @@
   >
     <ChartWrapper
       width={Math.min(width, 600)}
-      height={height * 0.7}
+      height={height * 0.8}
     />
   </Scrollyteller>
 {/if}

@@ -15,11 +15,26 @@ import { defaultCustomisation } from './constants';
 import InlineChart from './components/InlineChart.svelte';
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import Quiz from './components/Quiz.svelte';
+import LineChart2 from './components/MultilineChart/LineChart2.svelte';
 import Header from './components/Header.svelte';
 
 const scrollyElems: any[] = [];
 const inlineElems: any[] = [];
+let chart2;
 let customisation: any = {};
+
+const prepTemplates = () => {
+  const bodyPars = document.querySelectorAll('.Main.u-layout > p');
+  bodyPars.forEach(n => {
+    let text = n.getAttribute('data-template') || n.textContent;
+    if (!text || text.indexOf('{{') === -1) {
+      return;
+    }
+
+    n.classList.add('templated');
+    n.setAttribute('data-template', text);
+  });
+}
 
 const mountComponents = (name: string, Component: typeof SvelteComponent, props?: any) =>
   selectMounts(name).forEach(
@@ -36,6 +51,9 @@ const mountComponents = (name: string, Component: typeof SvelteComponent, props?
         },
       })
 
+      if (name === 'linechart2') {
+        chart2 = el;
+      }
       if (name === 'mark' || name === 'Scrollyteller') {
         inlineElems.push([el, decode(acto(marker).state as string)]);
       }
@@ -53,12 +71,13 @@ Promise.all([
   const onCustomisationChange = (customisationChange) => {
     customisation = customisationChange;
 
+    const templatedPanels = document.querySelectorAll('p.templated');
+    for (const panel of Array.from(templatedPanels || [])) {
+      const text = panel.getAttribute('data-template') || '';
+      panel.textContent = personaliseText(customisation as any, text);
+    }
+
     if (prefersReducedMotion) {
-      const templatedPanels = document.querySelectorAll('p.templated');
-      for (const panel of Array.from(templatedPanels || [])) {
-        const text = panel.getAttribute('data-template') || '';
-        panel.textContent = personaliseText(customisation as any, text);
-      }
 
       for (const el of inlineElems) {
         const [elem, state] = el;
@@ -84,29 +103,21 @@ Promise.all([
         elem.$set({ customisation });
       }
     }
+    chart2?.$set({ customisation });
   };
 
   mountComponents('headerimg', Header);
   mountComponents('interactive-quiz', Quiz, { indexData, onCustomisationChange });
+  mountComponents('linechart2', LineChart2, { indexData, customisation });
   mountComponents('inlinechart', InlineChart, { indexData });
 
   if (prefersReducedMotion) {
     console.log('Falling back to non-scrollyteller version for reduced motion.');
 
-    const bodyPars = document.querySelectorAll('.Main.u-layout > p');
-    bodyPars.forEach(n => {
-      let text = n.getAttribute('data-template') || n.textContent;
-      if (!text || text.indexOf('{{') === -1) {
-        return;
-      }
-
-      n.classList.add('templated');
-      n.setAttribute('data-template', text);
-    });
+    prepTemplates();
 
     mountComponents('mark', InlineChart, { indexData, size: 'sm' });
     mountComponents('scrollyteller', InlineChart, { indexData, size: 'sm' });
-
     return;
   }
 
@@ -151,6 +162,8 @@ Promise.all([
   } catch (e) {
     console.log(e);
   }
+
+  prepTemplates();
 });
 
 if (process.env.NODE_ENV === 'development') {
