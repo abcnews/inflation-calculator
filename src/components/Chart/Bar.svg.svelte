@@ -83,6 +83,8 @@
         <!-- Shortened (or wrapped-text) to fit in the space -->
         {#if point.name.indexOf('Gas') === 0}
           Household fuels
+        {:else if point.name.indexOf('Interest') === 0}
+          Mortgage repayments
         {:else if point.name.indexOf('Deposit and loan facilities (direct charges)') === 0}
           Deposit and loan facilities
         {:else if point.name.indexOf('Property rates and') === 0}
