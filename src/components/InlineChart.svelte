@@ -28,7 +28,9 @@
 
   let width: number;
   $: description = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'Inflation of CPI food component since September 2021.';
-  $: title = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'Prices of fruit and vegetables rising faster than other foods';
+  $: title = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'Vegetables, fruit, milk, oils and fats rising faster than other foods';
+
+  $: maxHeight = Math.min(750, window.innerHeight * 0.8);
 </script>
 
 {#if size === 'lg'}
@@ -38,8 +40,7 @@
 <div class="inline-wrapper" bind:clientWidth={width}>
   <ChartWrapper
     width={width}
-    height={size === 'lg' ? 600 : 400}
-    overrideBudgetDescription={'Consumer price index'}
+    height={size === 'lg' ? maxHeight : 400} overrideBudgetDescription={'Consumer price index'}
   />
 </div>
 

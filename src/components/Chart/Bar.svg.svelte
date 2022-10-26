@@ -10,12 +10,8 @@
   export let budgetDescription: string;
 
   // Push everything off the y-axis so it's easier to see
-  $: xOffset = point.x > 0 ? 2 : -2;
+  $: xOffset = 2;
   $: width = Math.max(point.width - 4, 1);
-
-  $: labelLocation = (point.width > $xScale.range()[1] * 0.7 && !needsAnnotation) ? 'inside' : 'right';
-
-  $: needsAnnotation = point.height < 10;
 
   const ANNOTATIONS_Y = {
     'Gas and other household fuels': -1,
@@ -24,9 +20,20 @@
     'Communication': 1,
     'Alcohol and tobacco': 1,
     'Insurance': 4,
+    'Oils and fats': 1,
+    'Other cereal products': -1,
+    'Eggs': 3,
+    'Breakfast cereals': -1,
     'Other financial services': -2,
     'Deposit and loan facilities (direct charges)': 2,
   };
+
+  const NO_ANNOTATIONS = [
+    'Jams, honey and spreads',
+  ];
+
+  $: needsAnnotation = point.height < 10 && NO_ANNOTATIONS.indexOf(point.name) === -1;
+  $: labelLocation = (point.width > $xScale.range()[1] * 0.6 && !needsAnnotation) ? 'inside' : 'right';
 
   $: annotationOffsetX = needsAnnotation ? 15 : 0;
   $: annotationOffsetY = needsAnnotation ? (ANNOTATIONS_Y[point.name] || 3) : 0;
@@ -59,7 +66,7 @@
     fill={blockColour}
   />
 
-  {#if point.height > 4}
+  {#if point.height > 1}
 
     {#if needsAnnotation && labelLocation === 'right'}
       <line class="annotation-line"

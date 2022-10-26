@@ -78,7 +78,7 @@
 
     // Ensure the passed in domain isn't smaller than the bars
     const xMax = processedData.reduce((x, d) => Math.max(x, d[xKey]), 0);
-    const xMin = processedData.reduce((x, d) => Math.min(x, d[xKey]), 0);
+    const xMin = Math.max(0, processedData.reduce((x, d) => Math.min(x, d[xKey]), 0));
     _xDomain[0] = Math.min(_xDomain[0], xMin);
     _xDomain[1] = Math.min(Math.max(_xDomain[1], xMax), 100);
   }

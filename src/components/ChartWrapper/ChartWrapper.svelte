@@ -59,7 +59,7 @@
     }
   }
 
-  $: xDomain = $customisationStore.timelineYears == 1 ? [-5, 20] : [-25, 55];
+  $: xDomain = $customisationStore.timelineYears == 1 ? [0, 24] : [-25, 55];
 </script>
 
 <WeightedIndexChart
