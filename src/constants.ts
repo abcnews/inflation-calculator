@@ -1,7 +1,7 @@
 import { Decimal } from 'decimal.js-light';
 import { Customisation } from './types';
 
-export const CPI = new Decimal(0.061);
+export const CPI = new Decimal(0.073);
 
 export const HOUSING_PROFILES = {
   'renter': {

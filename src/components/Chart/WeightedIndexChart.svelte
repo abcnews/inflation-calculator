@@ -101,7 +101,7 @@
 </script>
 
 {#if showZoomTitle}
-  <div in:slide class="zoomed-in-title">Housing, insurance & financial services</div>
+  <div in:slide class="zoomed-in-title">Housing expenses</div>
 {/if}
 <div
   class="chart-container"

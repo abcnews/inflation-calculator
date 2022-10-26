@@ -2,7 +2,7 @@
   import { setContext } from 'svelte';
   import { writable } from 'svelte/store';
   import { decode } from '@abcnews/base-36-props';
-  import { decode as decodeText } from '@abcnews/base-36-text';
+  // import { decode as decodeText } from '@abcnews/base-36-text';
   import acto from '@abcnews/alternating-case-to-object';
 
   import { InflationData } from '../types';
@@ -27,11 +27,12 @@
   $: stateStore.set({ ...defaultCustomisation, ...decode(params.state as string) });
 
   let width: number;
-  $: description = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'CPI Inflation since June 2021.';
+  $: description = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'Inflation of CPI food component since September 2021.';
+  $: title = $stateStore.timelineYears == 10 ? 'CPI Inflation since June 2012.' : 'Prices of fruit and vegetables rising faster than other foods';
 </script>
 
 {#if size === 'lg'}
-  <h6 class="chart-title">{decodeText(params.title)}</h6>
+  <h6 class="chart-title">{title}</h6>
   <p class="chart-description">{description}</p>
 {/if}
 <div class="inline-wrapper" bind:clientWidth={width}>
