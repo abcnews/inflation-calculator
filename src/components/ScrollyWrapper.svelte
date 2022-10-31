@@ -30,7 +30,12 @@
       if (state.applyPersonalisation) {
         // These are the only two properties modified by the quiz.
         const removedGroups = [...customisation.removedGroups, ...(state.removedGroups || [])];
-        const housingProfile = customisation.housingProfile || state.housingProfile;
+        let housingProfile = customisation.housingProfile || state.housingProfile;
+
+        // Override the user's housing profile with that of the marker
+        if (state.forceHousingProfile && state.housingProfile) {
+          housingProfile = state.housingProfile;
+        }
 
         stateStore.set({ ...defaultCustomisation, ...state, removedGroups, housingProfile });
       } else {
@@ -45,7 +50,13 @@
     const templatedPanels = document.querySelectorAll('.st-panel .templated');
     for (const panel of Array.from(templatedPanels || [])) {
       const text = panel.getAttribute('data-template') || '';
-      panel.textContent = personaliseText(customisation, text);
+      const pText = personaliseText(customisation, text);
+      if (!pText) {
+        panel.classList.add('hidden-template');
+      } else {
+        panel.classList.remove('hidden-template');
+        panel.textContent = pText;
+      }
     }
   }
 
@@ -101,6 +112,13 @@
       width: calc(100% - 35% - 24.75rem) !important;
       overflow: visible !important;
     }
+  }
+
+  :global(.hidden-template) {
+    display: none;
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
   }
 
   // Hide fallback images when scrollyteller is active

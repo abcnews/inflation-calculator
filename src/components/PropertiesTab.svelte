@@ -109,6 +109,10 @@
         bind:checked={$customisation.applyPersonalisation}
       />
       <Checkbox
+        labelText="Force housing profile"
+        bind:checked={$customisation.forceHousingProfile}
+      />
+      <Checkbox
         labelText="Prevent zoom splitting"
         bind:checked={$customisation.preventZoomSplitting}
       />

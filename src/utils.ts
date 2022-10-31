@@ -79,6 +79,10 @@ export function personaliseText(customisation: Customisation, text: string): str
   }
 
   // Remove the leftover templates
-  text = text.replaceAll(/{{([^}]*)}}/g, '');
+  text = text.replace(/{{([^}]*)}}/g, '');
+  // Remove the leftover whitespace in panels
+  if (text.length === 1) {
+    text = '';
+  }
   return text;
 }

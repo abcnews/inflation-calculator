@@ -22,16 +22,14 @@ export interface Customisation {
 
   showMarimako: boolean;
   showInflationBreakdown: boolean;
+  forceHousingProfile: boolean;
   applyPersonalisation: boolean;
   preventZoomSplitting: boolean;
-
-  // showDiscretionary: boolean;
 }
 
 export interface ExpenditureGroup {
   name: string;
   group: string;
-  // isDiscretionary: boolean;
   weights: ExpenditureGroupWeights;
   inflation: {
     1: Decimal;

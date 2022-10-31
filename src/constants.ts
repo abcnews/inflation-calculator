@@ -41,6 +41,7 @@ export const defaultCustomisation: Customisation = {
   showMarimako: false,
   showInflationBreakdown: false,
 
+  forceHousingProfile: false,
   applyPersonalisation: false,
   preventZoomSplitting: false,
 

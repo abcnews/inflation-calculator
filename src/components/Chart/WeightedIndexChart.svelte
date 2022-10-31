@@ -97,11 +97,12 @@
     return x + d[yKey];
   }, 0);
 
-  $: showZoomTitle = zoomedInGroups.indexOf('Housing') > -1 && zoomInAnimationStage > 3;
+  $: showZoomTitle = (zoomedInGroups.indexOf('Housing') > -1 || zoomedInGroups.indexOf('Food and non-alcoholic beverages') > -1) && zoomInAnimationStage > 3;
+  $: console.log(zoomedInGroups);
 </script>
 
 {#if showZoomTitle}
-  <div in:slide class="zoomed-in-title">Housing expenses</div>
+  <div in:slide class="zoomed-in-title">{zoomedInGroups[0].replace('and', '&')}</div>
 {/if}
 <div
   class="chart-container"

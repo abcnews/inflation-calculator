@@ -23,6 +23,8 @@
     'Oils and fats': 1,
     'Other cereal products': -1,
     'Eggs': 3,
+    'Pork': -1,
+    'Lamb and goat': -1,
     'Breakfast cereals': -1,
     'Other financial services': -2,
     'Deposit and loan facilities (direct charges)': 2,
@@ -36,7 +38,7 @@
   $: labelLocation = (point.width > $xScale.range()[1] * 0.6 && !needsAnnotation) ? 'inside' : 'right';
 
   $: annotationOffsetX = needsAnnotation ? 15 : 0;
-  $: annotationOffsetY = needsAnnotation ? (ANNOTATIONS_Y[point.name] || 3) : 0;
+  $: annotationOffsetY = needsAnnotation ? (ANNOTATIONS_Y[point.name] || 1) : 0;
 
   // Colours
   $: nonFocusColour = budgetDescription === 'Consumer price index' ? NON_FOCUS_ALT : NON_FOCUS;
