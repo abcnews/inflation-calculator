@@ -6,7 +6,7 @@
 
   export let budgetDescription = '';
 
-  const { data, xGet, yGet, xScale, yScale } = getContext('LayerCake');
+  const { data, xGet, yGet, y, xScale, yScale } = getContext('LayerCake');
   
   const calcBars = (data: WeightedBar[], xRange: number[], yRange: number[]): BarProps[] => {
     const res = data.reduce((acc, d) => {
@@ -31,6 +31,9 @@
       const point = {
         name: d.name,
         isHighlighted: d.isHighlighted,
+
+        // Show the % of entire budget for the first scrollyteller
+        budgetPercent: (!d.expandX && budgetDescription === 'typical budget') ? $y(d) : undefined,
 
         y: acc.y - height,
         x: xVal,

@@ -19,6 +19,7 @@
 
   export let yAxisMax;
   export let budgetDescription;
+  export let zoomInAnimationStage;
 
   $: isBandwidth = typeof $yScale.bandwidth === 'function';
 
@@ -78,13 +79,22 @@
       <tspan x="0" dy="0">Proportion of</tspan>
       <tspan x="0" dy="1.2em">typical budget</tspan>
     {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage holder'}
-      <tspan x="0" dy="0"><tspan class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan> of {budgetDescription.split(' ')[0]}</tspan>
+      <tspan x="0" dy="0">
+        <tspan class:extra={yAxisMax < 97 && zoomInAnimationStage > 1} class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan>
+        of {budgetDescription.split(' ')[0]}
+      </tspan>
       <tspan x="0" dy="1.2em">{budgetDescription.split(' ')[1] || ''} budget</tspan>
     {:else if budgetDescription === 'Consumer price index'}
-      <tspan x="0" dy="0"><tspan class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan> of Consumer</tspan>
+      <tspan x="0" dy="0">
+        <tspan class:extra={yAxisMax < 97 && zoomInAnimationStage > 1} class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan>
+          of Consumer
+        </tspan>
       <tspan x="0" dy="1.2em">Price Index (CPI)</tspan>
     {:else}
-      <tspan x="0" dy="0"><tspan class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan> of</tspan>
+      <tspan x="0" dy="0">
+        <tspan class:extra={yAxisMax < 97 && zoomInAnimationStage > 1} class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan>
+          of
+        </tspan>
       <tspan x="0" dy="1.2em">{budgetDescription}</tspan>
     {/if}
   </text>
@@ -111,6 +121,9 @@
 
     .bold {
       font-weight: 700;
+    }
+    .extra {
+      fill: black;
     }
   }
 

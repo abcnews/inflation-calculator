@@ -98,7 +98,6 @@
   }, 0);
 
   $: showZoomTitle = (zoomedInGroups.indexOf('Housing') > -1 || zoomedInGroups.indexOf('Food and non-alcoholic beverages') > -1) && zoomInAnimationStage > 3;
-  $: console.log(zoomedInGroups);
 </script>
 
 {#if showZoomTitle}
@@ -138,6 +137,7 @@
           ticks={0}
           {yAxisMax}
           {budgetDescription}
+          {zoomInAnimationStage}
         />
 
         <Bars {budgetDescription} />

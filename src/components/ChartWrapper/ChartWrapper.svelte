@@ -35,18 +35,15 @@
   $: {
     if (overrideBudgetDescription) {
       budgetDescription = overrideBudgetDescription;
-    } else if ($customisationStore.applyPersonalisation) {
-      // Personalisation of 1st scrollyteller
+    } else if ($customisationStore.applyPersonalisation && !customisationStore.forceHousingProfile) {
       budgetDescription = 'your budget';
-    } else if ($customisationStore.housingProfile === 'renter') {
-      // Different tenure types in 2nd scrollyteller
-      budgetDescription = 'renter';
     } else if ($customisationStore.housingProfile === 'mortgage') {
-      // Different tenure types in 2nd scrollyteller
       budgetDescription = 'mortgage holder';
-    } else if ($customisationStore.housingProfile === 'outright') {
-      // Different tenure types in 2nd scrollyteller
-      budgetDescription = 'outright owner';
+
+      // Special case for when forcing the housing profile to be the same as the user's one
+      if ($customisationStore.userHousingProfile === 'mortgage') {
+        budgetDescription = 'your budget';
+      }
     } else if (
       $customisationStore.removedGroups.indexOf('New dwelling purchase by owner-occupiers') === -1 &&
       $customisationStore.zoomedInGroups.indexOf('Housing') > -1

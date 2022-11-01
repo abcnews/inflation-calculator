@@ -132,6 +132,7 @@ export function deriveChartData(data: InflationData, customisation: Customisatio
       ];
     }, []);
 
+
     // If split, return the individual subgroups as bars
     if (customisation.splitGroups.indexOf(groupName) > -1) {
       return [...acc, ...bars];

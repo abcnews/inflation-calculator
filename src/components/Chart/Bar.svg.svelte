@@ -51,6 +51,20 @@
   $: textAnchor = labelLocation === 'inside' ? 'middle' : 'start';
   $: textFill = labelLocation === 'inside' ? 'white' : labelColour;
   $: textWeight = point.isHighlighted ? 600 : 400;
+
+  const showLabel = (p) => {
+    if (p.name === 'Oils and fats') {
+      return true;
+    }
+
+    if (point.name === 'Other food products n.e.c.') {
+      return p.height > 13;
+    }
+
+    return p.height > 8;
+  };
+
+  $: percentageLabelOffsetX = point.name === 'Automotive fuel' ? 53 : 21;
 </script>
 
 <!-- Needs an out transition to avoid leaving boxes behind... -->
@@ -68,7 +82,7 @@
     fill={blockColour}
   />
 
-  {#if point.height > 1}
+  {#if showLabel(point)}
 
     {#if needsAnnotation && labelLocation === 'right'}
       <line class="annotation-line"
@@ -96,6 +110,8 @@
           Mortgage repayments
         {:else if point.name.indexOf('Deposit and loan facilities (direct charges)') === 0}
           Deposit and loan facilities
+        {:else if point.name.indexOf('Other food products') === 0}
+          Other
         {:else if point.name.indexOf('Property rates and') === 0}
           Property rates
         {:else if point.name.indexOf('Maintenance and repair') === 0}
@@ -114,6 +130,16 @@
           {point.name.replace(/ and /g, ' & ')}
         {/if}
       </text>
+      {#if point.budgetPercent}
+        <text
+          class="percent-label"
+          style="
+            transform: translate({0}px, 20px);
+          "
+        >
+          {Math.floor(point.budgetPercent)}% of budget
+        </text>
+      {/if}
     </g>
 
   {/if}
@@ -122,6 +148,7 @@
 <style lang="scss">
 .weighted-bar {
   transition: transform 800ms;
+  --axis-colour: #646464;
 
   rect {
     transition: 
@@ -131,6 +158,14 @@
       y 800ms;
 
     transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+
+  .percent-label {
+    font-family: ABCSans;
+    font-size: 12px;
+    font-weight: 400;
+    fill: var(--axis-colour);
+    text-anchor: left;
   }
 
   text {

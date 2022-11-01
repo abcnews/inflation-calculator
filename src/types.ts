@@ -57,6 +57,7 @@ export interface WeightedBar {
 export interface BarProps {
   name: string;
   isHighlighted?: boolean;
+  budgetPercent?: number;
 
   width: number;
   height: number;
