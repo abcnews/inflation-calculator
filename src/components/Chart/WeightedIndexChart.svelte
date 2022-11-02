@@ -97,7 +97,7 @@
     return x + d[yKey];
   }, 0);
 
-  $: showZoomTitle = (zoomedInGroups.indexOf('Housing') > -1 || zoomedInGroups.indexOf('Food and non-alcoholic beverages') > -1) && zoomInAnimationStage > 3;
+  $: showZoomTitle = zoomedInGroups.length === 1 && (zoomedInGroups.indexOf('Housing') > -1 || zoomedInGroups.indexOf('Food and non-alcoholic beverages') > -1) && zoomInAnimationStage > 3;
 </script>
 
 {#if showZoomTitle}

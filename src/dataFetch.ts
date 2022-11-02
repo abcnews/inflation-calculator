@@ -12,7 +12,6 @@ export async function getStoreData(): Promise<InflationData> {
     csv(`${absolutePath}inflation-long-term.csv`),
   ]);
   const INFLATION_ONE_YEAR = INFLATION.find(i => i.Group === 'Last Year');
-  const INFLATION_TEN_YEARS = INFLATION.find(i => i.Group === 'Last 10 Years');
 
   // Clean raw data into expenditure groups with a reference to the group they fit into
   let lastGroup: string;
@@ -38,7 +37,6 @@ export async function getStoreData(): Promise<InflationData> {
         cpi: new Decimal(row['Consumer Price Index']).div(100),
       },
       inflation: {
-        10: new Decimal(INFLATION_TEN_YEARS[key(row['Expenditure Group'])]).sub(1),
         1: new Decimal(INFLATION_ONE_YEAR[key(row['Expenditure Group'])]).sub(1)
       },
     };

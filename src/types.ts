@@ -33,7 +33,6 @@ export interface ExpenditureGroup {
   weights: ExpenditureGroupWeights;
   inflation: {
     1: Decimal;
-    10: Decimal;
   };
 }
 export interface ExpenditureGroupWeights {

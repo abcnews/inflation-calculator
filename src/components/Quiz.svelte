@@ -170,7 +170,7 @@
     </span>
     for the past year, which is
     <span class="bold">
-      {formatPercentage(inflationDiff)} lower
+      {formatPercentage(inflationDiff.abs())} {inflationDiff.greaterThan(0) ? 'lower' : 'higher' }
     </span>
     than the official rate.
   </p>
