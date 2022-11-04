@@ -38,7 +38,7 @@
 <div class="inline-wrapper" bind:clientWidth={width}>
   <ChartWrapper
     width={width}
-    height={size === 'lg' ? 500 : 400} overrideBudgetDescription={'Consumer price index'}
+    height={size === 'lg' ? 300 : 400} overrideBudgetDescription={'Consumer price index'}
   />
 </div>
 

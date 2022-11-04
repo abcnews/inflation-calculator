@@ -38,7 +38,7 @@
         }
 
         const userHousingProfile = customisation.housingProfile;
-        stateStore.set({ ...defaultCustomisation, ...state, removedGroups, housingProfile });
+        stateStore.set({ ...defaultCustomisation, ...state, removedGroups, housingProfile, userHousingProfile });
       } else {
         stateStore.set({ ...defaultCustomisation, ...state });
       }

@@ -17,6 +17,7 @@ import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import Quiz from './components/Quiz.svelte';
 import LineChart2 from './components/MultilineChart/LineChart2.svelte';
 import Header from './components/Header.svelte';
+import Subheading from './components/Subheading.svelte';
 
 const scrollyElems: any[] = [];
 const inlineElems: any[] = [];
@@ -107,6 +108,9 @@ Promise.all([
   };
 
   mountComponents('headerimg', Header);
+  mountComponents('subhead-1', Subheading, { heading: 'Inflation_and_you' });
+  mountComponents('subhead-2', Subheading, { heading: 'Measuring_housing_costs' });
+  mountComponents('subhead-3', Subheading, { heading: 'An_Expensive_Cure' });
   mountComponents('interactive-quiz', Quiz, { indexData, onCustomisationChange });
   mountComponents('linechart2', LineChart2, { indexData, customisation });
   mountComponents('inlinechart', InlineChart, { indexData });

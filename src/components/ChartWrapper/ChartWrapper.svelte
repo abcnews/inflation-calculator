@@ -35,7 +35,7 @@
   $: {
     if (overrideBudgetDescription) {
       budgetDescription = overrideBudgetDescription;
-    } else if ($customisationStore.applyPersonalisation && !customisationStore.forceHousingProfile) {
+    } else if ($customisationStore.applyPersonalisation && !$customisationStore.forceHousingProfile) {
       budgetDescription = 'your budget';
     } else if ($customisationStore.housingProfile === 'mortgage') {
       budgetDescription = 'mortgage holder';
