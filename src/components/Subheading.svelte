@@ -32,7 +32,7 @@
   }
   @media only screen and (max-width: 700px) {
     :global(#subhead-1, #subhead-2, #subhead-3) {
-      height: 15px;
+      height: 25px;
     }
   }
 

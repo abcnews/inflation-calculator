@@ -27,7 +27,7 @@ let customisation: any = {};
 const prepTemplates = () => {
   const bodyPars = document.querySelectorAll('.Main.u-layout > p');
   bodyPars.forEach(n => {
-    let text = n.getAttribute('data-template') || n.textContent;
+    let text = n.getAttribute('data-template') || n.innerHTML;
     if (!text || text.indexOf('{{') === -1) {
       return;
     }
@@ -75,7 +75,7 @@ Promise.all([
     const templatedPanels = document.querySelectorAll('p.templated');
     for (const panel of Array.from(templatedPanels || [])) {
       const text = panel.getAttribute('data-template') || '';
-      panel.textContent = personaliseText(customisation as any, text);
+      panel.innerHTML = personaliseText(customisation as any, text);
     }
 
     if (prefersReducedMotion) {

@@ -56,7 +56,7 @@
         panel.classList.add('hidden-template');
       } else {
         panel.classList.remove('hidden-template');
-        panel.textContent = pText;
+        panel.innerHTML = pText;
       }
     }
   }
@@ -71,8 +71,9 @@
       return {
         ...p,
         nodes: p.nodes.map(n => {
+          let text = n.getAttribute('data-template') || n.innerHTML;
+
           // No templated text in the DOM element, so skip it
-          let text = n.getAttribute('data-template') || n.textContent;
           if (text.indexOf('{{') === -1) {
             return n;
           }
