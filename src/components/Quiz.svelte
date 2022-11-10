@@ -118,10 +118,10 @@
       removedGroups = removedGroups.filter(g => g !== 'Tobacco' && g !== 'Wine' && g !== 'Spirits' && g !== 'Beer');
 
       if (answer === 'Drink') {
-        removedGroups = [...removedGroups, 'Wine', 'Spirits', 'Beer'];
+        removedGroups = [...removedGroups, 'Tobacco'];
       }
       if (answer === 'Smoke') {
-        removedGroups = [...removedGroups, 'Tobacco'];
+        removedGroups = [...removedGroups, 'Wine', 'Spirits', 'Beer'];
       }
       if (answer === 'Neither') {
         removedGroups = [...removedGroups, 'Tobacco', 'Wine', 'Spirits', 'Beer'];
