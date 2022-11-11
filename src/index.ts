@@ -10,6 +10,7 @@ import type { Mount } from '@abcnews/mount-utils';
 import { loadScrollyteller } from './components/Scrollyteller';
 import { getStoreData } from './dataFetch';
 import { personaliseText } from './utils';
+import { fetchDocument } from './terminus';
 import { defaultCustomisation } from './constants';
 
 import InlineChart from './components/InlineChart.svelte';
@@ -60,6 +61,24 @@ const mountComponents = (name: string, Component: typeof SvelteComponent, props?
       }
     }
   );
+
+
+const [dynamicContentEl] = selectMounts('gemini');
+if (dynamicContentEl) {
+  const replaceContent = (el, doc) => {
+    const text = doc.teaserText.plain;
+    console.log(text);
+  };
+
+  const marker = getMountValue(dynamicContentEl, 'gemini');
+  if (marker[0] === ':') {
+    const teaserId = marker.slice(1);
+    fetchDocument(teaserId).then(teaserDoc => replaceContent(dynamicContentEl, teaserDoc));
+  } else {
+    console.log('Invalid marker: ', marker);
+  }
+}
+
 
 Promise.all([
   getStoreData(),
