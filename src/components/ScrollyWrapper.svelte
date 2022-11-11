@@ -6,6 +6,7 @@
   import { InflationData, Customisation } from '../types';
   import { defaultCustomisation } from '../constants';
   import { personaliseText } from '../utils';
+  import { deriveChartData } from '../model';
 
   import Scrollyteller from './Scrollyteller/Scrollyteller.svelte';
   import ChartWrapper from './ChartWrapper/ChartWrapper.svelte';
@@ -51,7 +52,15 @@
     const templatedPanels = document.querySelectorAll('.st-panel .templated');
     for (const panel of Array.from(templatedPanels || [])) {
       const text = panel.getAttribute('data-template') || '';
-      const pText = personaliseText(customisation, text);
+
+      // Needed to interpolate the names of the biggest + smallest categories
+      const groups = deriveChartData(indexData, {
+        ...defaultCustomisation,
+        ...customisation,
+        splitGroups: [],
+      });
+
+      const pText = personaliseText(customisation, text, groups);
       if (!pText) {
         panel.classList.add('hidden-template');
       } else {

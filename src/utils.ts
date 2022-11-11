@@ -57,7 +57,7 @@ export function toPercentage(x: string | number): Decimal {
 };
 
 
-export function personaliseText(customisation: Customisation, text: string): string {
+export function personaliseText(customisation: Customisation, text: string, groups?): string {
   const doesDrive = customisation.removedGroups.indexOf('Motor vehicles') === -1;
   const doesSmoke = customisation.removedGroups.indexOf('Tobacco') === -1;
   const isRenter = customisation.housingProfile === 'renter';
@@ -85,6 +85,18 @@ export function personaliseText(customisation: Customisation, text: string): str
     text = text.replace(/{{mortgage:([^}]*)}}/g, '$1');
   } else {
     text = text.replace(/{{outright:([^}]*)}}/g, '$1');
+  }
+
+  if (groups) {
+    const expOrdering = [...groups].sort(sortBars('weighting', []));
+    const areaOrdering = [...groups].sort(sortBars('area', []));
+
+    text = text.replace('{{exp-first}}', expOrdering[expOrdering.length - 1].name);
+    text = text.replace('{{exp-second}}', expOrdering[expOrdering.length - 2].name);
+    text = text.replace('{{exp-last}}', expOrdering[0].name);
+
+    text = text.replace('{{area-first}}', areaOrdering[areaOrdering.length - 1].name);
+    text = text.replace('{{area-second}}', areaOrdering[areaOrdering.length - 2].name);
   }
 
   // Remove the leftover templates
