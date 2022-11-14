@@ -60,6 +60,7 @@ export function toPercentage(x: string | number): Decimal {
 export function personaliseText(customisation: Customisation, text: string, groups?): string {
   const doesDrive = customisation.removedGroups.indexOf('Motor vehicles') === -1;
   const doesSmoke = customisation.removedGroups.indexOf('Tobacco') === -1;
+  const doesDrink = customisation.removedGroups.indexOf('Beer') === -1;
   const isRenter = customisation.housingProfile === 'renter';
   const hasMortgage = customisation.housingProfile === 'mortgage';
 
@@ -77,6 +78,14 @@ export function personaliseText(customisation: Customisation, text: string, grou
   } else {
     text = text.replace(/{{nosmoke:([^}]*)}}/g, '$1');
     text = text.replace(/{{smoke:([^}]*)}}/g, '');
+  }
+
+  if (doesDrink) {
+    text = text.replace(/{{drink:([^}]*)}}/g, '$1');
+    text = text.replace(/{{nodrink:([^}]*)}}/g, '');
+  } else {
+    text = text.replace(/{{nodrink:([^}]*)}}/g, '$1');
+    text = text.replace(/{{drink:([^}]*)}}/g, '');
   }
 
   if (isRenter) {

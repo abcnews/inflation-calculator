@@ -5,6 +5,7 @@
   import { BarProps } from '../../types';
 
   const { xScale } = getContext('LayerCake');
+  const customisationStore = getContext<any>('customisation');
   
   export let point: BarProps;
   export let budgetDescription: string;
@@ -33,6 +34,9 @@
   const NO_ANNOTATIONS = [
     'Jams, honey and spreads',
   ];
+
+  $: doesDrink = $customisationStore.removedGroups.indexOf('Beer') === -1;
+  $: doesSmoke = $customisationStore.removedGroups.indexOf('Tobacco') === -1;
 
   $: needsAnnotation = point.height < 10 && NO_ANNOTATIONS.indexOf(point.name) === -1;
   $: labelLocation = (point.width > $xScale.range()[1] * 0.6 && !needsAnnotation) ? 'inside' : 'right';
@@ -63,8 +67,6 @@
 
     return p.height > 8;
   };
-
-  $: percentageLabelOffsetX = point.name === 'Automotive fuel' ? 53 : 21;
 </script>
 
 <!-- Needs an out transition to avoid leaving boxes behind... -->
@@ -126,6 +128,15 @@
         {:else if point.name.indexOf('New dwelling') === 0}
           <tspan x="0" dy="-0.4em">New dwelling purchase</tspan>
           <tspan x="0" dy="1em">by owner-occupiers</tspan>
+
+        {:else if point.name.indexOf('Alcohol') === 0}
+          {#if !doesSmoke}
+            Alcohol
+          {:else if !doesDrink}
+            Tobacco
+          {:else}
+            Alcohol & Tobacco
+          {/if}
         {:else}
           {point.name.replace(/ and /g, ' & ')}
         {/if}

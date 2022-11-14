@@ -174,7 +174,7 @@
     </span>
     than the official rate.
   </p>
-     
+
   <LineChart inflationRate={personalInflation.mul(100).toNumber()} />
 
   <p class="result">
