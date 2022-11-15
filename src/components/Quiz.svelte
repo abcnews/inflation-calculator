@@ -54,8 +54,8 @@
           value: "Own outright",
         },
         {
-          label: "Own with a mortgage",
-          value: "Own with a mortgage",
+          label: "Own with mortgage",
+          value: "Own with mortgage",
         },
       ],
     },
@@ -108,7 +108,7 @@
       if (answer === 'Own outright') {
         housingProfile = 'outright';
       }
-      if (answer === 'Own with a mortgage') {
+      if (answer === 'Own with mortgage') {
         housingProfile = 'mortgage';
       }
     }
