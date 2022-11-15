@@ -125,6 +125,12 @@
     }
   }
 
+  @media only screen and (max-width: 1022px) {
+    :global(.scrollyteller > .content > .st-panel:first-child) {
+      margin-top: 85vh;
+    }
+  }
+
   :global(.hidden-template) {
     display: none;
     position: absolute;
