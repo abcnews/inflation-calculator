@@ -31,6 +31,7 @@
       flex: 1;
 
       font-family: 'ABCSans';
+      color: black;
       display: inline-block;
       background: transparent;
       font-size: 0.875rem;
