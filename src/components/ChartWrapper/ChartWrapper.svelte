@@ -38,7 +38,7 @@
     } else if ($customisationStore.applyPersonalisation && !$customisationStore.forceHousingProfile) {
       budgetDescription = 'your budget';
     } else if ($customisationStore.housingProfile === 'mortgage') {
-      budgetDescription = 'mortgage holder';
+      budgetDescription = 'mortgage borrower';
 
       // Special case for when forcing the housing profile to be the same as the user's one
       if ($customisationStore.userHousingProfile === 'mortgage') {

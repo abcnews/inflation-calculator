@@ -78,7 +78,7 @@
     {#if budgetDescription === 'typical budget'}
       <tspan x="0" dy="0">Proportion of</tspan>
       <tspan x="0" dy="1.2em">typical budget</tspan>
-    {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage holder'}
+    {:else if budgetDescription === 'renter' || budgetDescription === 'outright owner' || budgetDescription === 'mortgage borrower'}
       <tspan x="0" dy="0">
         <tspan class:extra={yAxisMax < 97 && zoomInAnimationStage > 1} class="bold">{yAxisMax > 97 ? 100 : Math.round(yAxisMax)}%</tspan>
         of {budgetDescription.split(' ')[0]}
